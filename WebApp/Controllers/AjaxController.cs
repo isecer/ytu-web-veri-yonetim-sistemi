@@ -112,19 +112,19 @@ namespace WebApp.Controllers
                         }
                         else
                         {
-                            //var ld = new LdapService.SecureSoapClient();
-                            //var wsPwd = ConfigurationManager.AppSettings["ldapServicePassword"];
-                            //var isSuccess = ld.Login(userName, password, wsPwd);
-                            //if (isSuccess)
-                            //{
-                            //    loginUser = user;
-                            //}
-                            //else
-                            //{
-                            //    mmMessage.IsSuccess = false;
-                            //    msg = "Active Directory Kontrolünden Geçilemedi!";
-                            //    SistemBilgilendirmeBus.SistemBilgisiKaydet("Active Directory Kontrolünden Geçilemedi! Kullanıcı Adı: " + userName, "Acconunt/Login", BilgiTipi.LoginHatalari, null, UserIdentity.Ip);
-                            //}
+                            var ld = new LdapService.SecureSoapClient();
+                            var wsPwd = ConfigurationManager.AppSettings["ldapServicePassword"];
+                            var isSuccess = ld.Login(userName, password, wsPwd);
+                            if (isSuccess)
+                            {
+                                loginUser = user;
+                            }
+                            else
+                            {
+                                mmMessage.IsSuccess = false;
+                                msg = "Active Directory Kontrolünden Geçilemedi!";
+                                SistemBilgilendirmeBus.SistemBilgisiKaydet("Active Directory Kontrolünden Geçilemedi! Kullanıcı Adı: " + userName, "Acconunt/Login", BilgiTipi.LoginHatalari, null, UserIdentity.Ip);
+                            }
                         }
 
                         if (loginUser != null && !loginUser.IsAktif)
