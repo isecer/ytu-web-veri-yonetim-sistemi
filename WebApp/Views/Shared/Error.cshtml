@@ -1,0 +1,37 @@
+﻿@using WebApp.Models
+@using Database
+@using BiskaUtil
+@using WebApp.Utilities.Extensions
+@model System.Web.Mvc.HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    using (var db = new VysDBEntities())
+    {
+        db.SistemBilgilendirmes.Add(new SistemBilgilendirme
+        {
+            BilgiTipi = BilgiTipi.Hata,
+            Message = Model.Exception.ToExceptionMessage(),
+            IslemYapanID = (UserIdentity.Current.IsAuthenticated ? UserIdentity.Current.Id : (int?)null),
+            IslemYapanIP = UserIdentity.Ip,
+            IslemTarihi = DateTime.Now,
+            StackTrace = Model.Exception.ToExceptionStackTrace()
+        });
+        db.SaveChanges();
+    }
+}
+
+<div class="error-container">
+    <div class="error-code">Hata! <div class="icon-preview"><i class="fa fa-frown-o"></i></div></div>
+    <div class="error-text">İşlem Yapılırken Bir Hata Oluştu.</div>
+    <div class="error-subtext">
+        Hata: @Model.Exception.Message
+    </div>
+    <div class="error-subtext">Bu hata sistem tarafından loglandı.</div>
+    @*<div class="error-code">500</div>
+        <div class="error-text">Internal server error</div>
+        <div class="error-subtext">The server encountered an internal error or misconfiguration and was unable to complete your request.</div>*@
+</div>
+
+
+

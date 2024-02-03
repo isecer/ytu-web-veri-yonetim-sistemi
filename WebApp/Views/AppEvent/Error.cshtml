@@ -1,0 +1,14 @@
+﻿@using WebApp.Utilities.Extensions
+@model Exception
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="error-container">
+    <div class="error-code">Hata! <div class="icon-preview"><i class="fa fa-frown-o"></i></div></div>
+    <div class="error-text">İşlem Yapılırken Bir Hata Oluştu.</div>
+    <div class="error-subtext">
+        Hata: @Model.ToExceptionMessage()
+    </div>
+    <div class="error-subtext">Bu hata sistem tarafından loglandı.</div> 
+</div> 

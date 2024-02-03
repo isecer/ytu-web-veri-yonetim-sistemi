@@ -1,0 +1,83 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MessageBox
+@model KmGTDonemleri
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+ 
+}
+
+<div class="row">
+    <form id="FrmBasvuruSurec" method="post" class="form-horizontal" enctype="multipart/form-data" role="form">
+        <input type="text" style="display:none;" id="GTDonemID" name="GTDonemID" value="@Model.GTDonemID" />
+        <div class="col-md-12">
+            <div class="panel panel-success" id="pnlEO">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="glyphicon glyphicon-time"></i> Dönem Kaydı</h3>
+                    <ul class="panel-controls">
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Kayit","GTDonemIslemleri",new { id = Model.GTDonemID })';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+
+
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label">Gelir Takip Dönem Yılı</label>
+                                <div class="col-md-9 col-xs-7">
+                                    @Html.DropDownList("Yil", null, new { @class = "form-control", style = "padding:0px;" })
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label">Başlangıç / Bitiş Tarihi</label>
+                                <div class="col-md-9 col-xs-7">
+                                    <table>
+                                        <tr>
+                                            <td><input class="trh form-control form-control-inline input-medium" autocomplete="off" size="16" type="text" value="@Model.BaslangicTarihi.ToFormatDate()" name="BaslangicTarihi" id="BaslangicTarihi"></td>
+                                            <td style="width:5px;text-align:center;">/</td>
+                                            <td><input class="trh form-control form-control-inline input-medium" autocomplete="off" size="16" type="text" value="@Model.BitisTarihi.ToFormatDate()" name="BitisTarihi" id="BitisTarihi"></td>
+                                        </tr>
+                                    </table>
+
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <label class="col-md-3 col-xs-5 control-label">Durum</label>
+                                <div class="col-md-9 col-xs-7">
+                                    <div class="make-switch" data-on-label="Aktif" data-off-label="Pasif" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" name="IsAktif" class="toggle" @Model.IsAktif.ToChecked() />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $(function () {
+            $('#BaslangicTarihi').datetimepicker({
+                lang: 'tr',
+                timepicker: false,
+                format: 'd-m-Y'
+            });
+            $('#BitisTarihi').datetimepicker({
+                lang: 'tr',
+                timepicker: false,
+                format: 'd-m-Y'
+            }); 
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+    });
+     
+</script>

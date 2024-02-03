@@ -1,0 +1,376 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model WebApp.Utilities.Dtos.VeriGirisDetailDto
+@{
+    Layout = null;
+    var vgElle = Model.VeriGirisi.VeriGirisSekliID == VeriGirisSekli.ElleGirilecek;
+    var kayitYetki = Model.SurecIsAktif && RoleNames.VeriGirisiKayitYetkisi.InRole();
+    var onayYetki = Model.SurecIsAktif && RoleNames.VeriGirisiOnayYetkisi.InRole();
+    var phKayitYetki = Model.SurecIsAktif && RoleNames.VeriGirisiPlanlananHedefKayitYetkisi.InRole() && vgElle;
+
+
+    var isPlanlananVeriGirisiAcik = !Model.VeriGirisi.VeriGirisiOnaylandi && phKayitYetki;
+
+}
+
+<div class="widget widget-default" style="border-top:1px solid;border-top-color:lightgray; margin-bottom:8px;padding:6px 10px;min-height:20px;">
+    <table style="width:100%;">
+        <tbody>
+            <tr>
+                <td style="font-weight:bold;border-bottom:1px solid;"><i class="glyphicon glyphicon-info-sign"></i> Genel Bilgiler</td>
+                <td style="border-bottom:1px solid;text-align:right;">
+                    <a href="javascript:void(0);" onclick="GetDetail(@Model.VASurecID,@Model.BirimID,@Model.MaddeID)" class="panel-refresh" title="Detayı Yenile"><span class="fa fa-refresh fa-lg"></span></a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-left:10px;text-align:left;">
+                    <div class="tasks ui-sortable">
+                        <div class="task-item task-success" style="margin-bottom:0px;">
+                            <div class="task-text ui-sortable-handle" style="padding-bottom: 0px; font-size: 8.5pt;cursor:default;">
+                                <table>
+                                    <tr>
+                                        <td width="160">Veri Giriş Süreci / Birim Adı</td>
+                                        <td width="5">:</td>
+                                        <td>@Model.SurecYil Yılı Süreci / @Model.VeriGirisi.BirimAdi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Madde Türü</td>
+                                        <td>:</td>
+                                        <td>@Model.VeriGirisi.MaddeTurAdi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Madde Adı</td>
+                                        <td>:</td>
+                                        <td>@Model.VeriGirisi.MaddeAdi</td>
+                                    </tr>
+                                    @if (!Model.VeriGirisi.Aciklama.IsNullOrWhiteSpace())
+                                    {
+                                        <tr>
+                                            <td>Madde Açıklaması</td>
+                                            <td>:</td>
+                                            <td> @Model.VeriGirisi.Aciklama</td>
+                                        </tr>
+                                    }
+                                    @if (Model.VeriGirisi.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak)
+                                    {
+                                        <tr>
+                                            <td>Formülle Hesaplama</td>
+                                            <td>:</td>
+                                            <td>Bu Madde <b>@Model.VeriGirisi.HesaplamaFormulu.Replace("]", "").Replace("[", "")</b> Formülüne Göre Sistem Tarafından Hesaplanacaktır.</td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="widget widget-default" style="border-top:1px solid;border-top-color:lightgray; margin-bottom:8px;padding:6px 10px;min-height:20px;">
+    <table style="width:100%;">
+        <tbody>
+            <tr>
+                <td style="font-weight:bold;border-bottom:1px solid;"><i class="fa fa-pencil-square-o fa-lg"></i> Veri Girişi ve Onaylama</td>
+                <td style="border-bottom:1px solid;text-align:right;">
+                    <span style="cursor:pointer;" onclick="GetKanitDosyalari(@Model.VASurecID,@Model.BirimID,@Model.MaddeID)"><i class="fa fa-folder-o fa-lg"></i> Tüm Kanıt Dosyalarını Gör (@Model.VeriGirisi.DosyaCount)</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-left:10px;text-align:left;">
+                    <table class="table table-hover" style="margin-bottom:0px;">
+                        @if (Model.VeriGirisi.IsPlanlananDegerOlacak || Model.VeriGirisi.IsPlanlananDegerOlacakGelecekYil)
+                        {
+                            <tr class="warning">
+                                <td></td>
+                                <td colspan="4" style="text-align:right;padding-right:5px;">
+                                    <div class="col-md-12">
+                                        @if (Model.VeriGirisi.IsPlanlananDegerOlacak)
+                                        {
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" style="border-color: transparent; background-color: transparent; color: black; ">@(Model.SurecYil) Yılı Planlanan Hedef</span>
+                                                    @if (isPlanlananVeriGirisiAcik && Model.IsAktifYilPlanlananVeriGirisiAcik)
+                                                    {
+                                                        <input type="text" class="form-control buYilPlanlananDeger_@(Model.VASurecID + "_" + Model.BirimID + "_" + Model.MaddeID)" style="font-weight:bold;text-align:right;" name="GirilenDeger" onkeydown="if(event.key.toLowerCase() == 'enter') { PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,true); }" value="@(Model.VeriGirisi.PlanlananDeger.HasValue ? $"{Model.VeriGirisi.PlanlananDeger:0.###}" : "")" />
+                                                        <span class="input-group-addon" style="cursor:pointer;" onclick="PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,true)" title="Kaydet"><i class="fa fa-save fa-lg"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control" readonly="readonly" style="font-weight:bold;text-align:right;color:green;" value="@(Model.VeriGirisi.PlanlananDeger.HasValue ? $"{Model.VeriGirisi.PlanlananDeger:0.###}" : "")" />
+                                                        <span class="input-group-addon" style="background-color: transparent; border-color: lightgray;"></span>
+
+                                                    }
+                                                </div>
+
+
+                                            </div>
+                                        }
+                                        @if (Model.VeriGirisi.IsPlanlananDegerOlacakGelecekYil)
+                                        {
+                                            <div class="col-md-6">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" style="border-color: transparent; background-color: transparent; color: black;">@(Model.SurecYil+1) Yılı Planlanan Hedef</span>
+                                                    @if (isPlanlananVeriGirisiAcik && Model.IsGelecekYilPlanlananVeriGirisiAcik)
+                                                    {
+                                                        <input type="text" class="form-control gelecekYilPlanlananDeger_@(Model.VASurecID + "_" + Model.BirimID + "_" + Model.MaddeID)" style="font-weight:bold;text-align:right;" name="GirilenDeger" onkeydown="if(event.key.toLowerCase() == 'enter') { PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,false); }" value="@(Model.VeriGirisi.PlanlananDegerGelecekYil.HasValue ? $"{Model.VeriGirisi.PlanlananDegerGelecekYil:0.###}" : "")" />
+                                                        <span class="input-group-addon" style="cursor:pointer;" onclick="PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,false)" title="Kaydet"><i class="fa fa-save fa-lg"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control" readonly="readonly" style="font-weight:bold;text-align:right;color:green;" value="@(Model.VeriGirisi.PlanlananDegerGelecekYil.HasValue ? $"{Model.VeriGirisi.PlanlananDegerGelecekYil:0.###}" : "")" />
+                                                        <span class="input-group-addon" style="background-color: transparent; border-color: lightgray;"></span>
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+
+                        <tr class="info">
+                            <th width="50">Sıra No</th>
+                            <th>Dönem</th>
+                            @if (vgElle)
+                            {
+                                <th width="80">Veri var mı?</th>
+                            }
+                            <th width="220" style="text-align:right;padding-right:10px;">Girilen Veri</th>
+                            <th width="100" style="text-align:right;">Onay Durumu</th>
+                        </tr>
+
+                        @{
+
+                            var inx = 0;
+                            foreach (var item in Model.VeriGirisi.VgMaddeVerileris)
+                            {
+                                inx++;
+                                var isOnaylandi = item.VeriGirisiOnaylandi == true;
+                                var isVeriVarReadOnly = !vgElle || isOnaylandi || !kayitYetki;
+                                var isVeriVar = item.IsVeriVar;
+                                var isVeriGirisReadOnly = isVeriVarReadOnly || isVeriVar != true;
+                                var rwId = Model.VASurecID + "_" + Model.BirimID + "_" + Model.MaddeID + "_" + item.VaCokluVeriDonemId;
+
+                                <tr id="@rwId">
+                                    <td>@inx</td>
+                                    <td>@item.CokluVeriDonemAdi</td>
+
+                                    @if (vgElle)
+                                    {
+
+
+                                        <td>
+                                            @if (!isVeriVarReadOnly)
+                                            {
+                                                <select class="form-control" style="font-size:9pt;height:24px;padding:1px;line-height:14px;" onchange="IsVeriVarPost(this, @Model.VASurecID, @Model.BirimID, @Model.MaddeID,@item.VaCokluVeriDonemId)" @isOnaylandi.ToChecked()>
+                                                    <option value="" @((isVeriVar == null).ToSelected())>-----</option>
+                                                    <option value="true" @(isVeriVar.ToSelected())>Veri Var</option>
+                                                    <option value="false" @((!isVeriVar).ToSelected())>Veri Yok</option>
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <span style="@(isVeriVar == true ? "color:green;" : "")">@(isVeriVar == null ? "-----" : (isVeriVar == true ? "Veri Var" : "Veri Yok"))</span>
+                                            }
+
+                                        </td>
+                                    }
+                                    <td style="text-align:right;padding-right:5px;">
+                                        <div class="col-md-12">
+                                            <div class="input-group input-group-sm" style="text-align: right; ">
+                                                @if (isVeriVar == true && item.IsDosyaYuklensin)
+                                                {
+                                                    <span class="input-group-addon" style="height: 24px; padding: 0px; border-color: lightgray;">
+                                                        <span class="btn btn-default" style="height: 22px; padding: 1px;@(item.DosyaCount > 0 ? "color:green;" : "")" onclick="GetKanitDosyalari(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,@item.VaCokluVeriDonemId)"><i class="fa fa-folder fa-lg" style="vertical-align:0px;margin:0px;"></i> @item.DosyaCount Dosya</span>
+                                                    </span>
+                                                }
+                                                @if (!isVeriGirisReadOnly)
+                                                {
+                                                    <input type="text" class="form-control VeriGiris_@rwId" style="font-weight: bold; text-align: right; height: 24px; padding: 1px; line-height: 14px;" onkeydown="if(event.key.toLowerCase() == 'enter') { VeriKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,@item.VaCokluVeriDonemId); }" value="@(item.GirilenDeger != null ? $"{item.GirilenDeger:0.###}" : "")" />
+                                                    <span class="input-group-addon" style="cursor: pointer; height: 24px; padding: 1px;" onclick="VeriKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,@item.VaCokluVeriDonemId)"><i class="fa fa-save fa-lg" style="vertical-align:0px;"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <input type="text" class="form-control" readonly="readonly" style="font-weight: bold; text-align: right; height: 24px; padding: 1px; line-height: 14px;color:black;" value="@(item.GirilenDeger != null ? $"{item.GirilenDeger:0.###}" : "")" />
+                                                    <span class="input-group-addon disabled" style="height: 22px; padding: 1px;background-color:transparent;border-color:lightgray;"></span>
+
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: right; padding-right: 5px;">
+                                        @if (onayYetki && item.IsVeriVar.HasValue && vgElle)
+                                        {
+                                            <div class="checkbox pull-left" style="margin:1px;">
+                                                <label>
+                                                    <input type="checkbox" class="icheckbox" name="RolID" onchange="VeriGirisOnay(this, @Model.VASurecID, @Model.BirimID, @Model.MaddeID,@item.VaCokluVeriDonemId)" @isOnaylandi.ToChecked()>
+                                                    Onaylandı
+                                                </label>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            if (item.VeriGirisiOnaylandi != null)
+                                            {
+                                                <span>@Html.Raw((isOnaylandi ? "Onaylandı" : "Onay Bekleniyor"))</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Veri Girilmedi</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="widget widget-default" style="border-top:1px solid;border-top-color:lightgray; margin-bottom:8px;padding:6px 10px;min-height:20px;">
+    <table style="width:100%;">
+        <tbody>
+            <tr>
+                <td style="font-weight:bold;border-bottom:1px solid;"><i class="fa fa-comments-o fa-lg"></i> Veri Girişi Açıklamaları (@Model.AciklamaCount)</td>
+                <td style="border-bottom:1px solid;text-align:right;">
+                    @if (kayitYetki && Model.SurecIsAktif)
+                    {
+                        <span style="cursor:pointer;font-size:9pt;" onclick="GetAciklamalar(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,'')"><i class="fa fa-plus fa-lg"></i> Açıklama Ekle</span>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-left:10px;text-align:left;">
+                    <table class="table table-hover" style="margin-bottom:0px;">
+                        <thead>
+                            <tr class="info">
+                                <th width="50">Sıra No</th>
+                                <th width="80">Dönem</th>
+                                <th>Açıklama</th>
+                                <th width="110">Eklenme Tarihi</th>
+                                <th width="30" style="text-align:center;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var aciklamaRowNumber = 0;
+                                foreach (var item in Model.EklenenAciklamas)
+                                {
+                                    aciklamaRowNumber++;
+                                    <tr>
+                                        <td>@aciklamaRowNumber</td>
+                                        <td id="tdAAyAdi_@item.VASurecleriMaddeEklenenAciklamaID">@(item.VACokluVeriDonemID.HasValue ? item.VACokluVeriDonemleri.CokluVeriDonemAdi : "Genel")</td>
+                                        <td id="tdAAciklama_@item.VASurecleriMaddeEklenenAciklamaID">
+                                            @item.Aciklama
+                                        </td>
+                                        <td>@item.IslemTarihi.ToFormatDateAndTime()</td>
+                                        <td>
+                                            @if (kayitYetki && Model.SurecIsAktif)
+                                            {
+                                                <a href="javascript:void(0)" onclick="AciklamaSilmeOnay(this,@item.VASurecleriMaddeEklenenAciklamaID)"><i class="fa fa-trash-o fa-lg" title="Açıklamayı Sil"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                            @if (Model.AciklamaCount == 0)
+                            {
+                                <tr>
+                                    <td colspan="5" style="text-align:center;color:maroon;">Eklenen Açıklama Yok</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+@if (Model.FaaliyetData.Any())
+{
+    <div class="widget widget-default" style="border-top:1px solid;border-top-color:lightgray; margin-bottom:8px;padding:6px 10px;min-height:20px;">
+        <table style="width:100%;">
+            <tbody>
+                <tr>
+                    <td style="font-weight:bold;border-bottom:1px solid;"><i class="glyphicon glyphicon-info-sign"></i> Madde İle İlgili Faaliyetler (@Model.FaaliyetData.Count)</td>
+                    <td style="border-bottom:1px solid;text-align:right;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding-left:10px;text-align:left;">
+                        <div class="" style="overflow:auto;max-height:250px;">
+                            <div class="tasks">
+                                @foreach (var item in Model.FaaliyetData)
+                                {
+                                    <div class="task-item task-info" style="padding:3px;cursor:default;">
+                                        <table class="" style="margin:0px;">
+
+                                            <tr>
+                                                <td width="120" style="">Faaliyet Adı</td>
+                                                <td width="10" style="">:</td>
+                                                <td class="Filter_Col_B_@Model.MaddeID" style="padding-bottom:3px;">
+                                                    [@item.FaaliyetKod] - @item.FaaliyetAdi
+                                                </td>
+                                            </tr>
+                                            @if (item.TakipGostergesi != null)
+                                            {
+                                                <tr>
+                                                    <td style="">Takip Göstergesi</td>
+                                                    <td style="">:</td>
+                                                    <td style="">
+                                                        @item.TakipGostergesi
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td style="">Planlanan Zaman</td>
+                                                <td style="">:</td>
+                                                <td>
+
+                                                    <ul class="list-tags">
+                                                        @foreach (var itemFa in item.FaaliyetAylari.OrderBy(o => o.AyID))
+                                                        {
+                                                            <li><a href="javascript:void(0);" style=""><span class="fa fa-tag"></span> @itemFa.AyAdi</a></li>
+                                                        }
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="">İlgili Kaynaklar</td>
+                                                <td style="">:</td>
+                                                <td>
+                                                    <ul class="list-tags">
+                                                        @foreach (var itemKa in item.FaaliyetKaynaklari.OrderBy(o => o.KaynakAdi))
+                                                        {
+                                                            <li><a href="javascript:void(0);" style=""><span class="fa fa-tag"></span> @itemKa.KaynakAdi</a></li>
+                                                        }
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+}
+
+
+

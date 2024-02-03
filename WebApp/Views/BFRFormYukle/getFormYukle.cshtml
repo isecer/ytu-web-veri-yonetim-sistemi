@@ -1,0 +1,124 @@
+﻿@using WebApp.Models
+@using Database
+@using WebApp.Utilities.Extensions
+@{
+    Layout = null;
+    var bfrDonem = (FrBfrDonemleri)ViewBag.BFRDonem;
+    var form = (BFRFormlar)ViewBag.Form;
+    var birim = (Vw_BirimlerTree)ViewBag.Birim;
+    var yuklenenForm = (BFRDonemlerFormGirisleri)ViewBag.YuklenenForm;
+
+}
+<div class="row">
+    @using (Ajax.BeginForm("FormYuklePost", null, new AjaxOptions() { HttpMethod = "POST", }, new { enctype = "multipart/form-data", id = "FormYukleForm" }))
+    {
+
+        <div class="panel panel-info">
+
+            <div class="panel-body" style="margin: 0px; padding: 0px;">
+                <div class="col-md-12">
+                    <table class="table" style="font-size:9pt;margin:0px;">
+                        <tbody>
+                            <tr>
+                                <td width="155">Faaliyet Raporu Dönemi</td>
+                                <td width="5">:</td>
+                                <td>@bfrDonem.DonemYilAdi</td>
+                            </tr>
+                            <tr>
+                                <td>Veri Giriş Tarih Aralığı</td>
+                                <td>:</td>
+                                <td>@bfrDonem.BaslangicTarihi.ToString("dd.MM.yyyyy") / @bfrDonem.BitisTarihi.ToString("dd.MM.yyyyy")</td>
+                            </tr>
+                            <tr>
+                                <td>Birim</td>
+                                <td>:</td>
+                                <td>@birim.BirimTreeAdi</td>
+                            </tr>
+                            <tr>
+                                <td>Form Adı</td>
+                                <td>:</td>
+                                <td>@form.FormAdi</td>
+                            </tr>
+                            @if (!form.Aciklama.IsNullOrWhiteSpace())
+                            {
+                                <tr>
+                                    <td>Form Açıklaması</td>
+                                    <td>:</td>
+                                    <td>@form.Aciklama</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td>Yüklenecek Form Şablonu</td>
+                                <td>:</td>
+                                <td>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td width="30px;"><i class="fa fa-file-excel-o" style="color:green;font-size:16pt;"></i></td>
+                                                <td>
+                                                    <a href="@Url.Content(form.DosyaYolu)" target="_blank" style="color:green;font-weight:bold;">@form.DosyaAdi</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel panel-danger" style="padding-bottom: 0px;" id="pnlFileD">
+            <div class="panel-body" style="padding: 0px;">
+                <div class="panel panel-default form-horizontal" style="margin: 0px;">
+                    <div class="panel-body form-group-separated">
+                        <input type="hidden" name="BFRDonemID" value="@bfrDonem.BFRDonemID" />
+                        <input type="hidden" name="BFRFormID" value="@form.BFRFormID" />
+                        <input type="hidden" name="BirimID" value="@birim.BirimID" />
+
+                        <table class="table" style="margin:0px;padding:0px;width:100%;table-layout:fixed;">
+
+                            <tbody>
+                                @if (yuklenenForm != null)
+                                {
+                                    <tr>
+                                        <td width="157">Yüklü Olan Form</td>
+                                        <td width="5">:</td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td width="30px;"><i class="fa fa-file-excel-o" style="color:green;font-size:16pt;"></i></td>
+                                                        <td>
+                                                            <a href="@Url.Content(yuklenenForm.DosyaYolu)" target="_blank" style="color:green;font-weight:bold;">@yuklenenForm.DosyaAdi</a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td width="157">Yüklenecek Form Dosyası</td>
+                                    <td width="5">:</td>
+                                    <td>
+                                        <div class="form-group">
+                                            <div class="col-md-12 col-xs-12">
+                                                <input type="file" name="DosyaEki" id="DosyaEki" style="height:24px;">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    }
+</div>
+
+ 

@@ -1,0 +1,80 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@model ChkListModel
+@{
+    Layout = null;
+}
+<div class="panel panel-info">
+    <div class="panel-heading padding-0">
+        <h3 class="panel-title">@Model.PanelTitle</h3>
+        <span id="FilterInfo_@Model.TableId" style="float:left;">
+        </span>
+        <ul class="panel-controls">
+            <li>
+                <table>
+                    <tr>
+                        <td width="20"><input type="checkbox" style="width:18px;height:18px;margin-top:4px;" value="true" @(Model.AllDataChecked ? "checked='checked;'" : "") onchange="setTumu(this,'@Model.TableId','@Model.InputName')"></td>
+                        <td style="cursor:pointer;font-size:10pt;" onclick="$(this).parents('tr').first().find('input').click();">Tümünü Seç</td>
+                    </tr>
+                </table>
+            </li>
+            <li>
+                <span class="label label-primary label-form" style="padding:1px;padding-left:3px;padding-right:3px;">
+                    <input style="color:maroon;width:250px;" type="text" autocomplete="off" name="search" onkeypress="return FilterInputKeyPress(this, event,'@Model.TableId');" placeholder="ara...">
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div class="panel-body padding-0">
+        <table class="table MainTable" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+            <tr>
+                <td colspan="3">
+                    <div style="max-height: @(Model.ScrollMaxHeight)px; overflow: auto;">
+                        <table class="table DMainTable" style="width:100%;table-layout:fixed;margin-bottom:0px;" id="Filter_Table_@Model.TableId">
+                            @foreach (var item in Model.Data)
+                            {
+                                <tr class="tr_@item.Value.ID MainRow @(item.Checked.Value?"success":"")">
+                                    <td class="Filter_Col_@Model.TableId">
+                                        <table style="width:100%;">
+                                            <tr>
+                                                <td width="25"><input type="checkbox" class="chk_" onclick="RwClick('@Model.TableId',@item.Value.ID);" style="width:18px;height:18px;" name="@Model.InputName" id="chk_@item.Value.ID" value="@(Model.ShowIsDosyaYuklensin? item.Value.ID+"_"+item.Value.IsDosyaYuklensin.ToString().ToLower() :item.Value.ID.ToString())" @item.Checked.ToChecked()></td>
+                                                <td style="cursor:pointer;" onclick="RwClick('@Model.TableId',@item.Value.ID);">@item.Value.Caption</td>
+                                                @if (Model.ShowIsDosyaYuklensin)
+                                                {
+                                                    <td width="120">
+                                                        <select name="IsDosyaYuklensins" onchange="IsDosyaYuklensinChange('@Model.TableId',@item.Value.ID)">
+                                                            <option @(item.Value.IsDosyaYuklensin.ToSelected()) value="true">Dosya Yüklensin</option>
+                                                            <option @((!item.Value.IsDosyaYuklensin).ToSelected()) value="false">Dosya Yüklenmesin</option>
+                                                        </select>
+                                                    </td>
+                                                }
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="panel-footer padding-0">
+                        <table>
+                            <tr>
+                                <td class="footerInfo">
+                                    Toplam: @Model.Data.Count(), Seçilen: @Model.Data.Count(p => p.Checked.Value)
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+
+

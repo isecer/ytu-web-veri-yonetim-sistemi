@@ -1,0 +1,465 @@
+﻿@using WebApp.Business
+@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model WebApp.Utilities.Dtos.FmVeriGiris
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kayitYetkisi = RoleNames.VeriGirisiKayitYetkisi.InRole();
+    var onayYetkisi = RoleNames.VeriGirisiOnayYetkisi.InRole();
+}
+
+
+
+<div class="row">
+    @using (Html.BeginForm("Index", "VeriGirisi", FormMethod.Post, new { id = "frmVeriGirisi" }))
+    {
+        <div class="col-md-12">
+
+            @Html.Hidden("export", false)
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-info @(Model.Expand ? "" : "panel-toggled")" id="pnlFltr">
+                <input class="hide" name="Expand" value="@Model.Expand.ToString().ToLower()" id="Expand" />
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title">
+                        <i class="glyphicon glyphicon-filter"></i> Filtre İşlemi
+                    </h3>
+                    <ul class="panel-controls">
+                        @if (Model.RowCount > 0)
+                        {
+                            <li><span class="label label-info" style="cursor:pointer;" onclick="$('#export').val('true'); $('#frmVeriGirisi').submit(); $('#export').val('false');"><i class="fa fa-download"></i> Listelenen maddeleri Excel'e aktar</span></li>
+
+                            @*<li>
+                                    <a href="javascript:void(0);" onclick="" title="Listelenen maddeleri excel e aktar"><i class="fa fa-download"></i></a>
+                                </li>*@
+
+                        }
+                        <li><a href="javasctipr:void(0)" onclick="$('#Expand').val(($('#pnlFltr').hasClass('panel-toggled') ? 'true' :'false' )); " class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover" style="table-layout:fixed;">
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Süreç</td>
+                                        <td>@Html.DropDownList("VASurecID", null, new { @class = "form-control", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Veri Giriş Durum</td>
+                                        <td>@Html.DropDownList("MaddeVeriGirisDurumID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Birim</td>
+                                        <td>@Html.DropDownList("BirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Veri Onay Durum</td>
+                                        <td>@Html.DropDownList("VeriGirisiOnaylandi", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Madde Türü</td>
+                                        <td>@Html.DropDownList("MaddeTurID", null, new { @class = "form-control", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Aranacak Kelime</td>
+                                        <td>
+                                            <table style="width:100%;table-layout:fixed;">
+                                                <tr>
+                                                    <td><input name="Aranan" id="Aranan" type="text" onkeypress="if (event.which == 13) { $('#frmVeriGirisi').submit(); }" value="@Model.Aranan" class="form-control" /></td>
+                                                    <td width="110px;"><a href="javascript:void(0);" onclick="$('#frmVeriGirisi').submit();" class="btn btn-info"><i class="glyphicon glyphicon-filter"> Filtrele</i></a></td>
+                                                </tr>
+                                            </table>
+                                            @if (Model.Aranan.IsNullOrEmpty() == false)
+                                            {
+                                                <script>
+                                                    $(function () {
+                                                        SetCaretAtEnd(document.getElementById('Aranan'));
+                                                    });
+
+                                                </script>
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-file-text-o fa-lg"></i> Maddeler</h3>
+                    <ul class="panel-controls">
+
+                        <li><span class="label label-info" title="Veri Girişi Tamamlanan Sayısı"><i class="fa fa-calendar"></i> VG Tamamlanmayanan: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li><span class="label label-success" title="Veri Girişi Tamamlanmayan Madde Say"><i class="fa fa-calendar-check-o"></i> VG Tamamlanan: <b>@Model.CountIngfos.Aktif</b></span></li>
+
+                        <li><span class="label label-primary" title="Toplam Madde Sayısı"><i class="fa fa-calendar-o"></i> T.M.S: <b>@Model.CountIngfos.Toplam</b></span></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th class="sirala sorting" field="MaddeAdi">Kod / Madde Adı</th>
+                                <th width="300" style="text-align:right;" title="Madde Veri Sonuçları">Veri Sonuçları</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RowCount > 0)
+                            {
+                                int rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    var rwId = item.VASurecID + "_" + item.BirimID + "_" + item.MaddeID;
+                                    rowIndex++;
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@rwId" onclick="ShowDetail(@item.VASurecID,@item.BirimID,@item.MaddeID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td style="font-size:8pt;">
+                                            <b>@item.MaddeTurAdi</b><br />
+                                            <b>[@item.MaddeKod]</b> -@item.MaddeAdi
+                                        </td>
+                                        <td class="Sn_@rwId" style="text-align: right; ">
+                                            @item.VeriGirisOnayDurumHtml()
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hide cls-ana-@rwId">
+                                        <td colspan="3" style="padding-left:75px;">
+                                            <div class="panel" style="margin: 0px; padding: 0px;" id="pnl_@rwId"> 
+                                                <div class="panel-body" style="margin: 0px; padding: 0px;" id="content_@rwId">
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    function ShowDetail(vaSurecId, birimId, maddeId) {
+        var RwID = vaSurecId + '_' + birimId + '_' + maddeId;
+        var _rwID = $('#iShow_' + RwID);
+        var cls = 'cls-ana-' + RwID;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(_rwID, cls, unTogled);
+        if (unTogled) GetDetail(vaSurecId, birimId, maddeId);
+    }
+    function ShowDetail2(rwGD) {
+        var rwID = $('#iShow_' + rwGD);
+        var cls = 'cls-' + rwGD;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(rwID, cls, unTogled);
+    }
+    function GetDetail(vaSurecId, birimId, maddeId) {
+        var RwID = vaSurecId + '_' + birimId + '_' + maddeId;
+        var _panel = $('#pnl_' + RwID);
+        _pRefresh(_panel, false);
+
+            $.ajax({
+                url: '@Url.Action("GetDetail", "VeriGirisi")',
+                data: { vaSurecId, birimId, maddeId },
+                async: false,
+                success: function (result) {
+
+                    if (!result.success) {
+                        alert("İşlem yapılırken bir hata oluştu!");
+                        return;
+                    }
+                    if (!result.IsAuthenticated) {
+                        alert("Kullanıcı Hesabınız Sistemden Çıkış Yapmış Gözükmekte. Ana Sayfaya Yönlendirileceksiniz...");
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }
+                    else {
+                        $('#content_' + RwID).html(result.page);
+                        $('.Sn_' + RwID).html(result.VeriGirisOnayDurumHtml);
+                    }
+                    _pRefresh(_panel, true);
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                    _pRefresh(_panel, true);
+                }
+            });
+    }
+    function GetKanitDosyalari(vaSurecId, birimId, maddeId, vaCokluVeriDonemId) {
+        var RwID = vaSurecId + '_' + birimId + '_' + maddeId;
+        var _panel = $('#pnl_' + RwID);
+        _pRefresh(_panel, false);
+        $.ajax({
+            url: '@Url.Action("GetViewKanitDosyasiEkle", "VeriGirisi")',
+            type: 'POST',
+            cache: false,
+            data: {
+                vaSurecId,
+                birimId,
+                maddeId,
+                vaCokluVeriDonemId
+            },
+            success: function (result) {
+                _pRefresh(_panel, true);
+                var btbxxFS = bootbox.dialog({
+                    message: result.page,
+                    title: "Veri Kanıt Dosyaları",
+                    buttons: {
+
+                        danger: {
+                            label: 'Kapat',
+                            className: "btn-success",
+                            callback: function () {
+
+                            }
+                        }
+                    }
+                });
+
+            },
+            error: function (err) {
+                _pRefresh(_panel, true);
+                alert(err.responseText);
+            }
+        });
+    }
+    function GetAciklamalar(vaSurecId, birimId, maddeId, vaSurecleriMaddeEklenenAciklamaId) {
+        var RwID = vaSurecId + '_' + birimId + '_' + maddeId;
+        var _panel = $('#pnl_' + RwID);
+        _pRefresh(_panel, false);
+        $.ajax({
+            url: '@Url.Action("GetViewAciklamaEkle", "VeriGirisi")',
+            type: 'POST',
+            cache: false,
+            data: {
+                vaSurecleriMaddeEklenenAciklamaId,
+                vaSurecId,
+                birimId,
+                maddeId
+            },
+            success: function (result) {
+                _pRefresh(_panel, true);
+                var btbxxFS = bootbox.dialog({
+                    message: result.page,
+                    title: "Açıklama Ekleme işlemi",
+                    buttons: {
+                        danger: {
+                            label: 'Kapat',
+                            className: "btn-success",
+                            callback: function () {
+
+                            }
+                        }
+                    }
+                });
+
+            },
+            error: function (err) {
+                _pRefresh(_panel, true);
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+@if (kayitYetkisi)
+{
+    <script>
+
+        function PlanlananDegerKayit(vaSurecId, birimId, maddeId, isBuYilOrGelecekYil) {
+            var rowId = (isBuYilOrGelecekYil ? "buYilPlanlananDeger_" :"gelecekYilPlanlananDeger_")+ vaSurecId + '_' + birimId + '_' + maddeId;
+            var _panel = $('#pnl_' + (vaSurecId + '_' + birimId + '_' + maddeId));
+            _pRefresh(_panel, false);
+            var planlananDeger = $('.' + rowId).val();
+            var dataModel = {
+                vaSurecId,
+                birimId,
+                maddeId,
+                isBuYilOrGelecekYil,
+                planlananDeger,
+
+            };
+            $.ajax({
+                url: '@Url.Action("PlanlananDegerPost", "VeriGirisi")',
+                type: 'POST',
+                enctype: "multipart/form-data",
+                cache: false,
+                dataType: "json",
+                data: dataModel,
+                success: function (result) {
+                    _pRefresh(_panel, true);
+                    if (!result.success) {
+                        alert("İşlem yapılırken bir hata oluştu!");
+                        return;
+                    }
+                    if (!result.messageModel.IsSuccess) GetMsg(result.messageModel);
+                    GetDetail(vaSurecId, birimId, maddeId);
+                },
+                error: function (err) {
+                    _pRefresh(_panel, true);
+                    alert(err.responseText);
+                }
+            });
+        }
+        function IsVeriVarPost(sndr, vaSurecId, birimId, maddeId, vaCokluVeriDonemId) {
+            var _panel = $('#pnl_' + (vaSurecId + '_' + birimId + '_' + maddeId));
+            _pRefresh(_panel, false);
+            var isVeriVar = $(sndr).val();
+            var dataModel = {
+                vaSurecId,
+                birimId,
+                maddeId,
+                vaCokluVeriDonemId,
+                isVeriVar,
+
+            };
+            $.ajax({
+                url: '@Url.Action("IsVeriVarPost", "VeriGirisi")',
+                type: 'POST',
+                enctype: "multipart/form-data",
+                cache: false,
+                dataType: "json",
+                data: dataModel,
+                success: function (result) {
+                    if (result.Messages.length > 0) GetMsg(result);
+                    GetDetail(vaSurecId, birimId, maddeId);
+                    _pRefresh(_panel, true);
+                },
+                error: function (err) {
+                    _pRefresh(_panel, true);
+                    alert(err.responseText);
+                }
+            });
+        }
+        function VeriKayit(vaSurecId, birimId, maddeId, vaCokluVeriDonemId) {
+            var rowId = vaSurecId + '_' + birimId + '_' + maddeId + '_' + vaCokluVeriDonemId;
+            var _panel = $('#pnl_' + (vaSurecId + '_' + birimId + '_' + maddeId));
+            _pRefresh(_panel, false);
+            var girilenDeger = $('.VeriGiris_' + rowId).val();
+            var dataModel = {
+                vaSurecId,
+                birimId,
+                maddeId,
+                vaCokluVeriDonemId,
+                girilenDeger, 
+            };
+            $.ajax({
+                url: '@Url.Action("VgPost", "VeriGirisi")',
+                type: 'POST',
+                enctype: "multipart/form-data",
+                cache: false,
+                dataType: "json",
+                data: dataModel,
+                success: function (result) { 
+                    if (result.ShowKanitDosyaEkle) {
+                        GetKanitDosyalari(vaSurecId, birimId, maddeId, vaCokluVeriDonemId);
+                        setTimeout(function () {
+                            GetMsg(result.Message,'#frmVeriGirisi');
+                        }, 10);
+                    }
+                    else {
+                        if (result.Message.Messages.length > 0) GetMsg(result.Message);
+                    } 
+                    GetDetail(vaSurecId, birimId, maddeId);
+                    _pRefresh(_panel, true);
+                },
+                error: function (err) {
+                    _pRefresh(_panel, true);
+                    alert(err.responseText);
+                }
+            });
+        }
+
+
+    </script>
+}
+@if (onayYetkisi)
+{
+    <script>
+        function VeriGirisOnay(sndr, vaSurecID, birimId, maddeId,vaCokluVeriDonemId) {
+            var RwID = vaSurecID + '_' + birimId + '_' + maddeId;
+            var _panel = $('#pnl_' + RwID);
+            _pRefresh(_panel, false); 
+            var veriGirisiOnaylandi = $(sndr).prop('checked');
+            $.ajax({
+                url: '@Url.Action("VgOnay", "VeriGirisi")',
+                type: 'POST',
+                enctype: "multipart/form-data",
+                cache: false,
+                data: { vaSurecID, birimId, maddeId, vaCokluVeriDonemId, veriGirisiOnaylandi },
+                success: function (result) {
+                    if (result.Messages.length > 0 && !result.IsSuccess) GetMsg(result);
+                    else toastr[result.MessageType==0?"success":"info"](result.Messages[0], result.Title);
+                    GetDetail(vaSurecID, birimId, maddeId);
+                    _pRefresh(_panel, true);
+
+                },
+                error: function (err) {
+                    _pRefresh(_panel, true);
+                    alert(err.responseText);
+                }
+            });
+        }
+    </script>
+}

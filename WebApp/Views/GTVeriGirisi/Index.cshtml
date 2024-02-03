@@ -1,0 +1,399 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model  FmGTVeriGirisi
+@{
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kayitYetki = RoleNames.GTVeriGirisiKayitYetkisi.InRole();
+    var yevmmiyeEklemeYetkisi = RoleNames.GTVeriGirisiYevmiyeEklendiYetkisi.InRole();
+    var onayYetkisi = RoleNames.GTVeriGirisiOnayYetkisi.InRole();
+}
+
+<div class="row">
+    @using (Html.BeginForm("Index", "GTVeriGirisi", FormMethod.Post, new { id = "frmGTVeriGirisi" }))
+    {
+        <div class="col-md-12">
+
+            @Html.Hidden("export", false)
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-info @(Model.Expand ? "" : "panel-toggled")" id="pnlFltr">
+                <input class="hide" name="Expand" value="@Model.Expand.ToString().ToLower()" id="Expand" />
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title">
+                        <i class="glyphicon glyphicon-filter"></i> Filtre İşlemi
+                    </h3>
+                    <ul class="panel-controls">
+
+                        @if (Model.RowCount > 0)
+                        {
+                            <li><span class="label label-info" style="cursor:pointer;" onclick="$('#export').val('true'); $('#frmGTVeriGirisi').submit(); $('#export').val('false');"><i class="fa fa-download"></i> Listelenen verileri Excel'e aktar</span></li>
+                        }
+                        <li><a href="javasctipr:void(0)" onclick="$('#Expand').val(($('#pnlFltr').hasClass('panel-toggled') ? 'true' :'false' )); " class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover" style="table-layout:fixed;">
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Gelir Dönemi</td>
+                                        <td>@Html.DropDownList("GTDonemID", null, new { @class = "form-control", onchange = "$('#frmGTVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Hesan Numarası</td>
+                                        <td>@Html.DropDownList("GTHesapNoID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmGTVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Birim</td>
+                                        <td>
+                                            @Html.DropDownList("GTBirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmGTVeriGirisi').submit();" })
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Hesap Kodu</td>
+                                        <td>@Html.DropDownList("GTHesapKodID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmGTVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Aktarım Tarihi Aralığı</td>
+                                        <td>
+                                            <table style="width:100%;">
+                                                <tr>
+                                                    <td width="90"><input type="text" name="BasTar" id="BasTar" class="form-control input-small" style="width:90px;" autocomplete="off" size="10" value="@(!Model.BasTar.HasValue?"":Model.BasTar.ToFormatDate())" onkeypress="if (event.which == 13) { $('#frmGTVeriGirisi').submit(); }"></td>
+                                                    <td width="10" style="text-align:center;">/</td>
+                                                    <td><input type="text" name="BitTar" id="BitTar" class="form-control input-small" style="width:90px;" autocomplete="off" size="10" value="@(!Model.BitTar.HasValue?"":Model.BitTar.ToFormatDate())" onkeypress="if (event.which == 13) { $('#frmGTVeriGirisi').submit(); }"></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Onay Durum</td>
+                                        <td>
+                                            @Html.DropDownList("GTVeriGirisDurumID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmGTVeriGirisi').submit();" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Aranacak Kelime</td>
+                                        <td><input name="Aranan" id="Aranan" value="@Model.Aranan" type="text" onkeypress="if (event.which == 13) { $('#frmGTVeriGirisi').submit(); }" class="form-control"></td>
+
+                                    </tr>
+                                </table>
+
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120"></td>
+                                        <td style="text-align:left;">
+                                            <a href="javascript:void(0);" onclick="$('#frmGTVeriGirisi').submit();" class="btn btn-info"><i class="glyphicon glyphicon-filter"> Filtrele</i></a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-try"></i> Gelir Takibi Veri Girişi Listesi</h3>
+                    <ul class="panel-controls">
+                        @if (kayitYetki)
+                        {
+                            <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit",new {Model.GTDonemID })" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        }
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th class="sirala sorting" field="BirimAdi">Birim Adı</th>
+                                <th>Hesap Numarası</th>
+                                <th width="100" class="sirala sorting" field="HesapNo">Aktarım Tarihi</th>
+                                <th width="90" class="sirala sorting" field="GelenTutar">Gelen Tutar</th>
+                                <th width="70" class="sirala sorting" field="DetayCount">Detay Sayısı</th>
+                                <th width="120" class="sirala sorting" field="IsOnaylandi">Onay Durum</th>
+                                <th width="45"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++;
+                                    <tr>
+
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@item.GTVeriGirisiID" onclick="ShowDetail(@item.GTVeriGirisiID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        <td>@item.BirimAdi</td>
+                                        <td>@item.HesapNo / @item.HesapNoAdi</td>
+                                        <td>@item.AktarimTarihi.ToShortDateString()</td>
+                                        <td style="text-align:right;padding-right:10px;">@item.GelenTutar.ToString("n2")</td>
+                                        <td>
+                                            <span class="badge badge-success">@item.DetayCount</span>
+                                        </td>
+                                        <td>
+                                            @if ((onayYetkisi || yevmmiyeEklemeYetkisi) && item.IsAktifSurec)
+                                            {
+                                                <select class="form-control" style="color: @item.DurumColor" onchange="Onayla(this,@item.GTVeriGirisiID)">
+                                                    @foreach (var vgd in Model.GTVeriGirisDurumlaris)
+                                                    {
+                                                        <option style="color:@vgd.DurumColor;" value="@vgd.GTVeriGirisDurumID" @(item.GTVeriGirisDurumID == vgd.GTVeriGirisDurumID ? "selected" : "")>@vgd.DurumAdi</option>
+                                                    }
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge" style="background-color:@item.DurumColor;">@item.DurumAdi</span>
+                                            }
+
+                                        </td>
+                                        <td style="text-align:right;">
+                                            @if (kayitYetki)
+                                            {
+
+                                                <a href="@Url.Action("Kayit", "GTVeriGirisi", new { id = item.GTVeriGirisiID })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
+                                                <a href="javascript:void(0)" onclick="SilmeOnay(this,'@item.GTVeriGirisiID')"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr class="cls-@item.GTVeriGirisiID hide">
+                                        <td id="cls-@item.GTVeriGirisiID" colspan="8" style="padding: 1px 1px 2px 75px;">
+                                            <div class="panel panel-primary form-horizontal" style="margin:0px;padding:0px;">
+                                                <div class="panel-body" style="margin:0px;padding:0px;">
+                                                    <div class="panel-body form-group-separated">
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-2 control-label">Birim Adı</label>
+                                                            <div class="col-md-10 col-xs-10">@item.BirimAdi</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-2 control-label">Hesap Numarası</label>
+                                                            <div class="col-md-10 col-xs-10">@item.HesapNo / @item.HesapNoAdi</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-2 control-label">Aktarım Tarihi</label>
+                                                            <div class="col-md-10 col-xs-10">@item.AktarimTarihi.ToFormatDate()</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-2 control-label">Gelen Tutar</label>
+                                                            <div class="col-md-10 col-xs-10">@item.GelenTutar.ToString("n2")</div>
+                                                        </div>
+                                                        <div class="form-group _replaceHide">
+                                                            <label class="col-md-2 col-xs-2 control-label">Detaylar</label>
+                                                            <div class="col-md-10 col-xs-10">
+                                                                <div class="panel panel-primary">
+                                                                    <div class="panel-body padding-0">
+                                                                        <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th width="40"></th>
+                                                                                    <th>Hesap Kodu</th>
+                                                                                    <th width="120">Gelir Niteliği</th>
+                                                                                    <th width="80" style="text-align:right;padding-right:10px;">Tutar</th>
+                                                                                    <th>Vergi Kimlik No</th> 
+                                                                                </tr>
+                                                                            </thead>
+                                                                            @{
+                                                                                var i = 0;
+                                                                                foreach (var itemBhk in item.GTVerigirisiDetayList)
+                                                                                {
+                                                                                    i++;
+                                                                                    <tr class="tr">
+                                                                                        <td width="40">@i)</td>
+                                                                                        <td>@itemBhk.HesapKod / @itemBhk.HesapKodAdi</td>
+                                                                                        <td>@itemBhk.GelirNiteligiAdi</td>
+                                                                                        <td style="text-align:right;padding-right:10px;">@itemBhk.Tutar.ToString("n2")</td>
+                                                                                        <td>@(itemBhk.GTVergiKimlikNoID.HasValue ? (itemBhk.VergiKimlikNo + " / " + itemBhk.AdSoyad) : "")</td>
+                                                                                     
+                                                                                    </tr>
+                                                                                    if (!itemBhk.Aciklama.IsNullOrWhiteSpace())
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td colspan="5">Açıklama: @itemBhk.Aciklama</td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        </table>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-2 control-label">İşlem Yapan</label>
+                                                            <div class="col-md-10 col-xs-10">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                        </div>
+                                                        <div class="form-group hide" style="color:maroon;">
+                                                            <label class="col-md-2 col-xs-2 control-label"><i class='fa fa-info fa-2x'></i></label>
+                                                            <div class="col-md-10 col-xs-10">Seçilen Veri Girişini Silmek İstiyor Musunuz?</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    $('#BasTar').datetimepicker({
+        lang: 'tr',
+        timepicker: false,
+        format: 'd-m-Y'
+    });
+    $('#BitTar').datetimepicker({
+        lang: 'tr',
+        timepicker: false,
+        format: 'd-m-Y'
+    });
+    function ShowDetail(id, IsExpand) {
+        var sndr = $('#iShow_' + id);
+        var cls = 'cls-' + id;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        if (IsExpand) {
+            if (unTogled) toggleByClass(sndr, cls, unTogled);
+        }
+        else toggleByClass(sndr, cls, unTogled);
+    }
+    function SilmeOnay(sndr, id) {
+        var htmlCont = $("#cls-" + id).html().replace('hide', '').replace('_replaceHide', 'hide');
+        bootbox.dialog({
+            message: htmlCont,
+            title: "Gerlir Takibi Veri Girişi Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Veri Girişini Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        Sil(sndr, id);
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function Sil(sndr, id) {
+        $.ajax({
+            url: '@Url.Action("Sil", "GTVeriGirisi")',
+            data: { id: id },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Gelir Takibi Veri Gİrişi Silme İşlemi")
+                if (result.success) {
+                    $(sndr).closest("tr").remove();
+                     $(".cls-" + id).remove();
+                }
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+@if (onayYetkisi)
+{
+    <script>
+        function Onayla(sndr, id) {
+            var Val = $(sndr).val();
+            $.ajax({
+                url: '@Url.Action("Onayla", "GTVeriGirisi")',
+                data: { id: id, GTVeriGirisDurumID: Val },
+                success: function (result) {
+                    toastr[result.success ? "success" : "error"](result.message, "Gelir Takibi Veri Girişi Onay İşlemi")
+                    if (!result.success) {
+                        $(sndr).val(result.GTVeriGirisDurumID);
+                    }
+                    else { $(sndr).attr('style', 'color:' + result.DurumColor) }
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        }
+    </script>
+}

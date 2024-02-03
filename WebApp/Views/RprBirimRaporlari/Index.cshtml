@@ -1,0 +1,62 @@
+﻿@using WebApp.Utilities.MessageBox
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+}
+
+<div class="row">
+    @using (Html.BeginForm("Index", "RprBirimRaporlari", FormMethod.Post, new { id = "frmRprBirimRaporlari" }))
+    {
+        <div class="col-md-12">
+
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-info" id="pnlFltr">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title" id="rTitle">
+                        <i class="fa fa-bar-chart-o"></i>Birim Madde Verileri Listesi Raporu Alma İşlemi
+                    </h3>
+                </div>
+                <div class="panel-body">
+
+                    @Html.Hidden("export", false)
+
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Rapor Tipi</label>
+                                <div class="col-md-10 col-xs-10">
+                                    @Html.DropDownList("RaporTipID", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Süreç</label>
+                                <div class="col-md-10 col-xs-10">
+                                    @Html.DropDownList("VASurecID", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Birim</label>
+                                <div class="col-md-10 col-xs-10" id="bOList">
+                                    @Html.DropDownList("BirimID", null, "Tümü", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label"></label>
+                                <div class="col-md-10 col-xs-10">
+                                    <a href="javascript:void(0);" onclick="$('#export').val('true'); $('#frmRprBirimRaporlari').submit(); $('#export').val('false');" class="btn btn-info"><i class="fa fa-bar-chart-o fa-lg"></i> Rapor Al</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+        $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+    });  
+</script>

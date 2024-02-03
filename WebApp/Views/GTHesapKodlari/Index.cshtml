@@ -1,0 +1,209 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model  FmGTHesapKodlari
+@{
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kayitYetki = RoleNames.GTHesapKodlariKayit.InRole();
+}
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-12">
+
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-list-alt"></i> Hesap Kodu Listesi</h3>
+                    <ul class="panel-controls">
+                        @if (kayitYetki)
+                        {
+                            <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit")" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        }
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-success label-form">Aktif: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-danger label-form">Pasif: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th width="120" class="sirala sorting" field="HesapKod">Hesap Kodu</th>
+                                <th class="sirala sorting" field="HesapKodAdi">Hesap Kod Adı</th>
+                                <th width="70" class="sirala sorting" field="IsAktif">Durum</th>
+                                <th width="35"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="filtrele">
+                                <th></th>
+                                <th>
+                                    <input name="HesapKod" type="text" value="@Model.HesapKod" class="form-control" />
+                                </th>
+                                <th>
+                                    <input name="HesapKodAdi" type="text" value="@Model.HesapKodAdi" class="form-control" />
+                                </th>
+                                <th>
+                                    @Html.DropDownList("IsAktif", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                                <th> </th>
+                            </tr>
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex; 
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++; 
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@item.GTHesapKodID" onclick="ShowDetail(@item.GTHesapKodID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        <td>@item.HesapKod</td>
+                                        <td>@item.HesapKodAdi</td>
+                                        <td>
+                                            <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                        </td>
+                                        <td>
+                                            @if (kayitYetki)
+                                            {
+
+
+                                                <a href="@Url.Action("Kayit", "GTHesapKodlari", new { id = item.GTHesapKodID })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
+                                                <a href="javascript:void(0)" onclick="SilmeOnay(this,'@item.GTHesapKodID','cls-@item.GTHesapKodID')"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
+
+
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr class="cls-@item.GTHesapKodID hide">
+                                        <td id="cls-@item.GTHesapKodID" colspan="4" style="padding: 1px 1px 2px 75px;">
+                                            <div class="panel panel-primary form-horizontal" style="margin:0px;padding:0px;">
+                                                <div class="panel-body" style="margin:0px;padding:0px;">
+                                                    <div class="panel-body form-group-separated">
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Hesap Kod</label>
+                                                            <div class="col-md-9 col-xs-9">@item.HesapKod</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Hesap Adı</label>
+                                                            <div class="col-md-9 col-xs-9">@item.HesapKodAdi</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Gelir Nitelikleri</label>
+                                                            <div class="col-md-9 col-xs-9">
+                                                                @foreach (var itemGnt in item.GTHesapKodlariGelirNitelikleris.Select((s, inx) => new { s.GelirNiteligiAdi, inx = (inx + 1) }))
+                                                                {
+                                                                    <b>@itemGnt.inx )</b> @itemGnt.GelirNiteligiAdi <br />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Durum</label>
+                                                            <div class="col-md-9 col-xs-9">
+                                                                <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">İşlem Yapan</label>
+                                                            <div class="col-md-9 col-xs-9">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                        </div>
+                                                        <div class="form-group hide _replaceHide" style="color:maroon;">
+                                                            <label class="col-md-3 col-xs-3 control-label"><i class='fa fa-info fa-2x'></i></label>
+                                                            <div class="col-md-9 col-xs-9">Seçilen Hesap Bilgisini Silmek İstiyor Musunuz?</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function ShowDetail(id, IsExpand) {
+        var sndr = $('#iShow_' + id);
+        var cls = 'cls-' + id;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        if (IsExpand) {
+            if (unTogled) toggleByClass(sndr, cls, unTogled);
+        }
+        else toggleByClass(sndr, cls, unTogled);
+    }
+    function SilmeOnay(sndr, id, RwID) {
+        var htmlCont = $('#' + RwID).html();
+        htmlCont = htmlCont.replaceAll('hide');
+        bootbox.dialog({
+            message: htmlCont,
+            title: "Hesap Kodu Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Hesap Kodunu Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        Sil(sndr, id);
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function Sil(sndr, id) {
+        $.ajax({
+            url: '@Url.Action("Sil", "GTHesapKodlari")',
+            data: { id: id },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Hesap Kodu Silme İşlemi")
+                if (result.success) {
+                    $(sndr).closest("tr").remove();
+                     $(".cls-" + id).remove();
+                }
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>

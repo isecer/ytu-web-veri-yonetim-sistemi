@@ -1,0 +1,367 @@
+﻿@using BiskaUtil
+@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model FmSurecIslemleri
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    var kayitYetki = RoleNames.SurecIslemleriKayitYetkisi.InRole(); 
+}
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-12">
+
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-danger" id="pnlDnms">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-clock-o"></i> Süreç İşlemleri</h3>
+                    <ul class="panel-controls">
+                        <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit")" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.RowCount</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body" style="padding-bottom:0px;">
+                    <table class="table table-hover padding-0">
+                        <thead>
+                            <tr>
+                                <th width="125"></th>
+                                <th width="160" class="sirala sorting" field="Yil">Süreç</th>
+                                <th>Başlangıç / Bitiş Tarihi</th>
+                                <th width="105" class="sirala sorting" field="IsAktif" style="text-align:center;">Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="filtrele">
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>
+                                    @Html.DropDownList("IsAktif", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                            </tr>
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++;
+                                    <tr class="delrw_@item.VASurecID" style="@(item.AktifSurec?"color:green;font-weight:bold;":"")">
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width: 30px;">@rowIndex</td>
+                                                    <td style="width: 50px;">
+                                                        <div class="btn-group">
+                                                            <a href="javascript:void(0);" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><i class="fa fa-cogs"></i></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li role="presentation" class="dropdown-header">İşlemler</li>
+                                                                <li>
+
+                                                                    <a href="@Url.Action("Kayit")"><i class="fa fa-plus fa-lg"></i>Yeni</a>
+                                                                    <a href="@Url.Action("Kayit", new { id = item.VASurecID })"><i class="fa fa-edit fa-lg"></i>Düzenle</a>
+                                                                    <a href="javascript:void(0)" onclick="Sil(@item.VASurecID)"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i>Sil</a>
+
+                                                                </li>
+                                                                @if (kayitYetki && (item.AktifSurec || UserIdentity.Current.IsAdmin))
+                                                                {
+                                                                    <li role="presentation" class="dropdown-header">Kopyalama</li>
+                                                                    <li>
+                                                                        <a href="javascript:void(0)" onclick="VeriKopyalaDialog(@item.VASurecID)"><i class="fa fa-copy fa-lg"></i>Birimleri ve Maddeleri Tekrar Kopyala</a>
+                                                                    </li>
+                                                                }
+
+
+                                                            </ul>
+
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_ana-@item.VASurecID" onclick="ShowDetail('ana-@item.VASurecID',@item.VASurecID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span></a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td width="160" class="sYilBilgi_@item.VASurecID">@item.SurecYilAdi</td>
+                                        <td>@item.BaslangicTarihi.ToFormatDate() / @item.BitisTarihi.ToFormatDate()</td>
+                                        <td style="text-align:center;">
+                                            <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                        </td>
+
+
+                                    </tr>
+                                    <tr class="hide cls-ana-@item.VASurecID delrw_@item.VASurecID">
+                                        <td id="cls-ana-@item.VASurecID" colspan="4" height="495"></td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" style="text-align: center">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (Model.VeriAktarilacakSurecID.HasValue)
+{
+    <script>
+        setTimeout(function () { VeriKopyalaDialog(@Model.VeriAktarilacakSurecID.Value); }, 200)
+    </script>
+}
+<script type="text/javascript">
+    function ShowDetail(rwGD, id) {
+        var rwID = $('#iShow_' + rwGD);
+        var cls = 'cls-' + rwGD;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(rwID, cls, unTogled);
+        if (unTogled && id != undefined) setTimeout(function () { GetDetail(id); }, 200);
+    }
+    function ShowDetail2(VASurecID, KayitID, rwGD, isBirimOrMadde) {
+        var rwID = $('#iShow_' + rwGD);
+        var cls = 'cls-' + rwGD;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(rwID, cls, unTogled);
+        if (unTogled) {
+            if (isBirimOrMadde) GetMaddeBirimleri(VASurecID, KayitID, rwGD);
+            else GetBirimMaddeleri(VASurecID, KayitID, rwGD);
+        }
+    }
+    function GetDetail(id) {
+        var tID = "1";
+        if ($('#selectedTb_' + id).length > 0) {
+            var tID = $('#selectedTb_' + id).val();
+            SubData(id);
+        }
+        else {
+            $.ajax({
+                url: '@Url.Action("GetDetail", "SurecIslemleri")',
+                data: { id: id, tbInx: tID },
+                async: false,
+                success: function (result) {
+                    if (!result.IsAuthenticated) {
+                        alert("Kullanıcı Hesabınız Sistemden Çıkış Yapmış Gözükmekte. Ana Sayfaya Yönlendirileceksiniz...");
+                        window.location.href = '@Url.Action("Index", "Home")';
+                    }
+                    else  {
+                        $('#cls-ana-' + id).html(result.page);
+                        SubData(id);
+                    }
+
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        }
+
+    }
+
+    function Sil(id) {
+        var _Yil = $('.sYilBilgi_' + id).text();
+        var btbx = bootbox.dialog({
+            message: "<table style='table-layout:fixed;width:100%;'><tr><td style='font-size:14pt;text-align:center;color:maroon;'>" + _Yil + " Bilgisini Silmek İstiyor Musunuz?</td></tr></table>",
+            title: "Süreç Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Süreci Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        $.ajax({
+                            url: '@Url.Action("Sil", "SurecIslemleri")',
+                            data: { id: id },
+                            success: function (result) {
+                                debugger
+                                if (result.IsSuccess) {
+                                    $(".delrw_" + id).remove();
+                                }
+                                showMmMessage(result.Messages, 'Tamam');
+                            },
+                            error: function (err) {
+                                alert(err.responseText);
+                            }
+                        });
+                    }
+                },
+                danger: {
+                    label: "Kapat",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+
+
+    function SubData(id) {
+        var _panel = $('#pnglDB_' + id);
+        var tID = "1";
+        var sDurumID = "";
+        if ($('#selectedTb_' + id).length > 0) {
+            var tID = $('#selectedTb_' + id).val();
+            var sHafta = "";
+            if (tID == 1)
+                sDurumID = $('#selectedBirimDurumID_' + id).val();
+            else sDurumID = $('#selectedMaddeDurumID_' + id).val();
+        }
+        _pRefresh(_panel, false);
+        $.ajax({
+            url: '@Url.Action("GetSubData", "SurecIslemleri")',
+            data: { id: id, SelectDurumID: sDurumID, tbInx: tID  },
+            success: function (result) {
+                 if (!result.IsAuthenticated) {
+                     alert("Kullanıcı Hesabınız Sistemden Çıkış Yapmış Gözükmekte. Ana Sayfaya Yönlendirileceksiniz...");
+                     window.location.href = '@Url.Action("Index", "Home")';
+                 }
+                 else  {
+                    var _nme = 'tab-' + id + '-' + tID;
+                    insertHtml(_nme, result.page);
+                 }
+                _pRefresh(_panel, true);
+            },
+            error: function (err) {
+                alert(err.responseText);
+                _pRefresh(_panel, true);
+            }
+        });
+    }
+    function GetBirimMaddeleri(VASurecID, BirimID,RwID) {
+        var _panel = $('#pnl-' + RwID).first();
+        _pRefresh(_panel, false);
+        $.ajax({
+            url: '@Url.Action("GetBirimMaddeleri", "SurecIslemleri")',
+            data: { 'VASurecID': VASurecID, 'BirimID': BirimID },
+            success: function (result) {
+                _pRefresh(_panel, true);
+                $('#pnl-' + RwID).html(result);
+            },
+            error: function (err) {
+                _pRefresh(_panel, true);
+                alert(err.responseText);
+            }
+        });
+    }
+    function GetMaddeBirimleri(VASurecID, MaddeID,RwID) {
+        var _panel = $('#pnl-' + RwID).first();
+        _pRefresh(_panel, false);
+        $.ajax({
+            url: '@Url.Action("GetMaddeBirimleri", "SurecIslemleri")',
+            data: { 'VASurecID': VASurecID, 'MaddeID': MaddeID },
+            success: function (result) {
+                _pRefresh(_panel, true);
+                $('#pnl-' + RwID).html(result);
+            },
+            error: function (err) {
+                _pRefresh(_panel, true);
+                alert(err.responseText);
+            }
+        });
+    }
+    function setselectedBirimDurumID(val, _VASurecID) {
+
+        $('#selectedBirimDurumID_' + _VASurecID).val(val);
+    }
+    function setselectedMaddeDurumID(val, _VASurecID) {
+
+        $('#selectedMaddeDurumID_' + _VASurecID).val(val);
+    }
+    function tabchangeSet(bsvID, tID) {
+        var clsNM_Btn = '.BsTabBtn_' + bsvID;
+        $(clsNM_Btn).find('li').each(function (inx, itmx) {
+            $(itmx).removeClass('active');
+        })
+        var clsNM_Cont = '.BsTabCont_' + bsvID;
+        $(clsNM_Cont).find('.tab-pane').each(function (inx, itmx) {
+            $(itmx).removeClass('active');
+        })
+        $('.btn-' + bsvID + '-' + tID).addClass('active');
+        $('#tab-' + bsvID + '-' + tID).addClass('active');
+        $('#selectedTb_' + bsvID).val(tID);
+        var tbHtml = $('#tab-' + bsvID + '-' + tID).html().trim();
+        if (tbHtml == "") {
+            SubData(bsvID, false, null);
+        }
+    }
+
+    function VeriKopyalaDialog(id) {
+        $.ajax({
+            url: '@Url.Action("VeriKopyalamaIslemi", "SurecIslemleri")',
+            type: 'POST',
+            cache: false,
+            data: { 'id': id },
+            success: function (result) {
+                    var btbxxFS = bootbox.dialog({
+                        message: result,
+                        title: "<i class='fa fa-copy fa-lg'></i> Veri Kopyalama İşlemi",
+                        buttons: {
+                            success: {
+                                label: 'Kaydet',
+                                className: "btn-primary",
+                                callback: function (event) {
+                                    var pnlx = $(btbxxFS).find('.modal-dialog').first();
+                                    _pRefresh(pnlx, false);
+                                    $('#VeriKopyalamaIslemiForm').ajaxForm({
+                                        success: function (result) {
+                                            if (result.IsSuccess) {
+                                                toastr["success"](result.Messages[0], result.Title);
+                                                SubData(id);
+
+                                                var _clsBtn = $('.modal-header').find('button').first();
+                                                $(_clsBtn).click();
+                                            }
+                                            else {
+                                                GetMsg(result);
+                                                return false;
+                                            }
+                                            _pRefresh(pnlx, true);
+
+                                        },
+                                        complete: function (cmp) {
+                                            _pRefresh(pnlx, true);
+                                        },
+                                        error: function (err) {
+                                            _pRefresh(pnlx, true);
+                                        }
+
+                                    });
+                                    $('#VeriKopyalamaIslemiForm').submit();
+
+                                    return false;
+                                }
+                            },
+                            danger: {
+                                label: 'Kapat',
+                                className: "btn-success",
+                                callback: function () {
+                                }
+                            }
+                        }
+                    });
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+
+    }
+</script>

@@ -1,0 +1,505 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model  FmMaddeler
+@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kayitYetki = RoleNames.MaddelerKayit.InRole();
+}
+
+<div class="row">
+    @using (Html.BeginForm("Index", "Maddeler", FormMethod.Post, new { id = "frmMaddeler" }))
+    {<div class="col-md-12">
+
+            @Html.Hidden("export", false)
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-info @(Model.Expand ? "" : "panel-toggled")" id="pnlFltr">
+                <input class="hide" name="Expand" value="@Model.Expand.ToString().ToLower()" id="Expand" />
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title">
+                        <i class="glyphicon glyphicon-filter"></i> Filtre İşlemi
+                    </h3>
+                    <ul class="panel-controls">
+                        @if (Model.RowCount > 0)
+                        {
+                            <li><span class="label label-info" style="cursor:pointer;" onclick="$('#export').val('true'); $('#frmMaddeler').submit(); $('#export').val('false');"><i class="fa fa-download"></i> Listelenen maddeleri Excel'e aktar</span></li>
+
+                        }
+                        <li><a href="javasctipr:void(0)" onclick="$('#Expand').val(($('#pnlFltr').hasClass('panel-toggled') ? 'true' :'false' )); " class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover" style="table-layout:fixed;">
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Madde Türü</td>
+                                        <td>
+                                            @Html.DropDownList("MaddeTurID", null, new { @class = "form-control", onchange = "$('#frmMaddeler').submit();" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Madde Durumu</td>
+                                        <td>@Html.DropDownList("IsAktif", null, new { @class = "form-control", onchange = "$('#frmMaddeler').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Veri Giriş Şekli</td>
+                                        <td>@Html.DropDownList("VeriGirisSekliID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmMaddeler').submit();" })</td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Yıl Sonu Hesap Şekli</td>
+                                        <td>@Html.DropDownList("MaddeYilSonuDegerHesaplamaTipID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmMaddeler').submit();" })</td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Çoklu Veri Giriş</td>
+                                        <td>@Html.DropDownList("IsCokluVeriGiris", null, new { @class = "form-control", onchange = "$('#frmMaddeler').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Birim Eşieşme Durum</td>
+                                        <td>@Html.DropDownList("EslestirmeDurum", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmMaddeler').submit();" })</td>
+                                    </tr>
+                                </table>
+
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Dosya Yüklensin</td>
+                                        <td>@Html.DropDownList("IsDosyaYuklensin", null, new { @class = "form-control", onchange = "$('#frmMaddeler').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="120">Aranacak Kelime</td>
+                                        <td>
+                                            <table style="width:100%;table-layout:fixed;">
+                                                <tr>
+                                                    <td><input name="Aranan" id="Aranan" type="text" onkeypress="if (event.which == 13) { $('#frmMaddeler').submit(); }" value="@Model.Aranan" class="form-control" /></td>
+                                                    <td width="110px;"><a href="javascript:void(0);" onclick="$('#frmMaddeler').submit();" class="btn btn-info"><i class="glyphicon glyphicon-filter"> Filtrele</i></a></td>
+                                                </tr>
+                                            </table>
+                                            @if (Model.Aranan.IsNullOrEmpty() == false)
+                                            {
+                                                <script>
+                                                    $(function () {
+                                                        SetCaretAtEnd(document.getElementById('Aranan'));
+                                                    });
+
+                                                </script>
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            @Html.Hidden("export", false)
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-list-alt"></i> Madde Listesi</h3>
+                    <ul class="panel-controls">
+
+                        @if (kayitYetki)
+                        {
+                            <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit")" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        }
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-success label-form">Aktif: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-danger label-form">Pasif: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th class="sirala sorting" field="MaddeTreeAdi">Madde Tür/Kod/Adı</th>
+                                <th width="120" field="VeriGirisSekliID" class="sirala sorting" title="Veri Giriş şekli / Yıl sonu hesaplama şekli">V.G.Ş / Y.S.H</th>
+                                <th width="40" title="Eşleştirilen Birim Sayısı">E.B.S</th>
+                                <th width="70" class="sirala sorting" field="IsAktif">Durum</th>
+                                <th width="35"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++;
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@item.MaddeID" onclick="ShowDetail(@item.MaddeID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <b>@item.MaddeTurAdi</b><br />
+                                            <b>@item.MaddeKod</b> - @item.MaddeTreeAdi
+                                        </td>
+                                        <td>
+                                            @item.VeriGirisSekilleri.VeriGirisSekliAdi <br />
+                                            @item.YilSonuDegerHesaplamaAdi
+                                        </td>
+                                        <td>
+                                            @if (item.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok)
+                                            {
+                                                <b style="font-size:14pt;color:@(item.BirimMaddeleris.Count>0?"green":"maroon")">@item.BirimMaddeleris.Count</b>
+                                            }
+                                            else
+                                            {
+                                                <b style="font-size:14pt" title="Eşleştirme Gerekmiyor">--</b>
+                                            }
+
+                                        </td>
+                                        <td id="tdIa_@item.MaddeID" style="text-align:center;">
+                                            <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                        </td>
+                                        <td>
+                                            @if (kayitYetki)
+                                            {
+                                                <a href="@Url.Action("Kayit", "Maddeler", new { id = item.MaddeID })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
+                                                <a href="javascript:void(0)" onclick="SilmeOnay(this,@item.MaddeID)"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr class="cls-@item.MaddeID hide">
+                                        <td id="cls-@item.MaddeID" colspan="8" style="padding: 1px 1px 2px 75px;">
+                                            <div class="panel panel-default form-horizontal" id="PnlOt_@item.MaddeID" style="margin:0px;padding:0px;">
+                                                <div class="panel-body" style="margin:0px;padding:0px;">
+                                                    <div class="panel-body form-group-separated">
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">Madde Kodu</label>
+                                                            <div class="col-md-10 col-xs-8">@item.MaddeKod</div>
+                                                        </div>
+                                                        @if (item.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok)
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Madde Türü</label>
+                                                                <div class="col-md-10 col-xs-8">
+
+                                                                    @if (false && kayitYetki)
+                                                                    {
+                                                                        var mtId = Guid.NewGuid().ToString();
+
+                                                                        @Html.DropDownList("MaddeTurID2", null, new { style = "margin:0px;float:left;width:180px;", title = "Madde türü", id = "MaddeTurID_" + mtId, OnChange = "MaddeTurGuncelle(this," + item.MaddeID + ");" })
+
+                                                                        <script>
+                                                                            $(function () {
+                                                                                setTimeout(function () {
+                                                                                    $('#MaddeTurID_' + '@mtId').val(@item.MaddeTurID);
+                                                                                }, 100);
+                                                                            });
+                                                                        </script>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span>@(item.MaddeTurID.HasValue ? item.MaddeTurleri.MaddeTurAdi : "")</span>
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Hesaplama Şekli</label>
+                                                                <div class="col-md-10 col-xs-8">
+
+                                                                    @if (false && kayitYetki)
+                                                                    {
+                                                                        var mtId = Guid.NewGuid().ToString();
+
+                                                                        @Html.DropDownList("MaddeYilSonuDegerHesaplamaTipID2", null, new { style = "margin:0px;float:left;", title = "Yıl sonu hesaplama şekli", id = "MaddeYilSonuDegerHesaplamaTipID_" + mtId, OnChange = "YSHesapTipGuncelle(this," + item.MaddeID + ");" })
+
+                                                                        <script>
+                                                                            $(function () {
+                                                                                setTimeout(function () {
+                                                                                    $('#MaddeYilSonuDegerHesaplamaTipID_' + '@mtId').val(@item.MaddeYilSonuDegerHesaplamaTipID);
+                                                                                }, 100);
+                                                                            });
+                                                                        </script>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span>@(item.MaddeYilSonuDegerHesaplamaTipID.HasValue ? item.MaddeYilSonuDegerHesaplamaTipleri.YilSonuDegerHesaplamaAdi : "")</span>
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+
+                                                        }
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">Madde Adı</label>
+                                                            <div class="col-md-10 col-xs-8">@item.MaddeTreeAdi</div>
+                                                        </div>
+                                                        @if (!item.Aciklama.IsNullOrWhiteSpace())
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Madde Açıklaması</label>
+                                                                <div class="col-md-10 col-xs-8">@item.Aciklama</div>
+                                                            </div>
+                                                        }
+                                                        @if (item.HesaplamaFormulu != null)
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Hesaplama Formülü</label>
+                                                                <div class="col-md-10 col-xs-8">@item.HesaplamaFormulu</div>
+                                                            </div>
+                                                        }
+                                                        @if (item.MaddeTurID.HasValue)
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Veri Girilecek Dönemler</label>
+                                                                <div class="col-md-10 col-xs-8">
+                                                                    <div class="panel panel-primary _replaceHide">
+                                                                        <div class="panel-body padding-0">
+                                                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="40"></th>
+                                                                                        <th>Ay Adı</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tr>
+                                                                                    <td colspan="3">
+
+                                                                                        <div style="max-height:135px;overflow:auto;">
+                                                                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                                @{
+                                                                                                    var i = 0;
+                                                                                                    foreach (var itemObt in item.MaddelerVeriGirisDonemleris)
+                                                                                                    {
+                                                                                                        i++;
+                                                                                                        <tr class="tr">
+                                                                                                            <td width="40">@i)</td>
+                                                                                                            <td>
+                                                                                                                @itemObt.VACokluVeriDonemleri.CokluVeriDonemAdi
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    }
+                                                                                                }
+                                                                                            </table>
+                                                                                        </div>
+
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                            </table>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+                                                        @if (item.BirimMaddeleris.Any())
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Eşleştirilen Birimler</label>
+                                                                <div class="col-md-10 col-xs-8">
+                                                                    <div class="panel panel-primary _replaceHide">
+                                                                        <div class="panel-body padding-0">
+                                                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="40"></th>
+                                                                                        <th width="40">Kod</th>
+                                                                                        <th>Birim Adı</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tr>
+                                                                                    <td colspan="3">
+
+                                                                                        <div style="max-height:160px;overflow:auto;">
+                                                                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                                @{
+                                                                                                    var i = 0;
+                                                                                                    foreach (var itemObt in item.BirimMaddeleris)
+                                                                                                    {
+                                                                                                        i++;
+                                                                                                        <tr class="tr">
+                                                                                                            <td width="40">@i)</td>
+                                                                                                            <td width="40">@itemObt.Birimler.BirimKod</td>
+                                                                                                            <td>
+                                                                                                                @itemObt.Birimler.BirimAdi
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    }
+                                                                                                }
+                                                                                            </table>
+                                                                                        </div>
+
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                            </table>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">Durum</label>
+                                                            <div class="col-md-10 col-xs-8" style="text-align: left;">
+                                                                <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">İşlem Yapan</label>
+                                                            <div class="col-md-10 col-xs-8">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function ShowDetail(id,IsExpand) {
+        var sndr = $('#iShow_' + id);
+        var cls = 'cls-' + id;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        if (IsExpand) {
+            if (unTogled) toggleByClass(sndr, cls, unTogled);
+        }
+        else toggleByClass(sndr, cls, unTogled);
+    }
+    function SilmeOnay(sndr, id) {
+        var htmlCont = $("#cls-" + id).html().replace('hide', '').replace('_replaceHide','hide');
+        var SoruHtml = "<table style='color:maroon;table-layout:fixed;width:100%;'><tr><td width='30' style='padding-left:10px;'><i class='fa fa-info fa-2x'></i></td><td style='padding-right:10px;'>Seçilen Maddeyi Silmek İstiyor Musunuz?</td></tr></table>";
+        bootbox.dialog({
+            message: htmlCont + SoruHtml,
+            title: "Madde Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Madde Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        Sil(sndr, id);
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function Sil(sndr, id) {
+        $.ajax({
+            url: '@Url.Action("Sil", "Maddeler")',
+            data: { id: id },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Madde Silme İşlemi")
+                if (result.success) {
+                    $(sndr).closest("tr").remove();
+                     $(".cls-" + id).remove();
+                }
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+    function MaddeTurGuncelle(sndr, id) {
+        var _MaddeTurID = $(sndr).val();
+        $.ajax({
+            url: '@Url.Action("MaddeTurGuncelle", "Maddeler")',
+            data: { id: id, MaddeTurID: _MaddeTurID },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Madde Türü Güncelleme İşlemi")
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+    function YSHesapTipGuncelle(sndr, id) {
+        var _YSHesapTipID = $(sndr).val();
+        $.ajax({
+            url: '@Url.Action("MaddeYSHesapTipGuncelle", "Maddeler")',
+            data: { id: id, MaddeYilSonuDegerHesaplamaTipID: _YSHesapTipID },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Madde Yıl Sonu Hesap Tipi Güncelleme İşlemi")
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>

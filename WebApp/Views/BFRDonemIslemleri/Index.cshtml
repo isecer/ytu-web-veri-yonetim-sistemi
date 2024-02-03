@@ -1,0 +1,165 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@model FmBfrDonemleri
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-12">
+
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-danger" id="pnlDnms">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-clock-o"></i> Dönem İşlemleri</h3>
+                    <ul class="panel-controls">
+                        <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit")" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-success label-form">Aktif: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-danger label-form">Pasif: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body" style="padding-bottom:0px;">
+                    <table class="table table-hover padding-0">
+                        <thead>
+                            <tr>
+                                <th width="125"></th>
+                                <th width="160" class="sirala sorting" field="Yil">Dönem</th>
+                                <th>Başlangıç / Bitiş Tarihi</th>
+                                <th width="105" class="sirala sorting" field="IsAktif" style="text-align:center;">Durum</th>
+                            </tr>
+                            <tr class="filtrele">
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>
+                                    @Html.DropDownList("IsAktif", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++;
+                                    <tr class="delrw_@item.BFRDonemID" style="@(item.AktifSurec?"color:green;font-weight:bold;":"")">
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width: 30px;">@rowIndex</td>
+                                                    <td style="width: 50px;">
+                                                        <div class="btn-group">
+                                                            <a href="javascript:void(0);" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><i class="fa fa-cogs"></i></a>
+                                                            <ul class="dropdown-menu" role="menu">
+                                                                <li role="presentation" class="dropdown-header">İşlemler</li>
+                                                                <li>
+
+                                                                    <a href="@Url.Action("Kayit")"><i class="fa fa-plus fa-lg"></i>Yeni</a>
+                                                                    <a href="@Url.Action("Kayit", new { id = item.BFRDonemID })"><i class="fa fa-edit fa-lg"></i>Düzenle</a>
+                                                                    <a href="javascript:void(0)" onclick="Sil(@item.BFRDonemID)"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i>Sil</a>
+
+                                                                </li> 
+                                                            </ul>
+
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td width="160" class="sYilBilgi_@item.BFRDonemID">@item.DonemYilAdi</td>
+                                        <td>@item.BaslangicTarihi.ToFormatDate() / @item.BitisTarihi.ToFormatDate()</td>
+                                        <td style="text-align:center;">
+                                            <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                        </td>
+
+
+                                    </tr>
+                                    <tr class="hide cls-ana-@item.BFRDonemID delrw_@item.BFRDonemID">
+                                        <td id="cls-ana-@item.BFRDonemID" colspan="4" height="495"></td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" style="text-align: center">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    function ShowDetail(rwGD, id) {
+        var rwID = $('#iShow_' + rwGD);
+        var cls = 'cls-' + rwGD;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(rwID, cls, unTogled);
+        if (unTogled && id != undefined) setTimeout(function () { GetDetail(id); }, 200);
+    }
+    function ShowDetail2(BFRDonemID, KayitID, rwGD, isBirimOrMadde) {
+        var rwID = $('#iShow_' + rwGD);
+        var cls = 'cls-' + rwGD;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(rwID, cls, unTogled);
+        if (unTogled) {
+            if (isBirimOrMadde) GetMaddeBirimleri(BFRDonemID, KayitID, rwGD);
+            else GetBirimMaddeleri(BFRDonemID, KayitID, rwGD);
+        }
+    }
+
+
+    function Sil(id) {
+        var _Yil = $('.sYilBilgi_' + id).text();
+        var btbx = bootbox.dialog({
+            message: "<table style='table-layout:fixed;width:100%;'><tr><td style='font-size:14pt;text-align:center;color:maroon;'>" + _Yil + " Bilgisini Silmek İstiyor Musunuz?</td></tr></table>",
+            title: "Dönem Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Dönemi Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        $.ajax({
+                            url: '@Url.Action("Sil", "BfrDonemIslemleri")',
+                            data: { id: id },
+                            success: function (result) {
+                                if (result.IsSuccess) {
+                                    $(".delrw_" + id).remove();
+                                }
+                                showMmMessage(result.Messages, 'Tamam');
+                            },
+                            error: function (err) {
+                                alert(err.responseText);
+                            }
+                        });
+                    }
+                },
+                danger: {
+                    label: "Kapat",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+
+</script>

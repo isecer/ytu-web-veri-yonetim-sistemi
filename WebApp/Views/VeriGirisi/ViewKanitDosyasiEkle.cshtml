@@ -1,0 +1,179 @@
+﻿@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model WebApp.Utilities.Dtos.VeriKanitModel
+@{
+    Layout = null;
+    var bbcId = (Model.VASurecID + "_" + Model.BirimID + "_" + Model.MaddeID);
+    var kayitYetki = Model.SurecAktif && RoleNames.VeriGirisiKayitYetkisi.InRole();
+}
+<div class="row">
+    @using (Ajax.BeginForm("VgKanitDosyasiPost", null, new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "VGKanitDosyasiPostForm" }))
+    {
+        <input name="BirimID" class="hide" value="@Model.BirimID" />
+        <input name="VASurecID" class="hide" value="@Model.VASurecID" />
+        <input name="MaddeID" class="hide" value="@Model.MaddeID" />
+        <div class="panel panel-info" id="bbContent_@bbcId">
+            <div class="panel-body" style="margin: 0px; padding: 0px;">
+                <div class="col-md-12">
+                    <table class="table" style="font-size:9pt;margin:0px;">
+                        <tr>
+                            <td width="140" style="font-weight:bold;">Süreç</td>
+                            <td width="5" style="font-weight:bold;">:</td>
+                            <td>@Model.Yil Yılı Süreci</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Birim Adı</td>
+                            <td style="font-weight:bold;">:</td>
+                            <td>@Model.BirimAdi</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;">Seçilen Madde</td>
+                            <td style="font-weight:bold;">:</td>
+                            <td>@Model.MaddeAdi</td>
+                        </tr>
+
+                        @if (!Model.VeriGirisiOnaylandi && kayitYetki)
+                        {
+                            <tr>
+                                <td style="font-weight:bold;">Not</td>
+                                <td>:</td>
+                                <td>
+                                    Yükleyeceğiniz Veri Kanıt Dosyası <b>excel, word, pdf, jpeg, png, bmp</b> dosya türlerinden farklı bir dosya türü olmamalıdır ve dosya boyutu en fazla <b>10 MB</b> olmalıdır.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold;">Ay/Dönem</td>
+                                <td>:</td>
+                                <td>
+                                    @Html.DropDownList("VaCokluVeriDonemId", Model.SelectListVaCokluVeriDonemId, new { @class = "form-control" })
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="font-weight:bold;">Kanıt Dosyası Seçiniz</td>
+                                <td style="font-weight:bold;">:</td>
+                                <td>
+                                    <table style="table-layout:fixed;width:100%;">
+                                        <tr>
+                                            <td>
+                                                <input type="file" name="KanitDosyasi" id="KanitDosyasi" style="height:24px;">
+                                            </td>
+                                            <td width="120">
+                                                <button data-bb-handler="success" type="button" class="btn btn-primary" onclick="DosyaEkle(@Model.VaCokluVeriDonemId)">Dosyayı Yükle</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                        }
+
+                    </table>
+                    <div id="VKDListContent">
+                        @{
+                            Model.VeriKanitDosyaListModel.KayitYetki = kayitYetki && !Model.VeriGirisiOnaylandi;
+                            Model.VeriKanitDosyaListModel.VaCokluVeriDonemId = Model.VaCokluVeriDonemId;
+                            Html.RenderPartial("ViewKanitDosyasiEklenenler", Model.VeriKanitDosyaListModel);
+                        }
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+<script>
+    function DosyaEkle(vaCokluVeriDonemId)
+    {
+        var pnlx = $('#bbContent_@bbcId');
+        _pRefresh(pnlx, false);
+        $('#VGKanitDosyasiPostForm').ajaxForm({
+            success: function (result) {
+          
+                _pRefresh(pnlx, true);
+                if (result.Messages.length > 0 && !result.IsSuccess) GetMsg(result);
+                else toastr[result.MessageType == 0 ? "success" : "info"](result.Messages[0], result.Title);
+                if (result.IsSuccess) {
+
+                    $('#KanitDosyasi').val(''); 
+                    GetVeriKanitDosyaListesi(vaCokluVeriDonemId);  
+                    GetDetail(@Model.VASurecID, @Model.BirimID, @Model.MaddeID);
+                    return false;
+                }
+                else { 
+                    return false;
+                }
+
+            },
+            complete: function (cmp) {
+                _pRefresh(pnlx, true);
+            },
+            error: function (err) {
+                _pRefresh(pnlx, true);
+            }
+
+        });
+        $('#VGKanitDosyasiPostForm').submit();
+    }
+
+    function SilmeOnay(sndr, id) {
+        var _AyAdi = $("#tdAyAdi_" + id).html();
+        var _DosyaAdi = $("#tdDosyaAdi_" + id).html();
+        var SoruHtml = "<table style='color:maroon;table-layout:fixed;width:100%;'><tr><td width='30' style='padding-left:10px;'><i class='fa fa-info fa-2x'></i></td><td style='padding-right:10px;'>'" + _AyAdi + "' : '" + _DosyaAdi + "' veri kanıt dosyasını silmek istiyor musunuz?</td></tr></table>";
+        bootbox.dialog({
+            message:  SoruHtml,
+            title: "Veri Kanıt Soyası Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Dosyayı Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        Sil(sndr, id);
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function Sil(sndr, id) {
+        $.ajax({
+            url: '@Url.Action("VgKanitDosyasiSil", "VeriGirisi")',
+            data: { id: id },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Veri Kanıt Dosyası Silme İşlemi")
+                if (result.success) {
+                    $(sndr).closest("tr").remove(); 
+                   GetDetail(@Model.VASurecID, @Model.BirimID, @Model.MaddeID);
+                }
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+
+<script>
+    function GetVeriKanitDosyaListesi(vaCokluVeriDonemId) { 
+        $.ajax({
+            url: '@Url.Action("GetViewKanitDosyasiEklenenler", "VeriGirisi")',
+            data: { 'VASurecID': @Model.VASurecID, 'BirimID': @Model.BirimID, 'MaddeID': @Model.MaddeID , vaCokluVeriDonemId },
+            async: false,
+            success: function (result) { 
+                $('#VKDListContent').html(result.page);
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>

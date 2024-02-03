@@ -1,0 +1,42 @@
+﻿@using WebApp.Models
+@model List<FrBirimler>
+@{
+
+    Layout = null;
+}
+
+<div class="panel-body" style="padding: 0px;">
+    <div class="panel panel-primary">
+        <div class="panel-body padding-0">
+            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                <thead>
+                    <tr>
+                        <th width="80">B Kod</th>
+                        <th>Birim Adı</th>
+                        <th style="text-align:right;" width="100">Durum</th>
+                    </tr>
+                </thead>
+                @foreach (var itemObt in Model)
+                {
+                    <tr class="tr">
+                        <td>@itemObt.BirimKod</td>
+                        <td>
+                            @itemObt.BirimAdi
+                        </td>
+                        <td width="100" style="text-align:right;font-weight:bold;font-size:11pt;">
+                            @if (itemObt.ToplamCount == itemObt.TamamlananCount)
+                            {
+                                <span style="color:#95b75d">Veri Girildi</span>
+                            }
+                            else
+                            {
+                                <span style="color:#3fbae4;">Veri Eksik</span>
+                            }
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </div>
+    </div>
+</div>

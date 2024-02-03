@@ -1,0 +1,31 @@
+﻿@using WebApp.Models;
+@using WebApp.Utilities.Extensions
+@model DosyaYuklePartialModelBFR
+@{ 
+    string dosyaYolu = null;
+    var dosyaAdi = "Yüklenmedi";
+    var bfrDonemlerFormGirisId = 0;
+    if (Model.EklenenDosya != null)
+    {
+        dosyaYolu = Model.EklenenDosya.DosyaYolu;
+        dosyaAdi = Model.EklenenDosya.DosyaAdi;
+        bfrDonemlerFormGirisId = Model.EklenenDosya.BFRDonemlerFormGirisID;
+    }
+}
+
+<div class="input-group">
+    @if (Model.KayitYetkisi)
+    {
+        <span class="input-group-addon" style="background-color:@(dosyaYolu.IsNullOrWhiteSpace()?"blue":"green");cursor:pointer" title="Form Yükle" onclick="FormYukle(@Model.BFRFormID)"><span class="glyphicon glyphicon-folder-open"></span></span>
+    }
+    <input type="text" class="form-control" style="cursor:default;color:black;" readonly="readonly" value="@dosyaAdi">
+    @if (!dosyaYolu.IsNullOrWhiteSpace())
+    {
+        <span class="input-group-addon" style="background-color:green;cursor:pointer;" onclick="window.location.href='@Url.Content(dosyaYolu)'" title="Yüklenen Form Dosyasını İndir"><span class="fa fa-cloud-download fa-lg"></span></span>
+    }
+    @if (Model.KayitYetkisi && !dosyaYolu.IsNullOrWhiteSpace())
+    {
+        <span class="input-group-addon" style="background-color:maroon;cursor:pointer;" onclick="FormSilmeOnay(@Model.BFRFormID, @bfrDonemlerFormGirisId)" title="Yüklenen Form Dosyasını Sil"><span class="fa fa-trash-o fa-lg"></span></span> 
+    }
+</div>
+

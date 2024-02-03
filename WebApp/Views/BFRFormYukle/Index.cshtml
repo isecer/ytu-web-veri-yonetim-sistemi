@@ -1,0 +1,345 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model FmBfrFormYukle
+@{ 
+    
+    var kayitYetkisi = Model.IsAktif && RoleNames.FRFormYukleKayitYetkisi.InRole();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="row">
+    @using (Html.BeginForm("Index", "BFRFormYukle", FormMethod.Post, new { id = "frmVeriGirisi" }))
+    {
+        <div class="col-md-12">
+
+            @Html.Hidden("export", false)
+            <!-- START SIMPLE DATATABLE -->
+            <div class="panel panel-info @(Model.Expand ? "" : "panel-toggled")" id="pnlFltr">
+                <input class="hide" name="Expand" value="@Model.Expand.ToString().ToLower()" id="Expand" />
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title">
+                        <i class="glyphicon glyphicon-filter"></i> Filtre İşlemi
+                    </h3>
+                    <ul class="panel-controls"> 
+                        <li><a href="javasctipr:void(0)" onclick="$('#Expand').val(($('#pnlFltr').hasClass('panel-toggled') ? 'true' :'false' )); " class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover" style="table-layout:fixed;">
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="130">Süreç</td>
+                                        <td>@Html.DropDownList("BFRDonemID", null, new { @class = "form-control", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="130">Form Yükleme Durum</td>
+                                        <td>@Html.DropDownList("FormYuklemeDurumID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="130">Birim</td>
+                                        <td>@Html.DropDownList("BirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                            <td style="padding-left:10px;">
+                                <table style="width:100%;table-layout:fixed;">
+                                    <tr>
+                                        <td width="130">Aranacak Kelime</td>
+                                        <td>
+                                            <table style="width:100%;table-layout:fixed;">
+                                                <tr>
+                                                    <td><input name="Aranan" id="Aranan" type="text" onkeypress="if (event.which == 13) { $('#frmVeriGirisi').submit(); }" value="@Model.Aranan" class="form-control" /></td>
+                                                    <td width="110px;"><a href="javascript:void(0);" onclick="$('#frmVeriGirisi').submit();" class="btn btn-info"><i class="glyphicon glyphicon-filter"> Filtrele</i></a></td>
+                                                </tr>
+                                            </table>
+                                            @if (Model.Aranan.IsNullOrEmpty() == false)
+                                            {
+                                                <script>
+                                                    $(function () {
+                                                        SetCaretAtEnd(document.getElementById('Aranan'));
+                                                    });
+
+                                                </script>
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-file-text-o fa-lg"></i> Formlar</h3>
+                    <ul class="panel-controls">
+
+                        <li><span class="label label-info" title="Veri Girişi Tamamlanan Sayısı">Yüklenenmeyeler: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li><span class="label label-success" title="Veri Girişi Tamamlanmayan Madde Say">Yüklenenler: <b>@Model.CountIngfos.Aktif</b></span></li>
+
+                        <li><span class="label label-primary" title="Toplam Madde Sayısı">Tümü: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th class="sirala sorting" field="FormAdi">Form Adı</th> 
+                                <th width="250" title="İstenen Form Verisi Şablonu">Şablon</th>
+                                <th width="300" title="Yüklenen Form Verisi">Yüklenen Form</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    var rwId = Model.BfrDonemId + "_" + Model.BirimId.Value + "_" + item.BFRFormID;
+                                    rowIndex++;
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@rwId" onclick="ShowDetail(@Model.BfrDonemId,@Model.BirimId.Value,@item.BFRFormID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td id="frmAdi_@rwId">@item.FormAdi <br /><span style="font-size:7.5pt;">Açıklama: @item.Aciklama</span></td> 
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-addon" style="background-color:green;"><span class="fa fa-file-excel-o fa-lg"></span></span>
+                                                <input type="text" class="form-control" style="color:black;cursor:default;" value="@item.FormDosyaAdi" disabled="disabled">
+                                                <span class="input-group-addon" style="background-color:green;cursor:pointer;" title="Form Şablonunu İndir" onclick="window.location.href='@Url.Content(item.FormDosyaYolu)';"><span class="fa fa-cloud-download fa-lg"></span></span>
+
+                                            </div>
+                                        </td>
+                                        <td id="frmCnt_@rwId">
+                                            @{
+                                                var mdl = new DosyaYuklePartialModelBFR
+                                                {
+                                                    KayitYetkisi = kayitYetkisi,
+                                                    BFRFormID = item.BFRFormID,
+                                                    EklenenDosya = item.BfrDonemlerFormGirisleri
+                                                };
+                                                Html.RenderPartial("DosyaYuklePartial", mdl);
+                                            }
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hide cls-ana-@rwId">
+                                        <td colspan="4" style="padding-left:35px;">
+                                            <div class="panel panel-default form-horizontal" style="margin: 0px; padding: 0px;" id="pnl_@rwId">
+
+                                                <div class="panel-body" style="margin: 0px; padding: 0px;" id="content_@rwId">
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function ShowDetail(_BFRDonemID, _BirimID, _BFRFormID) {
+        var RwID = _BFRDonemID + '_' + _BirimID + '_' + _BFRFormID;
+        var _rwID = $('#iShow_' + RwID);
+        var cls = 'cls-ana-' + RwID;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        toggleByClass(_rwID, cls, unTogled);
+        if (unTogled) GetDetail(_BFRDonemID, _BirimID, _BFRFormID);
+    }
+  
+    function GetDetail(_BFRDonemID, _BirimID, _BFRFormID) {
+        var RwID = _BFRDonemID + '_' + _BirimID + '_' + _BFRFormID;
+        var _panel = $('#pnl_' + RwID);
+        _pRefresh(_panel, false);
+
+        $.ajax({
+            url: '@Url.Action("GetDetail", "BFRFormYukle")',
+            data: { 'BFRDonemID': _BFRDonemID, 'BirimID': _BirimID, 'BFRFormID': _BFRFormID },
+            async: false,
+            success: function (result) {
+                if (!result.IsAuthenticated) {
+                    alert("Kullanıcı Hesabınız Sistemden Çıkış Yapmış Gözükmekte. Ana Sayfaya Yönlendirileceksiniz...");
+                    window.location.href = '@Url.Action("Index", "Home")';
+                }
+                else {
+                    $('#content_' + RwID).html(result.page);
+                }
+                _pRefresh(_panel, true);
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+                _pRefresh(_panel, true);
+            }
+        });
+    }
+
+
+</script>
+
+@if (kayitYetkisi)
+{
+    <script>
+        function FormYukle(_BFRFormID) {
+            var RwID = '@Model.BfrDonemId' + '_' + @Model.BirimId + '_' + _BFRFormID;
+            var _panel = $('#pnl_' + RwID);
+            _pRefresh(_panel, false);
+            $.ajax({
+                url: '@Url.Action("GetFormYukle", "BFRFormYukle")',
+                data: { 'BFRDonemID': @Model.BfrDonemId, 'BirimID':@Model.BirimId, 'BFRFormID': _BFRFormID },
+                success: function (result) {
+                    _pRefresh(_panel, true);
+                    var btbxxFS = bootbox.dialog({
+                        message: result,
+                        title: "Bütçe Hazırlık Raporu Form yükleme işlemi",
+                        buttons: {
+                            success: {
+                                label: "Yükle",
+                                className: "btn-primary",
+                                callback: function () {
+                                    var pnlx = $(btbxxFS).find('.modal-dialog').first();
+                                    _pRefresh(pnlx, false);
+                                    $('#FormYukleForm').ajaxForm({
+                                        success: function (result) {
+                                            $('#DosyaEki').val(null);
+                                            if (result.mMessage.IsSuccess) {
+                                                $(btbxxFS).find('.bootbox-close-button').first().click();
+                                                $('#frmCnt_' + RwID).html(result.pView);
+                                                GetDetail(@Model.BfrDonemId, @Model.BirimId, _BFRFormID);
+                                            }
+
+                                            GetMsg(result.mMessage);
+                                            _pRefresh(pnlx, true);
+
+                                        },
+                                        complete: function (cmp) {
+                                            _pRefresh(pnlx, true);
+                                        },
+                                        error: function (err) {
+                                            _pRefresh(pnlx, true);
+                                        }
+
+                                    });
+                                    $('#FormYukleForm').submit();
+                                    return false;
+
+                                }
+                            },
+                            danger: {
+                                label: "Vazgeç",
+                                className: "btn-success",
+                                callback: function () {
+                                }
+                            }
+                        }
+                    });
+                },
+                error: function (err) {
+                    _pRefresh(_panel, true);
+                    alert(err.responseText);
+                }
+            });
+        };
+
+
+        function FormSilmeOnay(_BFRFormID,id) {
+            var RwID = '@Model.BfrDonemId' + '_' + @Model.BirimId + '_' + _BFRFormID;
+            var _panel = $('#pnl_' + RwID);
+            var _frmAdi = $("#frmAdi_" + RwID).html();
+            var SoruHtml = "<table style='color:maroon;table-layout:fixed;width:100%;'><tr><td width='30' style='padding-left:10px;'><i class='fa fa-info fa-2x'></i></td><td style='padding-right:10px;'>'" + _frmAdi + "' isimli forma ait yüklenen dosyayı silmek istiyor musunuz?</td></tr></table>";
+            bootbox.dialog({
+                message: SoruHtml,
+                title: "Form Dosyası Silme İşlemi",
+                buttons: {
+                    success: {
+                        label: "Dosyayı Sil",
+                        className: "btn-danger",
+                        callback: function () {
+                            FormSil(_BFRFormID, id);
+                        }
+                    },
+                    danger: {
+                        label: "Vazgeç",
+                        className: "btn-success",
+                        callback: function () {
+                        }
+                    }
+                }
+            });
+        }
+        function FormSil(_BFRFormID,id) {
+            var RwID = '@Model.BfrDonemId' + '_' + @Model.BirimId + '_' + _BFRFormID;
+            var _panel = $('#pnl_' + RwID);
+            _pRefresh(_panel, false);
+            $.ajax({
+                url: '@Url.Action("FormSil", "BFRFormYukle")',
+                data: { id: id },
+                success: function (result) {
+                    _pRefresh(_panel, true);
+                    toastr[result.success ? "success" : "error"](result.message, "Form Dosyası Silme İşlemi")
+                    if (result.success) {
+                        $('#frmCnt_' + RwID).html(result.pView);
+                        GetDetail(@Model.BfrDonemId, @Model.BirimId, _BFRFormID);
+                    }
+
+                },
+                error: function (err) {
+                    _pRefresh(_panel, true);
+                    alert(err.responseText);
+                }
+            });
+        }
+    </script>
+}

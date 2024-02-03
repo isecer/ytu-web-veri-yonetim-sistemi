@@ -1,0 +1,43 @@
+﻿@using WebApp.Models;
+@using WebApp.Utilities.Extensions
+@model FRFaaliyetDetayModel
+@{
+}
+
+
+<div class="panel-body form-group-separated">
+    <div class="form-group">
+        <label class="col-md-2 col-xs-4 control-label">Form Adı</label>
+        <div class="col-md-10 col-xs-8">@Model.FrFaaliyetler.FormAdi</div>
+    </div>
+    @if (!Model.FrFaaliyetler.Aciklama.IsNullOrWhiteSpace())
+    {
+        <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label">Açıklama</label>
+            <div class="col-md-10 col-xs-8">@Model.FrFaaliyetler.Aciklama</div>
+        </div>
+    }
+    @if (Model.FrFaaliyetler.FormYuklendi)
+    {
+        <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label">Yüklenen Form Dosyası</label>
+            <div class="col-md-10 col-xs-8">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td width="30px;"><i class="fa fa-file-excel-o" style="color:green;font-size:16pt;"></i></td>
+                            <td>
+                                <a href="@Url.Content(Model.FrFaaliyetler.DosyaYolu)" target="_blank" style="color:green;font-weight:bold;">@Model.FrFaaliyetler.DosyaAdi</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label">İşlem Yapan</label>
+            <div class="col-md-10 col-xs-8">@Model.FrFaaliyetler.IslemYapan [@Model.FrFaaliyetler.IslemTarihi.ToFormatDateAndTime()][@Model.FrFaaliyetler.IslemYapanIP]</div>
+        </div>
+    }
+</div>
+

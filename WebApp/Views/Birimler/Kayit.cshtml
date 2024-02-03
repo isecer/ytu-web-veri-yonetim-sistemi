@@ -1,0 +1,101 @@
+﻿@using Database
+@using WebApp.Business
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.Helpers
+@using WebApp.Utilities.MessageBox
+@model Birimler
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var secilenler = (List<int>)ViewBag.Secilenler;
+    var mdData = BirimlerBus.GetBirimMaddeleri(Model.BirimID, secilenler);
+    mdData.InputName = "MaddeID";
+    mdData.PanelTitle = "İlgili Maddeleri Seçiniz";
+    mdData.ScrollMaxHeight = 250;
+}
+<div class="row">
+    <form method="post" class="form-horizontal" role="form">
+        <input type="text" style="display:none;" id="BirimID" name="BirimID" value="@Model.BirimID" />
+        <div class="col-md-12 col-md-12 col-md-12">
+            <div class="panel panel-default" id="bPanel">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> @(Model.BirimKod.IsNullOrWhiteSpace() ? "Yeni Birim Tanımlama" : Model.BirimKod + " Kodlu Birim Güncelleme İşlemi")</h3>
+                    <ul class="panel-controls">
+                        <li><a href="@Url.Action("Kayit", Model.BirimKod)" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Üst Birim</label>
+                                <div class="col-md-10 col-xs-10">
+                                    @Html.DropDownList("UstBirimID", null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Birim Kodu</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="BirimKod" id="BirimKod" value="@Model.BirimKod" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Birim Adı</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="BirimAdi" id="BirimAdi" value="@Model.BirimAdi" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Kısa Adı</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="BirimKisaAdi" id="BirimKisaAdi" value="@Model.BirimKisaAdi" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Madde Eklenebilir Mi?</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <div class="make-switch" data-on-label="Evet" data-off-label="Hayır" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" name="IsMaddeEklenebilir" id="IsMaddeEklenebilir" onchange="MaddeEklenebilirChange()" class="toggle" @Model.IsMaddeEklenebilir.ToChecked() />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="maddeList">
+                                <label class="col-md-2 col-xs-2 control-label"></label>
+                                <div class="col-md-10 col-xs-10">
+                                    @mdData.ToRenderPartialViewHtml("Ajax", "GetChkList")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Birim Durumu</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <div class="make-switch" data-on-label="Aktif" data-off-label="Pasif" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" name="IsAktif" class="toggle" @Model.IsAktif.ToChecked() />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+        MaddeEklenebilirChange();
+    });
+    function MaddeEklenebilirChange() {
+        var isMaddeEklenebilir = $('#IsMaddeEklenebilir').prop('checked');
+        if (isMaddeEklenebilir) $('#maddeList').removeClass('hide');
+        else $('#maddeList').addClass('hide');
+    }
+</script>
+

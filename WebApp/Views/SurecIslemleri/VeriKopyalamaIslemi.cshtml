@@ -1,0 +1,73 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@model  SurecVeriKopyalaModel
+@{
+    Layout = null;
+}
+
+@using (Ajax.BeginForm("VeriKopyalamaIslemiPost", null, new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "VeriKopyalamaIslemiForm" }))
+{
+    @Html.Hidden("VASurecID", Model.SurecBilgi.VASurecID)
+    <div class="panel panel-info" style="margin: 0px; padding: 0px;" id="_VKopyala">
+        @*<div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+                <h3 class="panel-title" style="font-size:9pt;">Sürece Madde Bilgilerini Kopyalama İşlemi</h3>
+            </div>*@
+        <div class="panel-body" style="padding: 0px;">
+            <div class="panel panel-default form-horizontal">
+                <div class="panel-body form-group-separated">
+                    <div class="form-group">
+                        <label class="col-md-3 col-xs-3 control-label">Süreç</label>
+                        <div class="col-md-9 col-xs-9">
+                            @Model.SurecBilgi.Yil Yılı Süreci
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 col-xs-3 control-label">Süreç Tarih Aralığı</label>
+                        <div class="col-md-9 col-xs-9">
+                            @Model.SurecBilgi.BaslangicTarihi.ToFormatDate() / @Model.SurecBilgi.BitisTarihi.ToFormatDate()
+                        </div>
+                    </div>
+                    <table class="table table-hover" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th width="22"></th>
+                                <th>Kopyalanacak Madde Türleri</th>
+                                <th title="Madde Türüne Ait Özelliklerini Kopyala">M.T.Ö. Kopyala</th>
+                                <th title="Önceki Süreçte Girilen Planlanan Değer Bilgilerini Kopyala">Pln. Dgr. Kopyala</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Data.Select((s, inx) => new { s, inx }))
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="text" name="MaddeSecildi" id="MaddeSecildi_@item.inx" style="width:16px;height:16px;display:none;" value="false" @(item.s.MaddeSecildi.ToChecked()) />
+                                        <input type="checkbox" class="chkMtur" style="width:16px;height:16px;" onclick="setChk(this,'MaddeSecildi_@item.inx')" @(item.s.MaddeSecildi.ToChecked()) />
+                                        <input type="hidden" name="MaddeTurID" value="@item.s.MaddeTurID" />
+                                    </td>
+                                    <td style="cursor:pointer;" onclick="$(this).parent().find('.chkMtur').first().click();">@item.s.MaddeTurAdi</td>
+                                    <td>
+                                        <input type="text" name="MaddeTurOzellikleriniKopyala" id="MaddeTurOzellikleriniKopyala_@item.inx" style="width:16px;height:16px;display:none;" value="false" @(item.s.MaddeTurOzellikleriniKopyala.ToChecked()) />
+                                        <input type="checkbox" style="width:16px;height:16px;" onclick="setChk(this,'MaddeTurOzellikleriniKopyala_@item.inx')" @(item.s.MaddeTurOzellikleriniKopyala.ToChecked()) />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="PlanlananDegerleriKopyala" id="PlanlananDegerleriKopyala_@item.inx" style="width:16px;height:16px;display:none;" value="false" @(item.s.PlanlananDegerleriKopyala.ToChecked()) />
+                                        <input type="checkbox" @(item.s.IsPlanlananDegerOlacak ? "" : "disabled") style="width:16px;height:16px;" onclick="setChk(this,'PlanlananDegerleriKopyala_@item.inx')" @(item.s.IsPlanlananDegerOlacak.ToChecked()) />
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function setChk(sndr, id) { 
+            var chkd = $(sndr).prop('checked');
+            $('#' + id).val(chkd == true ? "true" : "false");
+        }
+    </script>
+}

@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{13A46E41-9EC9-4827-8AB9-6E466E29A0A5}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebApp</RootNamespace>
+    <AssemblyName>WebApp</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QRCoder, Version=1.4.3.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.4.3\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.1\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.9\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.9\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Business\BfrDonemlerBus.cs" />
+    <Compile Include="Business\BfrFormYukleBus.cs" />
+    <Compile Include="Business\BirimlerBus.cs" />
+    <Compile Include="Business\FaaliyetlerBus.cs" />
+    <Compile Include="Business\FrDonemlerBus.cs" />
+    <Compile Include="Business\FrFormYukleBus.cs" />
+    <Compile Include="Business\GtDonemlerBus.cs" />
+    <Compile Include="Business\GtVeriGirisiBus.cs" />
+    <Compile Include="Business\MaddelerBus.cs" />
+    <Compile Include="Business\MaddeTurleriBus.cs" />
+    <Compile Include="Business\MailIslemleriBus.cs" />
+    <Compile Include="Business\MenulerBus.cs" />
+    <Compile Include="Business\MesajKategorileriBus.cs" />
+    <Compile Include="Business\MesajlarBus.cs" />
+    <Compile Include="Business\RaporlarBus.cs" />
+    <Compile Include="Business\RollerBus.cs" />
+    <Compile Include="Business\SistemBilgilendirmeBus.cs" />
+    <Compile Include="Business\SurecIslemleriBus.cs" />
+    <Compile Include="Business\UnvanlarBus.cs" />
+    <Compile Include="Business\UserBus.cs" />
+    <Compile Include="Business\VeriGirisiBus.cs" />
+    <Compile Include="Business\YetkiGrupBus.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AjaxController.cs" />
+    <Compile Include="Controllers\AppEventController.cs" />
+    <Compile Include="Controllers\BFRDonemIslemleriController.cs" />
+    <Compile Include="Controllers\BFRFormOlusturController.cs" />
+    <Compile Include="Controllers\BFRFormYukleController.cs" />
+    <Compile Include="Controllers\BirimlerController.cs" />
+    <Compile Include="Controllers\DuyurularController.cs" />
+    <Compile Include="Controllers\FaaliyetlerController.cs" />
+    <Compile Include="Controllers\FRDonemIslemleriController.cs" />
+    <Compile Include="Controllers\FRFormOlusturController.cs" />
+    <Compile Include="Controllers\FRFormYukleController.cs" />
+    <Compile Include="Controllers\GTBirimlerController.cs" />
+    <Compile Include="Controllers\GTDonemIslemleriController.cs" />
+    <Compile Include="Controllers\GTHesapKodlariController.cs" />
+    <Compile Include="Controllers\GTHesapNumaralariController.cs" />
+    <Compile Include="Controllers\GTVergiKimlikNumaralariController.cs" />
+    <Compile Include="Controllers\GTVeriGirisiController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\KDuyurularController.cs" />
+    <Compile Include="Controllers\KullanicilarController.cs" />
+    <Compile Include="Controllers\MaddelerController.cs" />
+    <Compile Include="Controllers\MaddeTurleriController.cs" />
+    <Compile Include="Controllers\MailIslemleriController.cs" />
+    <Compile Include="Controllers\MailSablonlariController.cs" />
+    <Compile Include="Controllers\MailSablonlariSistemController.cs" />
+    <Compile Include="Controllers\MesajKategorileriController.cs" />
+    <Compile Include="Controllers\MesajlarController.cs" />
+    <Compile Include="Controllers\RaporTipleriController.cs" />
+    <Compile Include="Controllers\RprBirimRaporlariController.cs" />
+    <Compile Include="Controllers\SistemAyarlariController.cs" />
+    <Compile Include="Controllers\SistemBilgilendirmeController.cs" />
+    <Compile Include="Controllers\SurecIslemleriController.cs" />
+    <Compile Include="Controllers\UnvanlarController.cs" />
+    <Compile Include="Controllers\VeriGirisiController.cs" />
+    <Compile Include="Controllers\YetkiGruplariController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CaptchaImageRequests.cs" />
+    <Compile Include="Models\ExcelDataImportModel.cs" />
+    <Compile Include="Models\FilterModels.cs" />
+    <Compile Include="Models\MailManager.cs" />
+    <Compile Include="Models\OnlineUsers.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ApplicationTasks\MailTaskRunner.cs" />
+    <Compile Include="Utilities\Dtos\ComboModels.cs" />
+    <Compile Include="Utilities\Dtos\VeriGirisDto.cs" />
+    <Compile Include="Utilities\Extensions\ExceptionExtension.cs" />
+    <Compile Include="Utilities\Extensions\FileExtension.cs" />
+    <Compile Include="Utilities\Extensions\IconExtension.cs" />
+    <Compile Include="Utilities\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Utilities\Extensions\ResultExtension.cs" />
+    <Compile Include="Utilities\Extensions\ValueControlExtension.cs" />
+    <Compile Include="Utilities\Extensions\ValueConverterExtension.cs" />
+    <Compile Include="Utilities\Extensions\ValueReplaceExtension.cs" />
+    <Compile Include="Utilities\Extensions\ValueTypeControlExtension.cs" />
+    <Compile Include="Utilities\Filters\IPFilterAttribute.cs" />
+    <Compile Include="Utilities\Helpers\DeviceTypeHelper.cs" />
+    <Compile Include="Utilities\Helpers\Dynamic.cs" />
+    <Compile Include="Utilities\Helpers\EvaluteExpressionHelper.cs" />
+    <Compile Include="Utilities\Helpers\ImageHelper.cs" />
+    <Compile Include="Utilities\Helpers\JsonConverter.cs" />
+    <Compile Include="Utilities\Helpers\OnlineUsersHelper.cs" />
+    <Compile Include="Utilities\Helpers\StaticDefinitions.cs" />
+    <Compile Include="Utilities\Helpers\ThreeDHelper.cs" />
+    <Compile Include="Utilities\Helpers\UrlInfoHelper.cs" />
+    <Compile Include="Utilities\Helpers\ViewRenderHelper.cs" />
+    <Compile Include="Utilities\MenuAndRoles\MenuVeRoller.cs" />
+    <Compile Include="Utilities\MessageBox\MessageBox.cs" />
+    <Compile Include="Utilities\Results\DataResult.cs" />
+    <Compile Include="Utilities\Results\IDataResult.cs" />
+    <Compile Include="Utilities\Results\IResult.cs" />
+    <Compile Include="Utilities\Results\Result.cs" />
+    <Compile Include="Utilities\SystemData\ComboData.cs" />
+    <Compile Include="Utilities\SystemSetting\GlobalSistemSetting.cs" />
+    <Compile Include="Utilities\SystemSetting\SistemAyar.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-grid.rtl.css" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-utilities.css" />
+    <Content Include="Content\bootstrap-utilities.min.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.rtl.css" />
+    <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.esm.js" />
+    <Content Include="Scripts\bootstrap.esm.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\getOnlineUserList.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\ParolaSifirla.cshtml" />
+    <Content Include="Views\Ajax\GetChkList.cshtml" />
+    <Content Include="Views\Ajax\getImageUpload.cshtml" />
+    <Content Include="Views\Ajax\getKullaniciDetay.cshtml" />
+    <Content Include="Views\Ajax\getMailContent.cshtml" />
+    <Content Include="Views\Ajax\getMailTableContent.cshtml" />
+    <Content Include="Views\Ajax\getMessage.cshtml" />
+    <Content Include="Views\Ajax\MailGonder.cshtml" />
+    <Content Include="Views\Ajax\MesajKaydet.cshtml" />
+    <Content Include="Views\Ajax\PdfViewer.cshtml" />
+    <Content Include="Views\AppEvent\Error.cshtml" />
+    <Content Include="Views\AppEvent\PageNotFound.cshtml" />
+    <Content Include="Views\BFRDonemIslemleri\DetaySablon.cshtml" />
+    <Content Include="Views\BFRDonemIslemleri\Index.cshtml" />
+    <Content Include="Views\BFRDonemIslemleri\Kayit.cshtml" />
+    <Content Include="Views\BFRFormOlustur\Index.cshtml" />
+    <Content Include="Views\BFRFormOlustur\Kayit.cshtml" />
+    <Content Include="Views\BFRFormYukle\DetaySablon.cshtml" />
+    <Content Include="Views\BFRFormYukle\DosyaYuklePartial.cshtml" />
+    <Content Include="Views\BFRFormYukle\getFormYukle.cshtml" />
+    <Content Include="Views\BFRFormYukle\Index.cshtml" />
+    <Content Include="Views\Birimler\Index.cshtml" />
+    <Content Include="Views\Birimler\Kayit.cshtml" />
+    <Content Include="Views\Duyurular\Index.cshtml" />
+    <Content Include="Views\Duyurular\Kayit.cshtml" />
+    <Content Include="Views\Faaliyetler\Index.cshtml" />
+    <Content Include="Views\Faaliyetler\Kayit.cshtml" />
+    <Content Include="Views\FRDonemIslemleri\DetaySablon.cshtml" />
+    <Content Include="Views\FRDonemIslemleri\Index.cshtml" />
+    <Content Include="Views\FRDonemIslemleri\Kayit.cshtml" />
+    <Content Include="Views\FRFormOlustur\Index.cshtml" />
+    <Content Include="Views\FRFormOlustur\Kayit.cshtml" />
+    <Content Include="Views\FRFormYukle\DetaySablon.cshtml" />
+    <Content Include="Views\FRFormYukle\DosyaYuklePartial.cshtml" />
+    <Content Include="Views\FRFormYukle\getFormYukle.cshtml" />
+    <Content Include="Views\FRFormYukle\Index.cshtml" />
+    <Content Include="Views\GTBirimler\Index.cshtml" />
+    <Content Include="Views\GTBirimler\Kayit.cshtml" />
+    <Content Include="Views\GTDonemIslemleri\DetaySablon.cshtml" />
+    <Content Include="Views\GTDonemIslemleri\Index.cshtml" />
+    <Content Include="Views\GTDonemIslemleri\Kayit.cshtml" />
+    <Content Include="Views\GTHesapKodlari\Index.cshtml" />
+    <Content Include="Views\GTHesapKodlari\Kayit.cshtml" />
+    <Content Include="Views\GTHesapNumaralari\Index.cshtml" />
+    <Content Include="Views\GTHesapNumaralari\Kayit.cshtml" />
+    <Content Include="Views\GTVergiKimlikNumaralari\Index.cshtml" />
+    <Content Include="Views\GTVergiKimlikNumaralari\Kayit.cshtml" />
+    <Content Include="Views\GTVeriGirisi\Index.cshtml" />
+    <Content Include="Views\GTVeriGirisi\Kayit.cshtml" />
+    <Content Include="Views\KDuyurular\DuyuruHtml.cshtml" />
+    <Content Include="Views\KDuyurular\Index.cshtml" />
+    <Content Include="Views\Kullanicilar\Index.cshtml" />
+    <Content Include="Views\Kullanicilar\Kayit.cshtml" />
+    <Content Include="Views\Kullanicilar\KullaniciBirimYetkileri.cshtml" />
+    <Content Include="Views\Kullanicilar\KullaniciHesapKodYetkileri.cshtml" />
+    <Content Include="Views\Kullanicilar\KullaniciHesapNoYetkileri.cshtml" />
+    <Content Include="Views\Kullanicilar\Yetkilendirme.cshtml" />
+    <Content Include="Views\Maddeler\Index.cshtml" />
+    <Content Include="Views\Maddeler\Kayit.cshtml" />
+    <Content Include="Views\MaddeTurleri\Index.cshtml" />
+    <Content Include="Views\MaddeTurleri\Kayit.cshtml" />
+    <Content Include="Views\MailIslemleri\Gonder.cshtml" />
+    <Content Include="Views\MailIslemleri\Index.cshtml" />
+    <Content Include="Views\MailIslemleri\MailDetay.cshtml" />
+    <Content Include="Views\MailSablonlariSistem\Index.cshtml" />
+    <Content Include="Views\MailSablonlariSistem\Kayit.cshtml" />
+    <Content Include="Views\MailSablonlari\Index.cshtml" />
+    <Content Include="Views\MailSablonlari\Kayit.cshtml" />
+    <Content Include="Views\MesajKategorileri\Index.cshtml" />
+    <Content Include="Views\MesajKategorileri\Kayit.cshtml" />
+    <Content Include="Views\Mesajlar\getMesajDetay.cshtml" />
+    <Content Include="Views\Mesajlar\Index.cshtml" />
+    <Content Include="Views\RaporTipleri\Index.cshtml" />
+    <Content Include="Views\RaporTipleri\Kayit.cshtml" />
+    <Content Include="Views\RprBirimRaporlari\Index.cshtml" />
+    <Content Include="Views\SistemAyarlari\Index.cshtml" />
+    <Content Include="Views\SistemBilgilendirme\Index.cshtml" />
+    <Content Include="Views\SurecIslemleri\DetaySablon.cshtml" />
+    <Content Include="Views\SurecIslemleri\GetBirimBilgileri.cshtml" />
+    <Content Include="Views\SurecIslemleri\GetBirimMaddeleri.cshtml" />
+    <Content Include="Views\SurecIslemleri\GetMaddeBilgileri.cshtml" />
+    <Content Include="Views\SurecIslemleri\GetMaddeBirimleri.cshtml" />
+    <Content Include="Views\SurecIslemleri\Index.cshtml" />
+    <Content Include="Views\SurecIslemleri\Kayit.cshtml" />
+    <Content Include="Views\SurecIslemleri\VeriKopyalamaIslemi.cshtml" />
+    <Content Include="Views\Unvanlar\Index.cshtml" />
+    <Content Include="Views\Unvanlar\Kayit.cshtml" />
+    <Content Include="Views\VeriGirisi\DetaySablon.cshtml" />
+    <Content Include="Views\VeriGirisi\Index.cshtml" />
+    <Content Include="Views\VeriGirisi\ViewAciklamaEkle.cshtml" />
+    <Content Include="Views\VeriGirisi\ViewAciklamaEklenenler.cshtml" />
+    <Content Include="Views\VeriGirisi\ViewKanitDosyasiEkle.cshtml" />
+    <Content Include="Views\VeriGirisi\ViewKanitDosyasiEklenenler.cshtml" />
+    <Content Include="Views\VeriGirisi\ViewVeriGirisOnayDurum.cshtml" />
+    <Content Include="Views\YetkiGruplari\Index.cshtml" />
+    <Content Include="Views\YetkiGruplari\Kayit.cshtml" />
+    <Content Include="Views\Shared\_LayoutPupupFrame.cshtml" />
+    <Content Include="Views\Shared\_LayoutSelectPdfCss.cshtml" />
+    <Content Include="Views\Shared\_MenuPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.rtl.min.css.map" />
+    <Content Include="Content\bootstrap.rtl.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.css.map" />
+    <Content Include="Content\bootstrap-utilities.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.esm.min.js.map" />
+    <Content Include="Scripts\bootstrap.esm.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BiskaUtil\BiskaUtil.csproj">
+      <Project>{a2d2b3e6-8b49-4aab-a6a0-7dd26020f306}</Project>
+      <Name>BiskaUtil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Database\Database.csproj">
+      <Project>{44316b9a-67a2-482f-b255-92b4b8355651}</Project>
+      <Name>Database</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>55419</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:55419/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

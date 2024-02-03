@@ -1,0 +1,72 @@
+﻿@using Database;
+@using WebApp.Business 
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.Helpers
+@{
+    Layout = null;
+    var urlInfo = Request.Url.ToUrlInfo(); 
+    var menudata = MenulerBus.GetAllMenu().ToList(); 
+
+    var mMenu = UserBus.GetUserMenus().ToList();
+    IEnumerable<Menuler> eklenecekler;
+    do
+    {
+        
+        var pids = mMenu.Where(p => p.BagliMenuID.HasValue && p.BagliMenuID.Value > 0).Select(s => s.BagliMenuID.Value);
+        var ids = mMenu.Select(s => s.MenuID);
+        var ekiskIds = pids.Except(ids);
+        eklenecekler = menudata.Where(p => ekiskIds.Contains(p.MenuID)).ToArray();
+
+        mMenu.AddRange(eklenecekler);
+    }
+    while (eklenecekler.Any());
+
+    mMenu.AddRange(menudata.Where(p => p.YetkisizErisim.HasValue && p.YetkisizErisim.Value && mMenu.Any(a => a.MenuID == p.MenuID) == false));
+    mMenu = mMenu.OrderBy(o => o.SiraNo).ToList();
+
+
+
+    var sb = new System.Text.StringBuilder();
+    Func<int?, bool> fxMenu = null;
+}
+@{
+    fxMenu = (parentId) =>
+    {
+        Menuler[] menuler = null;
+        menuler = !parentId.HasValue ? mMenu.Where(p => p.BagliMenuID == 0).ToArray() : mMenu.Where(p => p.BagliMenuID == parentId).ToArray();
+        if (menuler.Any())
+        {
+            for (int i = 0; i < menuler.Count(); i++)
+            {
+                var menu = menuler[i];
+                string menuAdi =   menu.MenuAdi;
+                string menuAd = "<span class='"+(parentId.HasValue?"": "xn-text") +"'>" + menuAdi + "</span>";  
+                string autC = menu.AuthenticationControl;
+                bool navAutC = !menu.AuthenticationControl.IsNullOrWhiteSpace();
+                var hrefUrl = navAutC || menu.MenuUrl.IsNullOrWhiteSpace() ? "javascript:void(0);" : (urlInfo.Root + menu.MenuUrl);
+
+                var hassubmenu = (mMenu.Any(a => a.BagliMenuID == menu.MenuID));
+                var isActive= (mMenu.Any(a => a.BagliMenuID == menu.MenuID && ("/"+a.MenuUrl.Replace("I","i").ToLower())==urlInfo.LastPath)) || hrefUrl.Replace("I","i").ToLower()==urlInfo.LastPath;
+                sb.AppendLine("<li class='" + (hassubmenu ? "xn-openable" : "") + (isActive?" active":"")+ "'>" +
+                              "<a href='" + hrefUrl + "' " + (navAutC ? ("onclick='" + autC + "'") : "") + " menuurl='" + urlInfo.Root.ToLower() +  menu.MenuUrl.Replace("I", "i").ToLower() + "'>" +
+                              "<i class='" + menu.MenuCssClass + "' style='margin-right:3px;'></i>" + menuAd +
+                              "</a>");
+                if (hassubmenu)
+                {
+                    sb.AppendLine("<ul>");
+                    fxMenu(menu.MenuID);
+                    sb.AppendLine("</ul>");
+                }
+                sb.AppendLine("</li>");
+            }
+        }
+
+        return true;
+    };
+
+
+    fxMenu(null);
+
+}
+@Html.Raw(sb.ToString())
+

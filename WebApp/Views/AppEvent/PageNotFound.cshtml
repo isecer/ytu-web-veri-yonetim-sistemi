@@ -1,0 +1,27 @@
+﻿@using WebApp.Models
+@using BiskaUtil
+@using WebApp.Business
+@using WebApp.Utilities.Extensions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var sayfaAdi = (string)ViewBag.SayfaAdi;
+    var errC = (int?)ViewBag.ErrC; 
+    SistemBilgilendirmeBus.SistemBilgisiKaydet("Sayfa Çağırma Hatası! Bulunamayan Sayfa= " + sayfaAdi.ToStrObjEmptString(), sayfaAdi.ToStrObjEmptString(), BilgiTipi.OnemsizHata, (UserIdentity.Current.IsAuthenticated ? UserIdentity.Current.Id : (int?)null), UserIdentity.Ip);    
+
+} 
+<div class="error-container">
+    <div class="error-code">Hata !</div>
+    <div class="icon-preview"><i class="fa fa-eye-slash"></i></div>
+    <div class="error-text">@(errC == HttpDurumKod.Unauthorized ? "Bu İşlemi Yapmaya Yetkili Değilsiniz" : "Çağrılan sayfa bulunamadı")</div>
+    <div class="error-subtext">@(errC == HttpDurumKod.Unauthorized ? "Bu İşlemi Yapmaya Yetkili Değilsiniz" : "Sayfa Çağırma Hatası! Bulunamayan Sayfa") "@sayfaAdi"</div>
+    <div class="error-actions">
+        <div class="row">
+            <div class="col-md-6">
+                <button class="btn btn-info btn-block btn-lg" onclick="document.location.href = '@Url.Action("Index","Home")' ;">Ana sayfaya dön</button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-primary btn-block btn-lg" onclick="history.back();">Bir önceki sayfaya git</button>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,100 @@
+﻿@using WebApp.Models
+@model FrSurecIslemleri
+@{
+    Layout = null;
+}
+
+<div class="panel" id="PnlBirim_@Model.VASurecID" style="margin:0px;">
+    <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+        <h3 class="panel-title">
+            <i class="fa fa-home"></i>Birimler
+        </h3>
+        <ul class="panel-controls">
+
+            <li id="FilterInfo_B_@Model.VASurecID">
+            </li>
+            <li>
+                <span class="label label-primary label-form" style="padding:1px;padding-left:3px;padding-right:3px;">
+                    <input style="color:maroon;" type="text" autocomplete="off" name="search" onkeypress="return FilterInputKeyPress(this, event,'B_@Model.VASurecID');" placeholder="ara...">
+                </span>
+
+            </li>
+            <li>
+                <span class="label label-primary" style="padding:1px;padding-left:3px;padding-right:3px;">
+                    Veri Giriş Durumu:
+                    @Html.DropDownList("SelectListBirimDurum", Model.SListBirimDurum, new { style = "color:black;", onchange = "setselectedBirimDurumID($(this).val()," + Model.VASurecID + "); SubData(" + Model.VASurecID + ");" })
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div class="panel" style="margin: 0px; padding: 0px;">
+        <div class="panel-body" style="margin: 0px; padding: 0px;">
+            <div class="col-md-12" style="height:610px;">
+                <table class="table" style="margin-bottom:0px;">
+                    <thead>
+                        <tr>
+                            <th height="40" width="75"></th>
+                            <th width="45" style="font-size:10pt;">B Kod</th>
+                            <th style="font-size:10pt;">Birim Adı</th>
+                            <th style="font-size:10pt;text-align:right;" width="120">Toplam Madde</th>
+                            <th style="font-size:10pt;text-align:right;color:#95b75d;" width="120">Veri Girilen</th>
+                            <th style="font-size:10pt;text-align:right;color:#3fbae4;" width="120">Kalan Madde</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" style="padding:0px;">
+                                <div class="scrolkikko" style="max-height:565px;overflow:auto;">
+                                    <table class="table table-hover" style="width:100%;table-layout:fixed;" id="Filter_Table_B_@Model.VASurecID">
+                                        @{
+                                            var rowIndex = 0;
+                                            foreach (var item in Model.BirimData)
+                                            {
+                                                rowIndex++;
+                                                var rowGd = "B-" + Model.VASurecID + "-" + item.BirimID;
+
+                                                <tr class="MainRow">
+                                                    <td width="75">
+                                                        <table>
+                                                            <tr>
+                                                                <td style="width:30px;">@rowIndex</td>
+                                                                <td>
+                                                                    <ul class="panel-controls">
+                                                                        <li id="iShow_@rowGd" onclick="ShowDetail2(@Model.VASurecID,@item.BirimID,'@rowGd',false)">
+                                                                            <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                    <td width="45" class="Filter_Col_B_@Model.VASurecID">
+                                                        @item.BirimKod
+                                                    </td>
+                                                    <td class="Filter_Col_B_@Model.VASurecID">
+                                                        @item.BirimAdi
+                                                    </td>
+                                                    <td width="120" style="text-align:right;color:black;font-weight:bold;font-size:13pt;">@item.ToplamCount</td>
+                                                    <td width="120" style="text-align:right;color:#95b75d;font-weight:bold;font-size:13pt;">@item.TamamlananCount</td>
+                                                    <td width="120" style="text-align:right;color:#3fbae4;font-weight:bold;font-size:13pt;">@(item.ToplamCount - item.TamamlananCount)</td>
+                                                </tr>
+                                                <tr class="MainRow2 hide cls-@rowGd">
+                                                    <td id="cls-@rowGd" colspan="6" style="padding: 1px 1px 2px 75px;">
+                                                        <div class="panel" id="pnl-@rowGd">
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            }
+                                        }
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 

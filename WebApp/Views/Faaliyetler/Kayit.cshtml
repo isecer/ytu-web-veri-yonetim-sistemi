@@ -1,0 +1,103 @@
+﻿@using Database
+@using WebApp.Business
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.Helpers
+@using WebApp.Utilities.MessageBox
+@model Faaliyetler
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var secilenlerKy = (List<int>)ViewBag.SecilenlerKy;
+    var secilenlerAy = (List<int>)ViewBag.SecilenlerAy;
+    var secilenlerMd = (List<int>)ViewBag.SecilenlerMd; 
+   
+    var ayData = FaaliyetlerBus.GetFaaliyetAylari(Model.FaaliyetID, secilenlerAy);
+    ayData.InputName = "AyID";
+    ayData.PanelTitle = "İlgili Ayları Seçiniz";
+    var kyData = FaaliyetlerBus.GetFaaliyetKaynaklari(Model.FaaliyetID, secilenlerKy);
+    kyData.InputName = "KaynakID";
+    kyData.PanelTitle = "İlgili Kaynakları Seçiniz";
+    var mdData = FaaliyetlerBus.GetFaaliyetMaddeleri(Model.FaaliyetID, secilenlerMd);
+    mdData.InputName = "MaddeID";
+    mdData.PanelTitle = "İlgili Maddeleri Seçiniz";
+    }
+<div class="row">
+    <form method="post" class="form-horizontal" role="form">
+        <input type="text" style="display:none;" id="FaaliyetID" name="FaaliyetID" value="@Model.FaaliyetID" />
+        <div class="col-md-12 col-md-12 col-md-12">
+            <div class="panel panel-default" id="bPanel">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> @(Model.FaaliyetKod.IsNullOrWhiteSpace() ? "Yeni Faaliyet Tanımlama" : Model.FaaliyetKod + " Kodlu Faaliyet Güncelleme İşlemi")</h3>
+                    <ul class="panel-controls">
+                        <li><a href="@Url.Action("Kayit", Model.FaaliyetKod)" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Faaliyet Kodu</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="FaaliyetKod" id="FaaliyetKod" value="@Model.FaaliyetKod" maxlength="4" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Faaliyet Adı</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="FaaliyetAdi" id="FaaliyetAdi" value="@Model.FaaliyetAdi" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Takip Göstergesi</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="TakipGostergesi" id="TakipGostergesi" value="@Model.TakipGostergesi" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Planlanan Gerçekleşme Zamanı</label>
+                                <div class="col-md-10 col-xs-10" id="mAyList">
+                                    @ayData.ToRenderPartialViewHtml("Ajax", "getChkList")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Kaynaklar</label>
+                                <div class="col-md-10 col-xs-10" id="mAyList">
+                                    @kyData.ToRenderPartialViewHtml("Ajax", "getChkList")
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Göstergeler</label>
+                                <div class="col-md-10 col-xs-10" id="bOList">
+                                    @mdData.ToRenderPartialViewHtml("Ajax", "getChkList")
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Durum</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <div class="make-switch" data-on-label="Aktif" data-off-label="Pasif" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" name="IsAktif" class="toggle" @Model.IsAktif.ToChecked() />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+    });
+</script>
+

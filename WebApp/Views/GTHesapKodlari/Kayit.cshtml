@@ -1,0 +1,136 @@
+﻿@using Database
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MessageBox
+@model GTHesapKodlari
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="row">
+    <form method="post" class="form-horizontal" role="form">
+        <input type="text" style="display:none;" id="GTHesapKodID" name="GTHesapKodID" value="@Model.GTHesapKodID" />
+        <div class="col-md-12 col-md-12 col-md-12">
+            <div class="panel panel-default" id="bPanel">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> @(Model.GTHesapKodID <= 0 ? "Yeni Hesap Kodu Tanımlama" : "Varolan Hesap Kodu Güncelleme İşlemi")</h3>
+                    <ul class="panel-controls">
+                        <li><a href="@Url.Action("Kayit","GTHesapKodlari",new {id= Model.GTHesapKodID })" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Hesap Kodu</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="HesapKod" id="HesapKod" value="@Model.HesapKod" maxlength="16" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Hesap Adı</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="HesapKodAdi"  id="HesapKodAdi" value="@Model.HesapKodAdi" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Gelir Nitelikleri</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <div>
+                                        <table style="width:100%;">
+                                            <tr>
+                                                <th>
+                                                    <input type="text" name="GelirNiteligiAdi_" id="GelirNiteligiAdi_" maxlength="256" class="form-control" />
+                                                </th>
+                                                <th width="40">
+                                                    <a style="float: right;" onclick="Ekle()" href="javascript:void(0);" class="btn btn-primary"><i class="fa fa-plus">&nbsp;</i>Ekle</a>
+                                                </th>
+                                            </tr>
+                                        </table>
+                                      
+                                    </div>
+                                    <div class="panel panel-primary" style="padding: 0px; margin: 0px;"> 
+
+                                        <div class="panel-body">
+                                           
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Gelir Niteliği</th>
+                                                        <th width="40"></th>
+                                                    </tr>
+                                                    
+                                                </thead>
+                                                <tbody id="Rw_tbody">
+                                                    @foreach (var item in Model.GTHesapKodlariGelirNitelikleris)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <input type="hidden" name="GTHesapKodlariGelirNiteligiID" value="@item.GTHesapKodlariGelirNiteligiID" />
+                                                                <input type="hidden" name="GelirNiteligiAdi" value="@item.GelirNiteligiAdi" />
+                                                                @item.GelirNiteligiAdi
+                                                            </td>
+                                                            <td>
+                                                                <a href="javascript:void(0)" onclick="$(this).parents('tr').first().remove();" style="font-size:14pt;"><i class="fa fa-trash-o tooltips" data-style="blue" data-original-title="Kaldır"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    } 
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.GTHesapKodID > 0)
+                            {
+
+                                <div class="form-group">
+                                    <label class="col-md-2 col-xs-2 control-label">Durum</label>
+                                    <div class="col-md-10 col-xs-10">
+                                        <div class="make-switch" data-on-label="Aktif" data-off-label="Pasif" data-on="success" data-off="danger">
+                                            <input type="checkbox" value="true" name="IsAktif" class="toggle" @Model.IsAktif.ToChecked() />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+    });
+
+    function Ekle() {
+        var GelirNiteligiAdi_ = $('#GelirNiteligiAdi_').val(); 
+        var msg = "";
+        var ekle = true;
+        if (GelirNiteligiAdi_.trim() == "") { ekle = false; msg = "Gelir Niteliği adını giriniz!" }
+
+        if (ekle) {
+        
+            var row = "<tr>" +
+                "<td><input type='hidden' name='GTHesapKodlariGelirNiteligiID' value='0' /><input type='hidden' name='GelirNiteligiAdi' value='" + GelirNiteligiAdi_ + "' />" + GelirNiteligiAdi_ + "</td>" + 
+                "<td><a href='javascript:void(0)' style='font-size:14pt;' onclick=$(this).parents('tr').first().remove();><i class='fa fa-trash-o tooltips' data-style='blue' data-original-title='Kaldır'></i></a></td>" +
+                "</tr>";
+            $('#Rw_tbody').append(row);
+            $('#GelirNiteligiAdi_').val('');
+        }
+        else {
+            showMessage("danger", "Dikkat", msg); 
+        }
+    }
+</script>
+

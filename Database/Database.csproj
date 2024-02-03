@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{44316B9A-67A2-482F-B255-92B4B8355651}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Database</RootNamespace>
+    <AssemblyName>Database</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ayarlar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Aylar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BFRDonemlerForm.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BFRDonemlerFormBirim.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BFRDonemlerFormGirisleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BFRDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BFRFormlar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BFRFormlarBirim.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Birimler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BirimMaddeleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DuyuruEkleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Duyurular.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Faaliyetler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FaaliyetlerAy.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FaaliyetlerKaynak.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FaaliyetlerMadde.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FRDonemlerForm.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FRDonemlerFormBirim.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FRDonemlerFormGirisleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FRDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FRFormlar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FRFormlarBirim.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GonderilenMailEkleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GonderilenMailKullanicilar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GonderilenMailler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTBirimHesapKodlari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTBirimHesapNumaralari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTBirimler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTHesapKodlari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTHesapKodlariGelirNitelikleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTHesapNumaralari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTVergiKimlikNumaralari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTVeriGirisDurumlari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTVeriGirisi.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GTVerigirisiDetay.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Gunler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Kaynaklar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KullaniciBirimleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KullaniciGTHesapKodlari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KullaniciGTHesapNumaralari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Kullanicilar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KullanicilarLog.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Maddeler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaddelerEslestirilenTurler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaddelerFormulEslesenMaddeler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaddelerVeriGirisDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaddeTurleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MaddeYilSonuDegerHesaplamaTipleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MailSablonlari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MailSablonlariEkleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MailSablonTipleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Menuler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MesajEkleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MesajKategorileri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mesajlar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RaporTipleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RaporTipleriSecilenMaddeler.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Roller.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SistemBilgilendirme.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_BirimAgaciGetBr_Result.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_BirimAgaci_Result.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_MaddeAgaciGetMd_Result.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_MaddeAgaci_Result.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Unvanlar.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VACokluVeriDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriBirim.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriBirimMadde.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriMadde.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriMaddeEklenenAciklama.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriMaddeEklenenDosya.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriMaddeFormulEslesenMadde.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriMaddeGirilenDeger.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VASurecleriMaddeVeriGirisDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VeriGirisSekilleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VeriTipleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vw_BirimlerTree.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vw_MaddelerTree.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vw_MaddeVeriGirisDurum.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VysDb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VysDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VysDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VysDb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VysDb.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="YetkiGruplari.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="YetkiGrupRolleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="VysDb.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>VysDb.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="packages.config" />
+    <None Include="VysDb.edmx.diagram">
+      <DependentUpon>VysDb.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="VysDb.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VysDb.Context.cs</LastGenOutput>
+      <DependentUpon>VysDb.edmx</DependentUpon>
+    </Content>
+    <Content Include="VysDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>VysDb.edmx</DependentUpon>
+      <LastGenOutput>VysDb.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

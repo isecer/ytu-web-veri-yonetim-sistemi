@@ -1,0 +1,251 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model  FmBfrFormOlsur
+@{
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kayitYetki = RoleNames.BFRFormOluşturKayitYetkisi.InRole();
+}
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-12">
+
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-list-alt"></i> Oluşturulan Form Listesi</h3>
+                    <ul class="panel-controls">
+                        @if (kayitYetki)
+                        {
+                            <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit")" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        }
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-success label-form">Aktif: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-danger label-form">Pasif: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a>
+                        </li>
+
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th class="sirala sorting" field="FormAdi">Form Adı Adı</th>
+                                <th class="sirala sorting">Dosya</th>
+                                <th width="70">E.B.S</th>
+                                <th width="70" class="sirala sorting" field="IsAktif">Durum</th>
+                                <th width="35"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="filtrele">
+                                <th></th>
+                                <th>
+                                    <input name="FormAdi" type="text" value="@Model.FormAdi" class="form-control" />
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th>
+                                    @Html.DropDownList("IsAktif", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                                <th> </th>
+                            </tr>
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++;
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@item.BFRFormID" onclick="ShowDetail(@item.BFRFormID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            @item.FormAdi
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Content(item.DosyaYolu)" target="_blank" style="color:green;"><i class="fa fa-file-excel-o" style="color:green;"></i> @item.DosyaAdi</a>
+
+                                        </td>
+                                        <td style="font-weight:bold; font-size:11pt;" title="Eşleştirilen birim sayısı">@item.FormBirimleri.Count</td>
+                                        <td id="tdIa_@item.BFRFormID" style="text-align:center;">
+                                            <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                        </td>
+                                        <td>
+                                            @if (kayitYetki)
+                                            {
+                                                <a href="@Url.Action("Kayit", "BFRFormOlustur", new { id = item.BFRFormID })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
+                                                <a href="javascript:void(0)" onclick="SilmeOnay(this,@item.BFRFormID)"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr class="cls-@item.BFRFormID hide">
+                                        <td id="cls-@item.BFRFormID" colspan="6" style="padding: 1px 1px 2px 75px;">
+                                            <div class="panel panel-default form-horizontal" id="PnlOt_@item.BFRFormID" style="margin:0px;padding:0px;">
+                                                <div class="panel-body" style="margin:0px;padding:0px;">
+                                                    <div class="panel-body form-group-separated">
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">Form Adı</label>
+                                                            <div class="col-md-10 col-xs-8">@item.FormAdi</div>
+                                                        </div>
+                                                        @if (!item.Aciklama.IsNullOrWhiteSpace())
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 col-xs-4 control-label">Açıklama</label>
+                                                                <div class="col-md-10 col-xs-8">@item.Aciklama</div>
+                                                            </div>
+                                                        }
+
+
+                                                        @if (item.FormBirimleri.Any())
+                                                        {
+                                                            <div class="form-group _replaceHide">
+                                                                <label class="col-md-2 col-xs-4 control-label">Eşleştirilen Birimler</label>
+                                                                <div class="col-md-10 col-xs-8">
+                                                                    <div class="panel panel-primary ">
+                                                                        <div class="panel-body padding-0">
+                                                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="40"></th>
+                                                                                        <th width="40">Kod</th>
+                                                                                        <th>Birim Adı</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tr>
+                                                                                    <td colspan="3">
+                                                                                        <div style="max-height:250px;overflow:auto;">
+                                                                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                                @{
+                                                                                                    var i = 0;
+                                                                                                    foreach (var itemObt in item.FormBirimleri)
+                                                                                                    {
+                                                                                                        i++;
+                                                                                                        <tr class="tr">
+                                                                                                            <td width="40">@i)</td>
+                                                                                                            <td width="40">@itemObt.BirimKod</td>
+                                                                                                            <td>
+                                                                                                                @itemObt.BirimTreeAdi
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    }
+                                                                                                }
+                                                                                            </table>
+                                                                                        </div>
+
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">Durum</label>
+                                                            <div class="col-md-10 col-xs-8" style="text-align: left;">
+                                                                <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 col-xs-4 control-label">İşlem Yapan</label>
+                                                            <div class="col-md-10 col-xs-8">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function ShowDetail(id,IsExpand) {
+        var sndr = $('#iShow_' + id);
+        var cls = 'cls-' + id;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        if (IsExpand) {
+            if (unTogled) toggleByClass(sndr, cls, unTogled);
+        }
+        else toggleByClass(sndr, cls, unTogled);
+    }
+    function SilmeOnay(sndr, id) {
+        var htmlCont = $("#cls-" + id).html().replace('_replaceHide', 'hide');
+        var SoruHtml = "<table style='color:maroon;table-layout:fixed;width:100%;'><tr><td width='30' style='padding-left:10px;'><i class='fa fa-info fa-2x'></i></td><td style='padding-right:10px;'>Seçilen Faaliyet Rapor Formunu Silmek İstiyor Musunuz?</td></tr></table>";
+        bootbox.dialog({
+            message: htmlCont + SoruHtml,
+            title: "Faaliyet Raporu Formu Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Formu Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        Sil(sndr, id);
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function Sil(sndr, id) {
+        $.ajax({
+            url: '@Url.Action("Sil", "BFRFormOlustur")',
+            data: { id: id },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Faaliyet Raporu Formu Silme İşlemi")
+                if (result.success) {
+                    $(sndr).closest("tr").remove();
+                     $(".cls-" + id).remove();
+                }
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+
+</script>

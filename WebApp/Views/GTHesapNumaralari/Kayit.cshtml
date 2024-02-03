@@ -1,0 +1,69 @@
+﻿@using Database
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MessageBox
+@model GTHesapNumaralari
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="row">
+    <form method="post" class="form-horizontal" role="form">
+        <input type="text" style="display:none;" id="GTHesapNoID" name="GTHesapNoID" value="@Model.GTHesapNoID" />
+        <div class="col-md-12 col-md-12 col-md-12">
+            <div class="panel panel-default" id="bPanel">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> @(Model.GTHesapNoID <= 0 ? "Yeni Hesap Numarası Tanımlama" : "Varolan Hesap Numarası Güncelleme İşlemi")</h3>
+                    <ul class="panel-controls">
+                        <li><a href="@Url.Action("Kayit","GTHesapKodlari",new {id= Model.GTHesapNoID })" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Hesap Numarası</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="HesapNo" id="HesapNo" value="@Model.HesapNo" maxlength="16" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Hesap Adı</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="HesapNoAdi" id="HesapNoAdi" value="@Model.HesapNoAdi" class="form-control" />
+                                </div>
+                            </div>
+                           
+                            @if (Model.GTHesapNoID > 0)
+                            {
+
+                                <div class="form-group">
+                                    <label class="col-md-2 col-xs-2 control-label">Durum</label>
+                                    <div class="col-md-10 col-xs-10">
+                                        <div class="make-switch" data-on-label="Aktif" data-off-label="Pasif" data-on="success" data-off="danger">
+                                            <input type="checkbox" value="true" name="IsAktif" class="toggle" @Model.IsAktif.ToChecked() />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+    });
+</script>
+

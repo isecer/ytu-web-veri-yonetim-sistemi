@@ -1,0 +1,95 @@
+﻿@using Database
+@using WebApp.Business
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.Helpers
+@using WebApp.Utilities.MessageBox
+@model FRFormlar
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var secilenlerMd = (List<int>)ViewBag.SecilenlerMd;
+
+
+    var mdData = FrFormYukleBus.GetFormBirimleri(Model.FRFormID, secilenlerMd);
+    mdData.ScrollMaxHeight = 230;
+    mdData.InputName = "BirimID";
+    mdData.PanelTitle = "İlgili Birimleri Seçiniz";
+}
+<div class="row">
+    <form method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
+        <input type="text" style="display:none;" id="FRFormID" name="FRFormID" value="@Model.FRFormID" />
+        <div class="col-md-12 col-md-12 col-md-12">
+            <div class="panel panel-default" id="bPanel">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> @(Model.FRFormID <= 0 ? "Yeni Form Oluştur" : "Form Güncelleme İşlemi")</h3>
+                    <ul class="panel-controls">
+                        <li><a href="@Url.Action("Kayit", Model.FRFormID)" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Form Adı</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="FormAdi" id="FormAdi" value="@Model.FormAdi" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Açıklama</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" name="Aciklama" id="Aciklama" value="@Model.Aciklama" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Form Şablonu</label>
+                                <div class="col-md-10 col-xs-10"> 
+                                    <input type="text" class="hide" name="DosyaAdi" id="DosyaAdi" value="@Model.DosyaAdi" />
+                                    <table>
+                                        <tr>
+                                            <td width="30px;"><i class="fa fa-file-excel-o" style="color:green;font-size:24pt;"></i></td>
+                                            @if (Model.FRFormID > 0)
+                                            {
+                                                <td>
+                                                    <a href="@Url.Content(Model.DosyaYolu)" target="_blank" style="color:green;font-weight:bold;">@Model.DosyaAdi</a>
+                                                </td>
+                                            } 
+                                            <td style="padding-left:15px;"><input type="file" class="fileinput btn-info" name="Form" id="Form" title="Form Dosyasını Seç" /></td>
+                                        </tr>
+                                    </table> 
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Birimler</label>
+                                <div class="col-md-10 col-xs-10" id="bOList">
+                                    @mdData.ToRenderPartialViewHtml("Ajax", "getChkList")
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Durum</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <div class="make-switch" data-on-label="Aktif" data-off-label="Pasif" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" name="IsAktif" class="toggle" @Model.IsAktif.ToChecked() />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+
+    $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+    });
+</script>
+

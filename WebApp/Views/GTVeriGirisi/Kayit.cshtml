@@ -1,0 +1,504 @@
+﻿@using Database 
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MessageBox
+@model GTVeriGirisi
+@{
+    var mmMessage = ViewBag.MmMessage as MmMessage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="row">
+    <form method="post" class="form-horizontal" role="form">
+        <input type="text" style="display:none;" id="GTVeriGirisiID" name="GTVeriGirisiID" value="@Model.GTVeriGirisiID" />
+        <input type="text" style="display:none;" id="GTDonemID" name="GTDonemID" value="@Model.GTDonemID" />
+        <div class="col-md-12 col-md-12 col-md-12">
+            <div class="panel panel-default" id="bPanel">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> @(Model.GTVeriGirisiID <= 0 ? "Yeni Veri Girişi İşlemi" : "Varolan Veri Girişini Güncelleme İşlemi")</h3>
+                    <ul class="panel-controls">
+                        <li><a href="@Url.Action("Kayit","GTVeriGirisi",new {id= Model.GTVeriGirisiID })" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default form-horizontal">
+                        <div class="panel-body form-group-separated">
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Birim</label>
+                                <div class="col-md-10 col-xs-10">
+                                    @Html.DropDownList("GTBirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "BirimChange();" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Hesap Numarası</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input type="text" style="width:100%;" name="GTHesapNoID" id="GTHesapNoID" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Aktarım Tarihi</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input class="form-control input-small" style="width:90px;" autocomplete="off" size="10" value="@(Model.AktarimTarihi==DateTime.MinValue?"":Model.AktarimTarihi.ToFormatDate())" type="text" name="AktarimTarihi" id="AktarimTarihi">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Gelen Tutar</label>
+                                <div class="col-md-10 col-xs-10">
+                                    <input class="form-control input-small" style="width:90px; text-align:right;" type="text" name="GelenTutar" id="GelenTutar" value="@(Model.GelenTutar<=0?"":Model.GelenTutar.ToString())" onchange="PriceFormat(this);" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 col-xs-2 control-label">Detaylar</label>
+                                <div class="col-md-10 col-xs-10">
+
+                                    <div class="panel panel-info" style="margin: 0px; padding: 0px;">
+                                        <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+                                            <h3 class="panel-title" style="font-size:9pt;">İlgili Detaylar</h3>
+                                            <ul class="panel-controls">
+                                                <li>
+                                                    <span class="label label-primary" style="cursor:pointer;" title="" onclick="YeniDetayEkle()"><i class="fa fa-plus fa-lg"></i>Satır Ekle</span>
+                                                </li>
+                                                <li>
+                                                    <span class="label label-info" style="cursor:pointer;" title="" onclick="YeniVknEkle()"><i class="fa fa-plus fa-lg"></i>VKN Ekle</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="panel-body" style="margin: 0px; padding: 0px;">
+                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin:0px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="240">Hesap Kodu</th>
+                                                        <th width="280">Gelir Niteliği</th>
+                                                        <th width="90">Tutar</th>
+                                                        <th width="280">Vergi Kimlik No</th>
+                                                        <th>Açıklama</th>
+                                                        <th>Dosya (PDF)</th>
+                                                        <th width="25" style="font-size:8pt;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="VeriGirisDetay">
+
+                                                    @if (Model.GTVerigirisiDetays.Any())
+                                                    {
+                                                        int inx = 0;
+                                                        foreach (var item in Model.GTVerigirisiDetays)
+                                                        {
+                                                            inx++;
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="text" class="hide" name="GTVeriGirisDetayIDs" value="@item.GTVeriGirisDetayID" />
+                                                                    <input type="text" name="GTHesapKodIDs" value="" style="width: 100%;" />
+                                                                    @if (item.GTHesapKodID > 0)
+                                                                    {
+                                                                        <span class="hide GTHesapKodID">@item.GTHesapKodID</span>
+                                                                        <span class="hide HesapKodAdi">@item.GTHesapKodlari.HesapKod / @item.GTHesapKodlari.HesapKodAdi</span>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="GTHesapKodlariGelirNiteligiIDs" style="width: 100%;" />
+                                                                    @if (item.GTHesapKodlariGelirNiteligiID > 0)
+                                                                    {
+                                                                        <span class="hide GTHesapKodlariGelirNiteligiID">@item.GTHesapKodlariGelirNiteligiID</span>
+                                                                        <span class="hide GelirNiteligiAdi">@item.GTHesapKodlariGelirNitelikleri.GelirNiteligiAdi</span>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" maxlength="18" name="Tutars" onchange="PriceFormat(this);" style="text-align:right;" value="@(item.Tutar<=0?"":item.Tutar.ToString())" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="GTVergiKimlikNoIDs" value="" style="width: 100%;" />
+
+                                                                    @if (item.GTVergiKimlikNoID > 0)
+                                                                    {
+                                                                        <span class="hide GTVergiKimlikNoID">@item.GTVergiKimlikNoID</span>
+                                                                        <span class="hide AdSoyad">@item.GTVergiKimlikNumaralari.VergiKimlikNo / @item.GTVergiKimlikNumaralari.AdSoyad</span>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" maxlength="256" name="Aciklamas" value="@item.Aciklama" />
+                                                                </td>
+                                                                <td style="text-align:center;">
+                                                                    <a href="javascript:void(0)" onclick="$(this).parents('tr').first().remove()"><i class="fa fa-trash-o fa-lg" title="Sil"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" class="hide" name="GTVeriGirisDetayIDs" value="0" />
+                                                                <input type="text" name="GTHesapKodIDs" style="width: 100%;" />
+                                                                <span class="hide GTHesapKodIDs"></span>
+                                                                <span class="hide HesapKodAdi"></span>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="GTHesapKodlariGelirNiteligiIDs" style="width: 100%;" />
+
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" style="text-align:right;" onchange="PriceFormat(this);" maxlength="18" name="Tutars" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="GTVergiKimlikNoIDs" style="width: 100%;" />
+                                                                <span class="hide GTVergiKimlikNoID"></span>
+                                                                <span class="hide AdSoyad"></span>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" maxlength="256" name="Aciklamas" />
+                                                            </td>
+                                                            @*<td>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon" style="background-color:green;"><span class="fa fa-file-pdf-o fa-lg"></span></span>
+                                                                    <input type="text" class="form-control" style="color:black;cursor:default;" value="Dosya Seçilmedi" disabled="disabled"> 
+                                                                    <input class="hide" type="file" accept="application/pdf" name="BelgeDosyasi" id="Belge_@Model.GTVeriGirisiID" onchange="ChangeFile(this,'@Model.GTVeriGirisiID');" />
+                                                                    <span class="input-group-addon" style="background-color:green;cursor:pointer;" title="Form Şablonunu İndir" onclick="window.location.href='/FRFormSablonlari/2022MaliYlFaaliyetRaporuTablolarBLGLEM_254D.xlsx';"><span class="fa fa-cloud-download fa-lg"></span></span>
+
+                                                                </div>
+                                                            </td>*@
+                                                            <td style="text-align:center;">
+                                                                <a href="javascript:void(0)" onclick="$(this).parents('tr').first().remove()"><i class="fa fa-trash-o fa-lg" title="Sil"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
+                    <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="panel panel-info vnkEkle hide" style="margin: 0px; padding: 0px;">
+    <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+        @*<h3 class="panel-title" style="font-size:9pt;">Vergi Kimlik Numarası Ekleme İşlemi</h3>*@
+        @*<ul class="panel-controls">
+                <li>
+                    <span class="label label-primary" style="cursor:pointer;" title="" onclick="YeniDetayEkle()"><i class="fa fa-plus fa-lg"></i>Satır Ekle</span>
+                </li>
+                <li>
+                    <span class="label label-info" style="cursor:pointer;" title="" onclick="YeniVknEkle()"><i class="fa fa-plus fa-lg"></i>VKN Ekle</span>
+                </li>
+            </ul>*@
+    </div>
+    <div class="panel-body" style="margin: 0px; padding: 0px;">
+        <table style="table-layout:fixed;width:100%;">
+            <tr>
+                <td width="120">Vergi Kimlik No</td>
+                <td width="5">:</td>
+                <td><input type="text" class="form-control" maxlength="11" id="__VergiKimlikNo" /></td>
+            </tr>
+            <tr>
+                <td>İsim</td>
+                <td>:</td>
+                <td><input type="text" class="form-control" maxlength="250" id="__AdSoyad" /></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    function BirimChange() {
+        $('#GTHesapNoID').select2('data', null);
+        $('input[name=GTHesapKodIDs]').each(function (inx, inpx) {
+            $(inpx).select2('data', null);
+        });
+        $('input[name=GTHesapKodlariGelirNiteligiIDs]').each(function (inx, inpx) {
+            $(inpx).select2('data', null);
+        });
+    }
+    function YeniVknEkle() {
+        var htmlCont = $(".vnkEkle").html().replace('hide', '').replace('__VergiKimlikNo', '_VergiKimlikNo').replace('__AdSoyad', '_AdSoyad');
+        var bbx= bootbox.dialog({
+            message: htmlCont,
+            title: "Vergi Kimlik Numarası Ekleme İşlemi",
+            buttons: {
+                success: {
+                    label: "Kaydet",
+                    className: "btn-primary",
+                    callback: function () { 
+                        var _VergiKimlikNo = $('#_VergiKimlikNo').val();
+                        var _AdSoyad = $('#_AdSoyad').val();
+                        $.ajax({
+                            url: '@Url.Action("VknEkle", "GTVeriGirisi")',
+                            data: { 'VergiKimlikNo': _VergiKimlikNo, 'AdSoyad': _AdSoyad },
+                            success: function (result) { 
+                                toastr[result.success ? "success" : "error"](result.message, "Vergi Kimlik Numarası Ekleme İşlemi")
+                                if (result.success)
+                                    $(bbx).find('.bootbox-close-button').first().click();
+
+                            },
+                            error: function (err) {
+                                alert(err.responseText);
+                            }
+                           
+                        });
+                        return false;
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function YeniDetayEkle() {
+        var rwLength = $('#VeriGirisDetay').find('tr').length;
+        var rw =
+            "<tr>" +
+            "<td><input type='text' name='GTHesapKodIDs' style='width: 100%;'/><input type='text' class='hide' name='GTVeriGirisDetayIDs' value='0'/></td>" +
+            "<td><input type='text' name='GTHesapKodlariGelirNiteligiIDs' style='width: 100%;' /></td>" +
+            "<td><input type='text' name='Tutars' class='form-control' style='text - align: right; ' onchange='PriceFormat(this); ' maxlength='18'/></td>" +
+            "<td><input type='text' name='GTVergiKimlikNoIDs' style='width: 100%;'/></td>" +
+            "<td><input type='text' name='Aciklamas' class='form-control' maxlength='256'  /></td>"+
+            "<td style='text-align:center;'><a href='javascript:void(0)' onclick=$(this).parents('tr').first().remove();><i class='fa fa-trash-o fa-lg' title='Sil'></i></a></td>" +
+            "</tr>";
+        $('#VeriGirisDetay').append(rw);
+        loadPlugin(false, true);
+    }
+    function PriceFormat(sndr) {
+        var $this = $(sndr);
+        var input = $this.val().replace(',', '.');
+
+        $this.val(function () {
+            var val = (input === 0) ? "" : parseFloat(input).toFixed(2).replace('.', ',');
+            return val == 'NaN' ? "" : val;
+        });
+    }
+
+    $(function () {
+        var model = '@Html.Raw(Json.Encode(mmMessage))';
+        validateControl(model);
+        $('#AktarimTarihi').datetimepicker({
+            lang: 'tr',
+            timepicker: false,
+            format: 'd-m-Y'
+        });
+        loadPlugin(true, false);
+        $('#GTHesapNoID').select2(
+            {
+                tags: true,
+                tokenSeparators: [",", " "],
+                minimumInputLength: 0,
+                maximumSelectionSize: 1,
+                multiple: false,
+                ajax: {
+                    url: '@Url.Action("GetHesapNumaralari", "GTVeriGirisi")',
+                    dataType: "json",
+                    data: function (term, page) {
+                        var _GTBirimID = $('#GTBirimID').val();
+                        return {
+                            'term': term,
+                            'GTBirimID': _GTBirimID
+                        };
+
+                    },
+                    results: function (data, page) {
+                        return {
+                            results: data
+                        };
+                    }
+                },
+                formatResult: function (result) {
+                    var cont2 =
+                        "<table class='table table-striped' style='width:100%; margin:0px;'>" +
+                        "<tbody>" +
+                        "<tr>" +
+                        "<tr><td>" + result.text + "</td></tr>" +
+                        "</tbody>" +
+                        "</table>";
+                    return cont2;
+                }
+            });
+
+    });
+
+    function loadPlugin(IsPageLoad, IsLastRefresh) {
+         $('#VeriGirisDetay').find('tr').each(function (inx, trx) {
+             if (IsPageLoad || (IsLastRefresh && inx + 1 == $('#VeriGirisDetay').find('tr').length))
+             {
+                 var _HesapKodu = $(trx).find('input[name=GTHesapKodIDs]').first();
+
+
+                 $(_HesapKodu).select2(
+                     {
+                     tags: true,
+                     tokenSeparators: [",", " "],
+                     minimumInputLength: 0,
+                     maximumSelectionSize: 1,
+                     multiple: false,
+                     ajax: {
+                         url: '@Url.Action("GetHesapKodlari", "GTVeriGirisi")',
+                         dataType: "json",
+                         data: function (term, page) {
+                             var _GTBirimID = $('#GTBirimID').val();
+                             return {
+                                 'GTBirimID': _GTBirimID,
+                                 'term': term
+                             };
+
+                         },
+                         results: function (data, page) {
+                             return {
+                                 results: data
+                             };
+                         }
+                     },
+                     formatResult: function (result) {
+                         var cont2 =
+                             "<table class='table table-striped' style='width:100%; margin:0px;'>" +
+                             "<tbody>" +
+                             "<tr>" +
+                             "<tr><td>" + result.text + "</td></tr>" +
+                             "</tbody>" +
+                             "</table>";
+                         return cont2;
+                     }
+                     }).on('change', function (e) {
+                         if ($(this).select2('data').length == 0) {
+                             $(this).parents('tr').first().find('input[name=GTHesapKodlariGelirNiteligiIDs]').first().select2('data', null);
+                         }
+                         else {
+                             var data = $(this).select2('data')[0];
+                             $(this).select2('data', [{ "id": data.id, "text": (data.text.length > 30 ? (data.text.substring(0, 30) + "...") : data.text) }]);
+                         }
+                     });
+                 var _GTHesapKodID = $(trx).find('.GTHesapKodID').text().trim();
+                 var _HesapKodAdi = $(trx).find('.HesapKodAdi').text().trim();
+                 if (_GTHesapKodID != "") {
+                     _HesapKodAdi = _HesapKodAdi.length > 30 ? (_HesapKodAdi.substring(0, 30) + "...") : _HesapKodAdi;
+                     $(_HesapKodu).select2('data', [{ "id": _GTHesapKodID, "text": _HesapKodAdi }]);
+                 }
+
+                 var _VergiKimlikNo = $(trx).find('input[name=GTVergiKimlikNoIDs]').first();
+
+
+                 $(_VergiKimlikNo).select2({
+                     tags: true,
+                     tokenSeparators: [",", " "],
+                     minimumInputLength: 0,
+                     maximumSelectionSize: 1,
+                     multiple: false,
+                     ajax: {
+                         url: '@Url.Action("GetVergiKimlikNumaralari", "GTVeriGirisi")',
+                         dataType: "json",
+                         data: function (term, page) {
+                             return {
+                                 'term': term
+                             };
+
+                         },
+                         results: function (data, page) {
+                             return {
+                                 results: data
+                             };
+                         }
+                     },
+                     formatResult: function (result) {
+                         var cont2 =
+                             "<table class='table table-striped' style='width:100%; margin:0px;'>" +
+                             "<tbody>" +
+                             "<tr>" +
+                             "<tr><td>" + result.text + "</td></tr>" +
+                             "</tbody>" +
+                             "</table>";
+                         return cont2;
+                     }
+                 }).on('change', function (e) {
+                     if ($(this).select2('data').length > 0) {
+                         var data = $(this).select2('data')[0];
+                         $(this).select2('data', [{ "id": data.id, "text": (data.text.length > 30 ? (data.text.substring(0, 30) + "...") : data.text) }]);
+                     }
+                 });
+
+                 var _GTVergiKimlikNoID = $(trx).find('.GTVergiKimlikNoID').text().trim();
+                 var _AdSoyad = $(trx).find('.AdSoyad').text().trim();
+                 if (_GTVergiKimlikNoID != "") {
+                     _AdSoyad = _AdSoyad.length > 30 ? (_AdSoyad.substring(0, 30) + "...") : _AdSoyad;
+                     $(_VergiKimlikNo).select2('data', [{ "id": _GTVergiKimlikNoID, "text": _AdSoyad }]);
+                 }
+
+
+                 var _GelirNiteligi = $(trx).find('input[name=GTHesapKodlariGelirNiteligiIDs]').first();
+
+                 $(_GelirNiteligi).select2({
+                     tags: true,
+                     tokenSeparators: [",", " "],
+                     minimumInputLength: 0,
+                     maximumSelectionSize: 1,
+                     multiple: false,
+                     ajax: {
+                         url: '@Url.Action("GetHesapKodGelirNitelikleri", "GTVeriGirisi")',
+                         dataType: "json",
+                         data: function (term, page) {
+                             var  SGTHesapKodID = $(this).parents('tr').first().find('input[name=GTHesapKodIDs]').first();
+                             var _GTHesapKodID = 0;
+                             if ($(SGTHesapKodID).select2('data').length > 0)
+                                 _GTHesapKodID = $(SGTHesapKodID).select2('data')[0]["id"];
+                             return {
+                                 'GTHesapKodID': _GTHesapKodID
+                             };
+
+                         },
+                         results: function (data, page) {
+                             return {
+                                 results: data
+                             };
+                         }
+                     },
+                     formatResult: function (result) {
+                         var cont2 =
+                             "<table class='table table-striped' style='width:100%; margin:0px;'>" +
+                             "<tbody>" +
+                             "<tr><td>"+result.text+"</td></tr>" +
+                             "</tbody>" +
+                             "</table>";
+                         return cont2;
+                     }
+                 }).on('change', function (e) {
+                     if ($(this).select2('data').length > 0) {
+                         var data = $(this).select2('data')[0];
+                         $(this).select2('data', [{ "id": data.id, "text": (data.text.length > 35 ? (data.text.substring(0, 35) + "...") :  data.text) }]);
+                     }
+                 });
+                 var _GTHesapKodlariGelirNiteligiID = $(trx).find('.GTHesapKodlariGelirNiteligiID').text().trim();
+                 var _GelirNiteligiAdi = $(trx).find('.GelirNiteligiAdi').text().trim();
+                 if (_GTHesapKodlariGelirNiteligiID != "") $(_GelirNiteligi).select2('data', [{ "id": _GTHesapKodlariGelirNiteligiID, "text": _GelirNiteligiAdi }]);
+
+
+
+
+            }
+         });
+    }
+
+</script>
+
+@if (Model.GTHesapNoID > 0)
+{
+    <script>
+        setTimeout(function () { 
+            var id =@Model.GTHesapNoID;
+            var HesapNo = '@Html.Raw(Model.GTHesapNumaralari.HesapNo+" / "+Model.GTHesapNumaralari.HesapNoAdi)'; 
+            $('#GTHesapNoID').select2('data', [{ "id": id, "text": HesapNo  }]);
+        }, 120)
+
+    </script>
+}

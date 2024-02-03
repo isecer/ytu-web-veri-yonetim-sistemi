@@ -1,0 +1,277 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@using WebApp.Utilities.MenuAndRoles
+@model  FmGTBirimler
+@{
+    /**/
+
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kayitYetki = RoleNames.GTBirimlerKayit.InRole();
+}
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-12">
+
+            <div class="panel panel-danger">
+                <div class="panel-heading padding-0">
+                    <h3 class="panel-title"><i class="fa fa-list-alt"></i> Birim Listesi</h3>
+                    <ul class="panel-controls">
+                        @if (kayitYetki)
+                        {
+                            <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit")" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
+                        }
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-success label-form">Aktif: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-danger label-form">Pasif: <b>@Model.CountIngfos.Pasif</b></span></li>
+                        <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="75"></th>
+                                <th width="90" class="sirala sorting" field="BirimKod">Birim Kodu</th>
+                                <th class="sirala sorting" field="BirimAdi">Birim Adı</th>
+                                <th width="70" class="sirala sorting" field="IsAktif">Durum</th>
+                                <th width="35"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (Model.RowCount > 0)
+                            {
+                                var rowIndex = Model.StartRowIndex;  
+                                foreach (var item in Model.Data)
+                                {
+                                    rowIndex++; 
+                                    <tr>
+
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td style="width:30px;">@rowIndex</td>
+                                                    <td>
+                                                        <ul class="panel-controls">
+                                                            <li id="iShow_@item.GTBirimID" onclick="ShowDetail(@item.GTBirimID)">
+                                                                <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+
+                                        <td>@item.BirimKod</td>
+                                        <td>@item.BirimAdi</td>
+                                        <td>
+                                            <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                        </td>
+                                        <td>
+                                            @if (kayitYetki)
+                                            {
+
+                                                <a href="@Url.Action("Kayit", "GTBirimler", new { id = item.GTBirimID })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
+                                                <a href="javascript:void(0)" onclick="SilmeOnay(this,'@item.GTBirimID')"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr class="cls-@item.GTBirimID hide">
+                                        <td id="cls-@item.GTBirimID" colspan="4" style="padding: 1px 1px 2px 75px;">
+                                            <div class="panel panel-primary form-horizontal" style="margin:0px;padding:0px;">
+                                                <div class="panel-body" style="margin:0px;padding:0px;">
+                                                    <div class="panel-body form-group-separated">
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Birim Kod</label>
+                                                            <div class="col-md-9 col-xs-9">@item.BirimKod</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Birim Adı</label>
+                                                            <div class="col-md-9 col-xs-9">@item.BirimAdi</div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Eşleştirilen Hesap Numaraları</label>
+                                                            <div class="col-md-9 col-xs-9">
+                                                                <div class="panel panel-primary _replaceHide">
+                                                                    <div class="panel-body padding-0">
+                                                                        <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th width="40"></th>
+                                                                                    <th width="120">Hesap No</th>
+                                                                                    <th>Hesap No Adı</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tr>
+                                                                                <td colspan="3">
+
+                                                                                    <div style="max-height:250px;overflow:auto;">
+                                                                                        <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                            @{
+                                                                                                var i = 0;
+                                                                                                foreach (var itemBhk in item.GTHesapNumaralariList)
+                                                                                                {
+                                                                                                    i++;
+                                                                                                    <tr class="tr">
+                                                                                                        <td width="40">@i)</td>
+                                                                                                        <td width="120">@itemBhk.HesapNo</td>
+                                                                                                        <td>
+                                                                                                            @itemBhk.HesapNoAdi
+                                                                                                        </td>
+
+                                                                                                    </tr>
+                                                                                                }
+                                                                                            }
+                                                                                        </table>
+                                                                                    </div>
+
+                                                                                </td>
+                                                                            </tr>
+
+                                                                        </table>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Eşleştirilen Hesap Kodları</label>
+                                                            <div class="col-md-9 col-xs-9">
+                                                                <div class="panel panel-primary _replaceHide">
+                                                                    <div class="panel-body padding-0">
+                                                                        <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th width="40"></th>
+                                                                                    <th width="120">Hesap Kod</th>
+                                                                                    <th>Hesap Kod Adı</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tr>
+                                                                                <td colspan="3">
+
+                                                                                    <div style="max-height:250px;overflow:auto;">
+                                                                                        <table class="table table-hover" style="width:100%;table-layout:fixed;margin-bottom:0px;">
+                                                                                            @{
+                                                                                                var i2 = 0;
+                                                                                                foreach (var itemBhk in item.GTHesapKodlariList)
+                                                                                                {
+                                                                                                    i2++;
+                                                                                                    <tr class="tr">
+                                                                                                        <td width="40">@i2)</td>
+                                                                                                        <td width="120">@itemBhk.HesapKod</td>
+                                                                                                        <td>
+                                                                                                            @itemBhk.HesapKodAdi
+                                                                                                        </td>
+
+                                                                                                    </tr>
+                                                                                                }
+                                                                                            }
+                                                                                        </table>
+                                                                                    </div>
+
+                                                                                </td>
+                                                                            </tr>
+
+                                                                        </table>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">Durum</label>
+                                                            <div class="col-md-9 col-xs-9">
+                                                                <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 col-xs-3 control-label">İşlem Yapan</label>
+                                                            <div class="col-md-9 col-xs-9">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                        </div>
+                                                        <div class="form-group hide" style="color:maroon;">
+                                                            <label class="col-md-3 col-xs-3 control-label"><i class='fa fa-info fa-2x'></i></label>
+                                                            <div class="col-md-9 col-xs-9">Seçilen Birimi Silmek İstiyor Musunuz?</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" style="text-align: center;">
+                                        [ Listelenen Kayıt Yok ]
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    @Model.ToPagerString()
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function ShowDetail(id, IsExpand) {
+        var sndr = $('#iShow_' + id);
+        var cls = 'cls-' + id;
+        var unTogled = ($('.' + cls).hasClass("hide"));
+        if (IsExpand) {
+            if (unTogled) toggleByClass(sndr, cls, unTogled);
+        }
+        else toggleByClass(sndr, cls, unTogled);
+    }
+    function SilmeOnay(sndr, id) {
+        var htmlCont = $("#cls-" + id).html().replace('hide', '').replace('_replaceHide', 'hide');
+        bootbox.dialog({
+            message: htmlCont,
+            title: "Birim Silme İşlemi",
+            buttons: {
+                success: {
+                    label: "Birimi Sil",
+                    className: "btn-danger",
+                    callback: function () {
+                        Sil(sndr, id);
+                    }
+                },
+                danger: {
+                    label: "Vazgeç",
+                    className: "btn-success",
+                    callback: function () {
+                    }
+                }
+            }
+        });
+    }
+    function Sil(sndr, id) {
+        $.ajax({
+            url: '@Url.Action("Sil", "GTBirimler")',
+            data: { id: id },
+            success: function (result) {
+                toastr[result.success ? "success" : "error"](result.message, "Birim Silme İşlemi")
+                if (result.success) {
+                    $(sndr).closest("tr").remove();
+                     $(".cls-" + id).remove();
+                }
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>

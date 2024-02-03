@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="48690e4b59284c48bb2fbac1b5e73e42" Name="Diagram1">
+        <EntityTypeShape EntityType="VysDBModel.Ayarlar" Width="1.5" PointX="5.25" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Aylar" Width="1.5" PointX="11.25" PointY="72.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerForm" Width="1.5" PointX="7.5" PointY="33.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerFormBirim" Width="1.5" PointX="15.75" PointY="40" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerFormGirisleri" Width="1.5" PointX="7.5" PointY="38.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemleri" Width="1.5" PointX="5.25" PointY="29.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BFRFormlar" Width="1.5" PointX="5.25" PointY="33.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BFRFormlarBirim" Width="1.5" PointX="10.5" PointY="37.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Birimler" Width="1.5" PointX="5.25" PointY="37.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.BirimMaddeleri" Width="1.5" PointX="10.5" PointY="40.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.DuyuruEkleri" Width="1.5" PointX="7.5" PointY="44.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Duyurular" Width="1.5" PointX="5.25" PointY="44" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Faaliyetler" Width="1.5" PointX="8.25" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerAy" Width="1.5" PointX="13.5" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerKaynak" Width="1.5" PointX="13.5" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerMadde" Width="1.5" PointX="10.5" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemlerForm" Width="1.5" PointX="7.5" PointY="50.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemlerFormBirim" Width="1.5" PointX="10.5" PointY="43.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemlerFormGirisleri" Width="1.5" PointX="10.5" PointY="47.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemleri" Width="1.5" PointX="5.25" PointY="52.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FRFormlar" Width="1.5" PointX="5.25" PointY="48.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.FRFormlarBirim" Width="1.5" PointX="7.5" PointY="47.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GonderilenMailEkleri" Width="1.5" PointX="15.5" PointY="36.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GonderilenMailKullanicilar" Width="1.5" PointX="10.25" PointY="33.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GonderilenMailler" Width="1.5" PointX="13.25" PointY="35.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTBirimHesapKodlari" Width="1.5" PointX="18.25" PointY="43.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTBirimHesapNumaralari" Width="1.5" PointX="18.25" PointY="46.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTBirimler" Width="1.5" PointX="11" PointY="24.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTDonemleri" Width="1.5" PointX="5.25" PointY="60.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTHesapKodlari" Width="1.5" PointX="11" PointY="61.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTHesapKodlariGelirNitelikleri" Width="1.5" PointX="13.5" PointY="51.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTHesapNumaralari" Width="1.5" PointX="11" PointY="65.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTVergiKimlikNumaralari" Width="1.5" PointX="13.5" PointY="54" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTVeriGirisDurumlari" Width="1.5" PointX="8.25" PointY="61.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTVeriGirisi" Width="1.5" PointX="10.5" PointY="51.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.GTVerigirisiDetay" Width="1.5" PointX="15.75" PointY="45" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Gunler" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Kaynaklar" Width="1.5" PointX="11.25" PointY="69.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.KullaniciBirimleri" Width="1.5" PointX="13.5" PointY="40.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapKodlari" Width="1.5" PointX="13.25" PointY="43.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapNumaralari" Width="1.5" PointX="13.25" PointY="47.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Kullanicilar" Width="1.5" PointX="3" PointY="35.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Maddeler" Width="1.5" PointX="8.25" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MaddelerEslestirilenTurler" Width="1.5" PointX="10.5" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MaddelerFormulEslesenMaddeler" Width="1.5" PointX="10.5" PointY="20.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MaddelerVeriGirisDonemleri" Width="1.5" PointX="13.5" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MaddeTurleri" Width="1.5" PointX="6" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MaddeYilSonuDegerHesaplamaTipleri" Width="1.5" PointX="6" PointY="15.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MailSablonlari" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MailSablonlariEkleri" Width="1.5" PointX="5.25" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MailSablonTipleri" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Menuler" Width="1.5" PointX="11" PointY="29.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MesajEkleri" Width="1.5" PointX="9.75" PointY="57.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.MesajKategorileri" Width="1.5" PointX="5.25" PointY="70.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Mesajlar" Width="1.5" PointX="7.5" PointY="55" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.RaporTipleri" Width="1.5" PointX="11.25" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.RaporTipleriSecilenMaddeler" Width="1.5" PointX="13.5" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Roller" Width="1.5" PointX="13.25" PointY="31.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.SistemBilgilendirme" Width="1.5" PointX="5.25" PointY="83.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Unvanlar" Width="1.5" PointX="0.75" PointY="36.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VACokluVeriDonemleri" Width="1.5" PointX="11.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleri" Width="1.5" PointX="11.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriBirim" Width="1.5" PointX="16.5" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriBirimMadde" Width="1.5" PointX="15.75" PointY="22" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMadde" Width="1.5" PointX="13.5" PointY="20.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeEklenenAciklama" Width="1.5" PointX="18.75" PointY="21.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeEklenenDosya" Width="1.5" PointX="15.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeFormulEslesenMadde" Width="1.5" PointX="15.75" PointY="30.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeGirilenDeger" Width="1.5" PointX="18.75" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeVeriGirisDonemleri" Width="1.5" PointX="15.75" PointY="26.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VeriGirisSekilleri" Width="1.5" PointX="6" PointY="18.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.VeriTipleri" Width="1.5" PointX="6" PointY="21.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.YetkiGruplari" Width="1.5" PointX="0.75" PointY="40.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.YetkiGrupRolleri" Width="1.5" PointX="15.5" PointY="33.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.KullanicilarLog" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Vw_BirimlerTree" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Vw_MaddelerTree" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VysDBModel.Vw_MaddeVeriGirisDurum" Width="1.5" PointX="0.75" PointY="14.75" IsExpanded="true" />
+        <AssociationConnector Association="VysDBModel.FK_Ayarlar_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FaaliyetlerAy_Aylar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerForm_BFrDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerForm_BFrFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormBirim_BFrDonemlerForm" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_BFRDonemlerForm" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormBirim_BFrFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormBirim_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_BFRFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRFormlar_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRFormlarBirim_BFRFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BFRFormlarBirim_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Birimler_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Birimler_UstBirimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BirimMaddeleri_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRFormlarBirim_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Birimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_BirimMaddeleri_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_DuyuruEkleri_Duyurular" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Duyurular_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FaaliyetlerAy_Faaliyetler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FaaliyetlerKaynak_Faaliyetler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FaaliyetlerMadde_Faaliyetler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FaaliyetlerKaynak_Kaynaklar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FaaliyetlerMadde_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerForm_FrDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerForm_FrFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_FrDonemlerForm" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_FrDonemlerForm" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_FrFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_FrFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRFormlar_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_FRFormlarBirim_FRFormlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailEkleri_GonderilenMailler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_GonderilenMailler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Mesajlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTBirimHesapKodlari_GTBirimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTBirimHesapKodlari_GTHesapKodlari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTBirimHesapNumaralari_GTBirimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTBirimHesapNumaralari_GTHesapNumaralari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTBirimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_GTBirimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_GTBirimler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTDonemleri_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTHesapKodlariGelirNitelikleri_GTHesapKodlari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTHesapKodlari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_GTHesapKodlari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTHesapKodlariGelirNitelikleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTHesapNumaralari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_GTHesapNumaralari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTVergiKimlikNumaralari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTVeriGirisDurumlari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTVeriGirisi" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_GelenMesajlar_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Unvanlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_YetkiGruplari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MesajKategorileri_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_SistemBilgilendirme_Kullanicilar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Maddeler_MaddeTurleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Maddeler_MaddeYilSonuDegerHesaplamaTipleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Maddeler_UstMaddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Maddeler_VeriGirisSekilleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Maddeler_VeriTipleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MaddelerEslestirilenTuler_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MaddelerVeriGirisDonemleri_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MFEM_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MFEM_MaddelerEslesen" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_RaporTipleriSecilenMaddeler_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_Maddeler" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MaddelerEslestirilenTuler_MaddeTurleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MaddelerVeriGirisDonemleri_VACokluVeriDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_MaddeTurleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_MaddeYilSonuDegerHesaplamaTipleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MailSablonlari_MailSablonTipleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MailSablonlariEkleri_MailSablonlari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_MesajEkleri_Mesajlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Mesajlar_MesajKategorileri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_Mesajlar_Mesajlar" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_RaporTipleriSecilenMaddeler_RaporTipleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_YetkiGrupRolleri_Roller" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenAciklama_VACokluVeriDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenDosya_VACokluVeriDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VACokluVeriDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeVeriGirisDonemleri_VACokluVeriDonemleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriBirim_VASurecleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_VASurecleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriBirimMadde_VASurecleriBirim" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenAciklama_VASurecleriBirim" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenDosya_VASurecleriBirim" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VASurecleriBirim" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriBirimMadde_VASurecleriMadde" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_VeriGirisSekilleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_VeriTipleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenAciklama_VASurecleriMadde" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenDosya_VASurecleriMadde" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeFormulEslesenMadde_VASurecleriMadde" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeFormulEslesenMadde_VASurecleriMadde1" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VASurecleriMadde" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeVeriGirisDonemleri_VASurecleriMadde" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.FK_YetkiGrupRolleri_YetkiGruplari" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.KullaniciRolleri" ManuallyRouted="false" />
+        <AssociationConnector Association="VysDBModel.MenuRollleri" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
