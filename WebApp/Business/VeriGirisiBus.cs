@@ -25,7 +25,7 @@ namespace WebApp.Business
             if (bosSecimVar) dct.Add(new ComboModelInt());
             using (var db = new VysDBEntities())
             {
-                var data = db.MaddeTurleris.Where(p => p.VASurecleriMaddes.Any(a => a.VASurecID == (vaSurecId ?? a.VASurecID) && a.VASurecleriBirimMaddes.Any(a2 => a2.VASurecleriBirim.BirimID == (birimId ?? a2.VASurecleriBirim.BirimID)))).OrderBy(o => o.MaddeTurAdi).ToList();
+                var data = db.MaddeTurleris.Where(p => p.VASurecleriMaddes.Any(a => a.VASurecID == (vaSurecId ?? a.VASurecID) && a.VASurecleriMaddeBirims.Any(a2 => a2.BirimID == (birimId ?? a2.BirimID)))).OrderBy(o => o.MaddeTurAdi).ToList();
                 foreach (var item in data)
                 {
                     dct.Add(new ComboModelInt { Value = item.MaddeTurID, Caption = item.MaddeTurAdi });
@@ -43,12 +43,14 @@ namespace WebApp.Business
             {
                 var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
 
-                var data = (from s in db.VASurecleriBirims.Where(p => birimIDs.Contains(p.BirimID) && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriMadde.IsAktif && p.VASurecID == vaSurecId))
-                            join b in db.Vw_BirimlerTree on s.BirimID equals b.BirimID
+                var surecBirimIds = db.VASurecleriMaddeBirims
+                    .Where(p => birimIDs.Contains(p.BirimID) && p.VASurecleriMadde.IsAktif &&
+                                p.VASurecleriMadde.VASurecID == vaSurecId).Select(s => s.BirimID).Distinct().ToList();
+                var data = (from s in db.Vw_BirimlerTree.Where(p => surecBirimIds.Contains(p.BirimID))
                             select new
                             {
-                                b.BirimID,
-                                b.BirimTreeAdi
+                                s.BirimID,
+                                s.BirimTreeAdi
                             }).OrderBy(o => o.BirimTreeAdi).ToList();
                 foreach (var item in data)
                 {
@@ -97,12 +99,10 @@ namespace WebApp.Business
                 var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
 
                 var data = db.Vw_MaddeVeriGirisDurum.Where(p => p.VASurecID == model.VaSurecId && p.IsAktif && birimIDs.Contains(p.BirimID) && p.BirimID == (model.BirimId ?? 0)).ToList();
-                var vaSurecBirimIds = data.Select(s => s.VASurecleriBirimID).Distinct().ToList();
+                var vaSurecBirimIds = data.Select(s => s.BirimID).Distinct().ToList();
                 var vaSurecMaddeIds = data.Select(s => s.VASurecleriMaddeID).Distinct().ToList();
-                var datavb = db.VASurecleriBirims.Where(p => vaSurecBirimIds.Contains(p.VASurecleriBirimID)).ToList();
-                var datavm = db.VASurecleriMaddes.Where(p => vaSurecMaddeIds.Contains(p.VASurecleriMaddeID)).ToList();
+                var datavm = db.VASurecleriMaddes.Where(p => vaSurecMaddeIds.Contains(p.VASurecleriMaddeID) && p.VASurecleriMaddeBirims.Any(a => vaSurecBirimIds.Contains(a.BirimID))).ToList();
                 var q = (from s in data
-                         join vbr in datavb on s.VASurecleriBirimID equals vbr.VASurecleriBirimID
                          join vm in datavm on s.VASurecleriMaddeID equals vm.VASurecleriMaddeID
                          select new FrVgMaddeler
                          {
@@ -131,11 +131,10 @@ namespace WebApp.Business
                              MaddeYilSonuDegerHesaplamaTipID = s.MaddeYilSonuDegerHesaplamaTipID,
                              HesaplananSonucDegeri = s.HesaplananSonucDegeri,
                              MaddeVeriGirisDurumId = s.OnaylananVeriSayisi > 0 && s.GirilecekVeriSayisi == s.OnaylananVeriSayisi ? 1 : 0,
-                             VASurecleriBirimID = s.VASurecleriBirimID,
                              VASurecleriMaddeID = s.VASurecleriMaddeID,
                              Aciklama = s.Aciklama,
                              VeriGirisSekliAdi = s.VeriGirisSekliAdi,
-                             VaSurecleriMaddeGirilenDegers = vbr.VASurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == s.VASurecleriMaddeID).ToList(),
+                             VaSurecleriMaddeGirilenDegers = db.VASurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == s.VASurecleriMaddeID && p.BirimID == s.BirimID).ToList(),
                              VaSurecleriMaddeVeriGirisDonemleris = vm.VASurecleriMaddeVeriGirisDonemleris.ToList()
                          }).AsQueryable();
                 if (!model.Aranan.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeTreeAdi.Contains(model.Aranan) || p.MaddeKod == model.Aranan);
@@ -183,9 +182,14 @@ namespace WebApp.Business
                     MaddeID = maddeId,
                     IsAktifYilPlanlananVeriGirisiAcik = vaSurecKontrol.IsAktifYilPlanlananVeriGirisiAcik,
                     IsGelecekYilPlanlananVeriGirisiAcik = vaSurecKontrol.IsGelecekYilPlanlananVeriGirisiAcik,
+                    BaslangicTarihi = vaSurecKontrol.BaslangicTarihi,
+                    BitisTarihi = vaSurecKontrol.BitisTarihi,
                     SurecIsAktif = vaSurecKontrol.AktifSurec,
                     SurecYil = vaSurecKontrol.Yil
                 };
+
+                var vaSurecleriEklenenDosyalar = db.VASurecleriMaddeEklenenDosyas.Where(p =>
+                    p.VASurecleriMadde.VASurecID == vaSurecId && p.VASurecleriMadde.MaddeID == maddeId && p.BirimID==birimId).ToList();
                 mdl.VeriGirisi = (from maddeVeriGirisDurum in db.Vw_MaddeVeriGirisDurum.Where(p => p.VASurecID == mdl.VASurecID && p.IsAktif)
                                   join vaSurecleriMadde in db.VASurecleriMaddes on maddeVeriGirisDurum.VASurecleriMaddeID equals vaSurecleriMadde.VASurecleriMaddeID
                                   where birimIDs.Contains(maddeVeriGirisDurum.BirimID) && maddeVeriGirisDurum.BirimID == mdl.BirimID && maddeVeriGirisDurum.MaddeID == mdl.MaddeID
@@ -202,7 +206,7 @@ namespace WebApp.Business
                                       MaddeTreeAdi = maddeVeriGirisDurum.MaddeTreeAdi,
                                       VeriGirisiOnaylandi = maddeVeriGirisDurum.GirilecekVeriSayisi == maddeVeriGirisDurum.OnaylananVeriSayisi,
                                       OnaylananVeriSayisi = maddeVeriGirisDurum.OnaylananVeriSayisi ?? 0,
-                                      DosyaCount = db.VASurecleriMaddeEklenenDosyas.Count(p => p.VASurecleriMaddeID == maddeVeriGirisDurum.VASurecleriMaddeID && p.VASurecleriBirimID == maddeVeriGirisDurum.VASurecleriBirimID),
+                                      DosyaCount = vaSurecleriEklenenDosyalar.Count,
                                       IsPlanlananDegerOlacak = maddeVeriGirisDurum.IsPlanlananDegerOlacak,
                                       IsPlanlananDegerOlacakGelecekYil = maddeVeriGirisDurum.IsPlanlananDegerOlacakGelecekYil,
                                       PlanlananDeger = maddeVeriGirisDurum.PlanlananDeger,
@@ -215,12 +219,11 @@ namespace WebApp.Business
                                       MaddeYilSonuDegerHesaplamaTipID = maddeVeriGirisDurum.MaddeYilSonuDegerHesaplamaTipID,
                                       HesaplananSonucDegeri = (maddeVeriGirisDurum.HesaplananSonucDegeri ?? 0),
                                       MaddeVeriGirisDurumId = maddeVeriGirisDurum.OnaylananVeriSayisi > 0 && maddeVeriGirisDurum.GirilecekVeriSayisi == maddeVeriGirisDurum.OnaylananVeriSayisi ? 1 : 0,
-                                      VASurecleriBirimID = maddeVeriGirisDurum.VASurecleriBirimID,
                                       VASurecleriMaddeID = maddeVeriGirisDurum.VASurecleriMaddeID,
                                       Aciklama = maddeVeriGirisDurum.Aciklama,
                                       VeriGirisSekliAdi = maddeVeriGirisDurum.VeriGirisSekliAdi,
                                       VaSurecleriMaddeVeriGirisDonemleris = vaSurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.ToList(),
-                                      VaSurecleriMaddeGirilenDegers = vaSurecleriMadde.VASurecleriMaddeGirilenDegers.Where(p => p.VASurecleriBirimID == maddeVeriGirisDurum.VASurecleriBirimID).ToList()
+                                      VaSurecleriMaddeGirilenDegers = vaSurecleriMadde.VASurecleriMaddeGirilenDegers.Where(p => p.BirimID == maddeVeriGirisDurum.BirimID).ToList()
 
                                   }).First();
 
@@ -231,7 +234,7 @@ namespace WebApp.Business
                                                        VaCokluVeriDonemId = vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID.ToNullIntZero(),
                                                        CokluVeriDonemAdi = vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemleri.CokluVeriDonemAdi,
                                                        IsDosyaYuklensin = vaSurecleriMaddeVeriGirisDonemleri.IsDosyaYuklensin,
-                                                       DosyaCount = db.VASurecleriMaddeEklenenDosyas.Count(p => p.VASurecleriMaddeID == mdl.VeriGirisi.VASurecleriMaddeID && p.VASurecleriBirimID == mdl.VeriGirisi.VASurecleriBirimID && p.VACokluVeriDonemID == (vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID == 0 ? p.VACokluVeriDonemID : vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID)),
+                                                       DosyaCount = vaSurecleriEklenenDosyalar.Count(p => p.VACokluVeriDonemID == (vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID == 0 ? p.VACokluVeriDonemID : vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID)),
                                                        IsVeriVar = vaSurecleriMaddeGirilenDeger?.IsVeriVar,
                                                        GirilenDeger = vaSurecleriMaddeGirilenDeger?.GirilenDeger,
                                                        VeriGirisiOnaylandi = vaSurecleriMaddeGirilenDeger?.VeriGirisiOnaylandi
@@ -262,10 +265,10 @@ namespace WebApp.Business
                                     }).OrderBy(o => o.FaaliyetAdi).ToList();
                 mdl.EklenenAciklamas = db.VASurecleriMaddeEklenenAciklamas
                     .Where(p => p.VASurecleriMaddeID == mdl.VeriGirisi.VASurecleriMaddeID &&
-                                p.VASurecleriBirimID == mdl.VeriGirisi.VASurecleriBirimID)
+                                p.BirimID == mdl.VeriGirisi.BirimID)
                     .Include(inc => inc.VACokluVeriDonemleri).ToList();
                 mdl.AciklamaCount = db.VASurecleriMaddeEklenenAciklamas.Count(p =>
-                    p.VASurecleriMadde.VASurecID == vaSurecId && p.VASurecleriBirim.BirimID == birimId &&
+                    p.VASurecleriMadde.VASurecID == vaSurecId && p.BirimID == birimId &&
                     p.VASurecleriMadde.MaddeID == maddeId);
                 return mdl;
             }
@@ -275,8 +278,8 @@ namespace WebApp.Business
             using (var db = new VysDBEntities())
             {
                 var model = new VeriKanitModel();
-                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
                 var birim = db.Birimlers.First(p => p.BirimID == birimId);
                 var veriGirisDonemleris = vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris
                     .Where(p => p.VACokluVeriDonemID == (vaCokluVeriDonemId ?? p.VACokluVeriDonemID)).ToList();
@@ -287,7 +290,7 @@ namespace WebApp.Business
                     ? vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes
                         .SelectMany(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers).ToList()
                     : vaSurecMadde.VASurecleriMaddeGirilenDegers
-                        .Where(p => p.VASurecleriBirimID == birimMadde.VASurecleriBirimID).ToList();
+                        .Where(p => p.BirimID == birimMadde.BirimID).ToList();
 
                 birimMaddeGirilenDegerlers = birimMaddeGirilenDegerlers
                     .Where(p => p.VACokluVeriDonemID == (vaCokluVeriDonemId ?? p.VACokluVeriDonemID)).ToList();
@@ -313,7 +316,7 @@ namespace WebApp.Business
                 model.VeriKanitDosyaListModel = new VeriKanitDosyaListModel
                 {
                     Data = vaSurecMadde.VASurecleriMaddeEklenenDosyas.Where(p => p.VASurecleriMaddeID == birimMadde.VASurecleriMaddeID
-                        && p.VASurecleriBirimID == birimMadde.VASurecleriBirimID && p.VACokluVeriDonemID == (vaCokluVeriDonemId ?? p.VACokluVeriDonemID)).Select(s => new VeriKanitDosyaListRw
+                        && p.BirimID == birimMadde.BirimID && p.VACokluVeriDonemID == (vaCokluVeriDonemId ?? p.VACokluVeriDonemID)).Select(s => new VeriKanitDosyaListRw
                         {
                             VASurecleriMaddeEklenenDosyaID = s.VASurecleriMaddeEklenenDosyaID,
                             VACokluVeriDonemID = s.VACokluVeriDonemID,
@@ -336,10 +339,10 @@ namespace WebApp.Business
         {
             using (var db = new VysDBEntities())
             {
-                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
 
-                var vkData = vaSurecMadde.VASurecleriMaddeEklenenDosyas.Where(p => p.VACokluVeriDonemID == (vaCokluVeriDonemId ?? p.VACokluVeriDonemID) && p.VASurecleriMaddeID == birimMadde.VASurecleriMaddeID && p.VASurecleriBirimID == birimMadde.VASurecleriBirimID).Select(s => new VeriKanitDosyaListRw
+                var vkData = vaSurecMadde.VASurecleriMaddeEklenenDosyas.Where(p => p.VACokluVeriDonemID == (vaCokluVeriDonemId ?? p.VACokluVeriDonemID) && p.VASurecleriMaddeID == birimMadde.VASurecleriMaddeID && p.BirimID == birimMadde.BirimID).Select(s => new VeriKanitDosyaListRw
                 {
                     VASurecleriMaddeEklenenDosyaID = s.VASurecleriMaddeEklenenDosyaID,
                     VACokluVeriDonemID = s.VACokluVeriDonemID,
@@ -351,9 +354,9 @@ namespace WebApp.Business
                 var nowDate = DateTime.Now.Date;
                 var girilecekVeriCnt = vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.Count;
                 var veriGirisiOnaylandi = (
-                    (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                    (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                      ||
-                     (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                     (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                 );
 
                 var model = new VeriKanitDosyaListModel
@@ -371,7 +374,7 @@ namespace WebApp.Business
             using (var db = new VysDBEntities())
             {
 
-                var surecBirimMadde = db.VASurecleriBirimMaddes.First(p => p.VASurecleriMadde.MaddeID == maddeId && p.VASurecleriBirim.BirimID == birimId && p.VASurecleriMadde.VASurecID == vaSurecId);
+                var surecBirimMadde = db.VASurecleriMaddeBirims.First(p => p.VASurecleriMadde.MaddeID == maddeId && p.BirimID == birimId && p.VASurecleriMadde.VASurecID == vaSurecId);
                 var surecMadde = surecBirimMadde.VASurecleriMadde;
                 var formulMaddeleri = surecBirimMadde.VASurecleriMadde.VASurecleriMaddeFormulEslesenMaddes;
                 var formul = surecBirimMadde.VASurecleriMadde.HesaplamaFormulu.ToLower();
@@ -395,12 +398,12 @@ namespace WebApp.Business
                             var hesaplananSonucDegeri =
                                   (
                                      secilenMadde.MaddeYilSonuDegerHesaplamaTipID == MaddeYilSonuDegerHesaplamaTip.SonAy ?
-                                             secilenMadde.VASurecleriMaddeGirilenDegers.Where(p => p.VASurecleriBirim.BirimID == item.VASurecleriBirim.BirimID && p.VACokluVeriDonemID == item.VACokluVeriDonemID && p.IsVeriVar == true).OrderByDescending(o => o.VACokluVeriDonemID).Select(s2 => s2.GirilenDeger).FirstOrDefault()
+                                             secilenMadde.VASurecleriMaddeGirilenDegers.Where(p => p.BirimID == item.BirimID && p.VACokluVeriDonemID == item.VACokluVeriDonemID && p.IsVeriVar == true).OrderByDescending(o => o.VACokluVeriDonemID).Select(s2 => s2.GirilenDeger).FirstOrDefault()
                                              :
                                              secilenMadde.MaddeYilSonuDegerHesaplamaTipID == MaddeYilSonuDegerHesaplamaTip.Kümülatif ?
-                                                 secilenMadde.VASurecleriMaddeGirilenDegers.Where(p => (herAyIcinOncekiAylarToplansin ? p.VACokluVeriDonemID <= item.VACokluVeriDonemID : p.VACokluVeriDonemID == item.VACokluVeriDonemID) && p.IsVeriVar == true && p.VASurecleriBirim.BirimID == item.VASurecleriBirim.BirimID).Sum(s2 => s2.GirilenDeger)
+                                                 secilenMadde.VASurecleriMaddeGirilenDegers.Where(p => (herAyIcinOncekiAylarToplansin ? p.VACokluVeriDonemID <= item.VACokluVeriDonemID : p.VACokluVeriDonemID == item.VACokluVeriDonemID) && p.IsVeriVar == true && p.BirimID == item.BirimID).Sum(s2 => s2.GirilenDeger)
                                                  :
-                                                 secilenMadde.VASurecleriMaddeGirilenDegers.Where(p => p.VASurecleriBirim.BirimID == item.VASurecleriBirim.BirimID && p.VACokluVeriDonemID == item.VACokluVeriDonemID && p.IsVeriVar == true).Sum(s2 => s2.GirilenDeger) / secilenMadde.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == item.VASurecleriBirim.BirimID && p.VACokluVeriDonemID == item.VACokluVeriDonemID && p.IsVeriVar == true)
+                                                 secilenMadde.VASurecleriMaddeGirilenDegers.Where(p => p.BirimID == item.BirimID && p.VACokluVeriDonemID == item.VACokluVeriDonemID && p.IsVeriVar == true).Sum(s2 => s2.GirilenDeger) / secilenMadde.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == item.BirimID && p.VACokluVeriDonemID == item.VACokluVeriDonemID && p.IsVeriVar == true)
                                  );
                             vgOnays.Add(item.VeriGirisiOnaylandi);
                             formul = formul.Replace(secilenMadde.MaddeKod.ToLower(), hesaplananSonucDegeri.ToString());
@@ -410,8 +413,7 @@ namespace WebApp.Business
                             formul = formul.Replace("[", "").Replace("]", "");
                             model.VaSurecleriMaddeGirilenDegers.Add(new VASurecleriMaddeGirilenDeger
                             {
-                                VASurecleriBirim = surecBirimMadde.VASurecleriBirim,
-                                VASurecleriBirimID = surecBirimMadde.VASurecleriBirimID,
+                                BirimID = surecBirimMadde.BirimID,
                                 VASurecleriMaddeID = surecMadde.VASurecleriMaddeID,
                                 VASurecleriMadde = surecMadde,
                                 IsVeriVar = true,
@@ -431,7 +433,7 @@ namespace WebApp.Business
 
                 }
 
-                var birimFormulMaddeleri = formulMaddeleri.Where(p => p.VASurecleriMadde.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId)).SelectMany(p => p.VASurecleriMadde1.VASurecleriBirimMaddes).ToList();
+                var birimFormulMaddeleri = formulMaddeleri.Where(p => p.VASurecleriMadde.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId)).SelectMany(p => p.VASurecleriMadde1.VASurecleriMaddeBirims).ToList();
                 if (surecMadde.IsPlanlananDegerOlacak && birimFormulMaddeleri.Count > 0 && birimFormulMaddeleri.Count == birimFormulMaddeleri.Count(c => c.PlanlananDeger.HasValue))
                 {
                     formul = surecBirimMadde.VASurecleriMadde.HesaplamaFormulu.ToLower();
@@ -514,7 +516,7 @@ namespace WebApp.Business
                 }
                 else
                 {
-                    var birimMadde = db.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.VASurecID == vaSurecId && p.VASurecleriBirim.BirimID == birimId && p.VASurecleriMadde.MaddeID == maddeId);
+                    var birimMadde = db.VASurecleriMaddeBirims.First(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.BirimID == birimId && p.VASurecleriMadde.MaddeID == maddeId);
 
                     if (isBuYilOrGelecekYil)
                         birimMadde.PlanlananDeger = birimMadde.VASurecleriMadde.IsPlanlananDegerOlacak ? planlananDeger : null;
@@ -562,9 +564,9 @@ namespace WebApp.Business
                 else
                 {
 
-                    var birimMadde = db.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.VASurecID == kModel.VASurecID && p.VASurecleriBirim.BirimID == kModel.BirimID && p.VASurecleriMadde.MaddeID == kModel.MaddeID);
+                    var birimMadde = db.VASurecleriMaddeBirims.First(p => p.VASurecleriMadde.VASurecID == kModel.VASurecID && p.BirimID == kModel.BirimID && p.VASurecleriMadde.MaddeID == kModel.MaddeID);
                     var vaSurecMadde = birimMadde.VASurecleriMadde;
-                    var girilenDeger = vaSurecMadde.VASurecleriMaddeGirilenDegers.FirstOrDefault(p => p.VASurecleriBirim.BirimID == kModel.BirimID && p.VACokluVeriDonemID == kModel.VaCokluVeriDonemId);
+                    var girilenDeger = vaSurecMadde.VASurecleriMaddeGirilenDegers.FirstOrDefault(p => p.BirimID == kModel.BirimID && p.VACokluVeriDonemID == kModel.VaCokluVeriDonemId);
 
 
 
@@ -583,7 +585,7 @@ namespace WebApp.Business
                         {
                             vaSurecMadde.VASurecleriMaddeGirilenDegers.Add(new VASurecleriMaddeGirilenDeger
                             {
-                                VASurecleriBirimID = birimMadde.VASurecleriBirimID,
+                                BirimID = birimMadde.BirimID,
                                 VACokluVeriDonemID = kModel.VaCokluVeriDonemId,
                                 IsVeriVar = kModel.IsVeriVar,
                                 IslemTarihi = DateTime.Now,
@@ -644,14 +646,14 @@ namespace WebApp.Business
                 else
                 {
 
-                    var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == kModel.VASurecID && p.MaddeID == kModel.MaddeID && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == kModel.BirimID));
-                    var vaSurecleriBirimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == kModel.BirimID);
-                    var girilenDeger = vaSurecMadde.VASurecleriMaddeGirilenDegers.FirstOrDefault(p => p.VASurecleriBirim.BirimID == kModel.BirimID && p.VASurecleriMadde.MaddeID == kModel.MaddeID && p.VACokluVeriDonemID == kModel.VaCokluVeriDonemId);
+                    var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == kModel.VASurecID && p.MaddeID == kModel.MaddeID && p.VASurecleriMaddeBirims.Any(a => a.BirimID == kModel.BirimID));
+                    var vaSurecleriBirimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == kModel.BirimID);
+                    var surecMaddeGirilenDeger = vaSurecMadde.VASurecleriMaddeGirilenDegers.FirstOrDefault(p => p.BirimID == kModel.BirimID && p.VASurecleriMadde.MaddeID == kModel.MaddeID && p.VACokluVeriDonemID == kModel.VaCokluVeriDonemId);
                     if (vaSurecMadde.VeriGirisSekliID != VeriGirisSekli.ElleGirilecek)
                     {
                         mMessage.Messages.Add("İşlem yapmaya çalıştığınız madde için veri girişi yapılamaz. Bu madde için özel hesaplama formülü ile veriler oluşturulur.");
                     }
-                    else if (girilenDeger != null && girilenDeger.VeriGirisiOnaylandi)
+                    else if (surecMaddeGirilenDeger != null && surecMaddeGirilenDeger.VeriGirisiOnaylandi)
                     {
                         mMessage.Messages.Add("İşlem yapmaya çalıştığınız madde verisi onaylandığından kayıt işlemi yapılamaz.");
                     }
@@ -660,21 +662,26 @@ namespace WebApp.Business
                         var vaSurecleriDonem =
                             vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.First(f =>
                                 f.VACokluVeriDonemID == kModel.VaCokluVeriDonemId);
-                        if (vaSurecleriDonem.IsDosyaYuklensin && !vaSurecMadde.VASurecleriMaddeEklenenDosyas.Any(a => a.VACokluVeriDonemID == kModel.VaCokluVeriDonemId && a.VASurecleriBirimID == vaSurecleriBirimMadde.VASurecleriBirimID))
+                        if (vaSurecleriDonem.IsDosyaYuklensin && !vaSurecMadde.VASurecleriMaddeEklenenDosyas.Any(a => a.VACokluVeriDonemID == kModel.VaCokluVeriDonemId && a.BirimID == vaSurecleriBirimMadde.BirimID))
                         {
                             showKanitDosyasi = true;
-                            mMessage.Messages.Add("Veri girişi yapılabilmesi için " + vaSurecleriDonem.VACokluVeriDonemleri.CokluVeriDonemAdi + " Veri Alım Dönemine en az bir adet veri kanıt dosyası eklenmesi gerekmektedir!");
+                            mMessage.Messages.Add("Veri girişi yapılabilmesi için " + vaSurecleriDonem.VACokluVeriDonemleri.CokluVeriDonemAdi + " veri alım dönemine en az bir adet veri Kanıt Dosyası eklenmesi gerekmektedir!");
+                        }
+                        else if (surecMaddeGirilenDeger.IsVeriVar == true && !kModel.GirilenDeger.HasValue)
+                        {
+                            mMessage.Messages.Add("'Veri Var' seçeneği seçilen  " + vaSurecleriDonem.VACokluVeriDonemleri.CokluVeriDonemAdi + " verisi için veri girişi boş bırakılamaz.");
+
                         }
                     }
 
                     if (mMessage.Messages.Count == 0)
                     {
 
-                        if (girilenDeger == null)
+                        if (surecMaddeGirilenDeger == null)
                         {
                             vaSurecMadde.VASurecleriMaddeGirilenDegers.Add(new VASurecleriMaddeGirilenDeger
                             {
-                                VASurecleriBirimID = vaSurecleriBirimMadde.VASurecleriBirimID,
+                                BirimID = vaSurecleriBirimMadde.BirimID,
                                 VACokluVeriDonemID = kModel.VaCokluVeriDonemId,
                                 IsVeriVar = kModel.IsVeriVar,
                                 GirilenDeger = kModel.GirilenDeger,
@@ -685,11 +692,11 @@ namespace WebApp.Business
                         }
                         else
                         {
-                            girilenDeger.VACokluVeriDonemID = kModel.VaCokluVeriDonemId;
-                            girilenDeger.GirilenDeger = girilenDeger.IsVeriVar == true ? kModel.GirilenDeger : null;
-                            girilenDeger.IslemTarihi = DateTime.Now;
-                            girilenDeger.IslemYapanID = UserIdentity.Current.Id;
-                            girilenDeger.IslemYapanIP = UserIdentity.Ip;
+                            surecMaddeGirilenDeger.VACokluVeriDonemID = kModel.VaCokluVeriDonemId;
+                            surecMaddeGirilenDeger.GirilenDeger = surecMaddeGirilenDeger.IsVeriVar == true ? kModel.GirilenDeger : null;
+                            surecMaddeGirilenDeger.IslemTarihi = DateTime.Now;
+                            surecMaddeGirilenDeger.IslemYapanID = UserIdentity.Current.Id;
+                            surecMaddeGirilenDeger.IslemYapanIP = UserIdentity.Ip;
 
                         }
 
@@ -721,8 +728,8 @@ namespace WebApp.Business
                 var birimYetki = birimIDs.Contains(birimId);
                 var surec = SurecIslemleriBus.GetVaSurecKontrol(vaSurecId);
                 var onayYetki = RoleNames.VeriGirisiOnayYetkisi.InRole();
-                var birimMadde = db.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.VASurecID == vaSurecId && p.VASurecleriBirim.BirimID == birimId && p.VASurecleriMadde.MaddeID == maddeId);
-                var maddeVeriBilgi = birimMadde.VASurecleriBirim.VASurecleriMaddeGirilenDegers.FirstOrDefault(p => p.VASurecleriMadde.MaddeID == maddeId && p.VACokluVeriDonemID == vaCokluVeriDonemId);
+                var birimMadde = db.VASurecleriMaddeBirims.First(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.BirimID == birimId && p.VASurecleriMadde.MaddeID == maddeId);
+                var maddeVeriBilgi = birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.FirstOrDefault(p => p.BirimID == birimId && p.VACokluVeriDonemID == vaCokluVeriDonemId);
                 var secilenVeriDonemi = db.VACokluVeriDonemleris.FirstOrDefault(p => p.VACokluVeriDonemID == vaCokluVeriDonemId);
                 if (!surec.IsAktif || !surec.AktifSurec)
                 {
@@ -749,7 +756,7 @@ namespace WebApp.Business
                 {
                     var madde = birimMadde.VASurecleriMadde;
                     var maddeAyCount = madde.VASurecleriMaddeVeriGirisDonemleris.Count;
-                    var girilenOnayCount = birimMadde.VASurecleriBirim.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriMadde.MaddeID == maddeId && p.VeriGirisiOnaylandi) + (maddeAyCount == 0 ? 0 : 1);
+                    var girilenOnayCount = birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriMadde.MaddeID == maddeId && p.VeriGirisiOnaylandi) + (maddeAyCount == 0 ? 0 : 1);
 
                     if (girilenOnayCount == maddeAyCount)
                     {
@@ -802,8 +809,8 @@ namespace WebApp.Business
         {
             using (var db = new VysDBEntities())
             {
-                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
                 var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
 
                 var mMessage = new MmMessage
@@ -830,9 +837,9 @@ namespace WebApp.Business
                     mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim yetkiniz dahilinde değildir.");
                 }
                 else if (
-                          (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                          (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                             ||
-                          (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                          (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                         )
                 {
                     mMessage.Messages.Add("Veri girişi onaylandığından Veri kanıt dosyası yüklenemez.");
@@ -864,7 +871,7 @@ namespace WebApp.Business
                         kanitDosyasi.SaveAs(fPath);
                         vaSurecMadde.VASurecleriMaddeEklenenDosyas.Add(new VASurecleriMaddeEklenenDosya
                         {
-                            VASurecleriBirimID = birimMadde.VASurecleriBirimID,
+                            BirimID = birimMadde.BirimID,
                             VASurecleriMaddeID = birimMadde.VASurecleriMaddeID,
                             VACokluVeriDonemID = vaCokluVeriDonemId,
                             DosyaAdi = fileName,
@@ -911,10 +918,10 @@ namespace WebApp.Business
                 if (kayit != null)
                 {
                     var maddeId = kayit.VASurecleriMadde.MaddeID;
-                    var birimId = kayit.VASurecleriBirim.BirimID;
-                    var vaSurecId = kayit.VASurecleriBirim.VASurecID;
-                    var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                    var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                    var birimId = kayit.BirimID;
+                    var vaSurecId = kayit.VASurecleriMadde.VASurecID;
+                    var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                    var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
 
                     var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
 
@@ -936,9 +943,9 @@ namespace WebApp.Business
                         mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim yetkiniz dahilinde değildir.");
                     }
                     else if (
-                                (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                                (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                                   ||
-                                (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                                (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                             )
                     {
                         mMessage.Messages.Add("Veri girişi onaylandığından Veri kanıt dosyası yüklenemez.");
@@ -987,8 +994,8 @@ namespace WebApp.Business
             using (var db = new VysDBEntities())
             {
                 var model = new AciklamaGirisModel();
-                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
                 var birim = db.Birimlers.First(p => p.BirimID == birimId);
 
                 var nowDate = DateTime.Now.Date;
@@ -1015,15 +1022,15 @@ namespace WebApp.Business
                 var girilecekVeriCnt = vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.Count;
 
                 model.VeriGirisiOnaylandi = (
-                                                (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                                                (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                                                   ||
-                                                (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                                                (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                                             );
                 model.SListAylar = new SelectList(cmbVaCokluVeriDonemleri, "Value", "Caption", model.VACokluVeriDonemID);
                 model.AciklamaData = new AciklamaListModel
                 {
                     Data = db.VASurecleriMaddeEklenenAciklamas
-                        .Where(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.VASurecleriBirim.BirimID == birimId &&
+                        .Where(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.BirimID == birimId &&
                                     p.VASurecleriMadde.MaddeID == maddeId).OrderBy(o => o.VACokluVeriDonemID)
                         .ThenByDescending(t => t.IslemTarihi).ToList()
                 };
@@ -1034,22 +1041,22 @@ namespace WebApp.Business
         {
             using (var db = new VysDBEntities())
             {
-                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
 
                 var model = new AciklamaListModel()
                 {
                     Data = db.VASurecleriMaddeEklenenAciklamas
-                        .Where(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.VASurecleriBirim.BirimID == birimId &&
+                        .Where(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.BirimID == birimId &&
                                     p.VASurecleriMadde.MaddeID == maddeId).OrderBy(o => o.VACokluVeriDonemID)
                         .ThenByDescending(t => t.IslemTarihi).ToList()
                 };
                 var nowDate = DateTime.Now.Date;
                 var girilecekVeriCnt = vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.Count;
                 var veriGirisiOnaylandi = (
-                                              (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                                              (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                                                 ||
-                                              (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                                              (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                                            );
                 model.KayitYetki = vaSurecMadde.VASurecleri.IsAktif && (vaSurecMadde.VASurecleri.BaslangicTarihi <= nowDate && vaSurecMadde.VASurecleri.BitisTarihi >= nowDate) && RoleNames.VeriGirisiKayitYetkisi.InRole() && !veriGirisiOnaylandi;
                 return model;
@@ -1059,8 +1066,8 @@ namespace WebApp.Business
         {
             using (var db = new VysDBEntities())
             {
-                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriMaddeBirims.Any(a => a.BirimID == birimId));
+                var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == birimId);
                 var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
                 var mMessage = new MmMessage
                 {
@@ -1086,9 +1093,9 @@ namespace WebApp.Business
                     mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim yetkiniz dahilinde değildir.");
                 }
                 else if (
-                          (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                          (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                             ||
-                          (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                          (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                        )
                 {
                     mMessage.Messages.Add("Veri girişi onaylandığından açıklama ekleyemezsiniz.");
@@ -1120,7 +1127,7 @@ namespace WebApp.Business
                         {
                             vaSurecMadde.VASurecleriMaddeEklenenAciklamas.Add(new VASurecleriMaddeEklenenAciklama
                             {
-                                VASurecleriBirimID = birimMadde.VASurecleriBirimID,
+                                BirimID = birimMadde.BirimID,
                                 VASurecleriMaddeID = birimMadde.VASurecleriMaddeID,
                                 VACokluVeriDonemID = vaCokluVeriDonemId,
                                 Aciklama = aciklama,
@@ -1166,15 +1173,14 @@ namespace WebApp.Business
                 if (kayit != null)
                 {
                     var maddeId = kayit.VASurecleriMadde.MaddeID;
-                    var birimId = kayit.VASurecleriBirim.BirimID;
-                    var vaSurecId = kayit.VASurecleriBirim.VASurecID;
-                    var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirim.BirimID == birimId));
-                    var birimMadde = vaSurecMadde.VASurecleriBirimMaddes.First(p => p.VASurecleriBirim.BirimID == birimId);
+                    var vaSurecId = kayit.VASurecleriMadde.VASurecID;
+                    var vaSurecMadde = db.VASurecleriMaddes.First(p => p.VASurecID == vaSurecId && p.MaddeID == maddeId);
+                    var birimMadde = vaSurecMadde.VASurecleriMaddeBirims.First(p => p.BirimID == kayit.BirimID);
 
                     var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
                     var girilecekVeriCnt = vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.Count;
                     var kayitYetki = RoleNames.VeriGirisi.InRole();
-                    var birimYetki = birimIDs.Contains(birimId);
+                    var birimYetki = birimIDs.Contains(kayit.BirimID);
                     var surec = SurecIslemleriBus.GetVaSurecKontrol(vaSurecId);
                     if (!surec.IsAktif || !surec.AktifSurec)
                     {
@@ -1189,9 +1195,9 @@ namespace WebApp.Business
                         mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim yetkiniz dahilinde değildir.");
                     }
                     else if (
-                                 (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.VASurecleriBirim.BirimID == birimId && c.VeriGirisiOnaylandi)
+                                 (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == kayit.BirimID && c.VeriGirisiOnaylandi)
                                    ||
-                                 (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriBirim.BirimID == birimId && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                                 (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == kayit.BirimID && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
                               )
                     {
                         mMessage.Messages.Add("Veri girişi onaylandığından açıklama ekleyemezsiniz.");

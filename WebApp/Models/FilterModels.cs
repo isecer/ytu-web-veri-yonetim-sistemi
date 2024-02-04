@@ -98,7 +98,7 @@ namespace WebApp.Models
         public bool VeriGirisiOnaylandi { get; set; }
         public string VeriGirisiOnaylayan { get; set; }
         public DateTime? OnayIslemTarihi { get; set; }
-        public VASurecleriBirimMadde BirimMadde { get; set; }
+        public VASurecleriMaddeBirim MaddeBirim { get; set; }
         public string Aciklama { get; set; }
     }
     public class VgModel
@@ -317,7 +317,7 @@ namespace WebApp.Models
         public int Yil { get; set; }
         public string BirimAdi { get; set; }
         public string VeriGirisSekliAdi { get; set; }
-        public VASurecleriBirimMadde BirimMadde { get; set; }
+        public VASurecleriMaddeBirim MaddeBirim { get; set; }
         public ICollection<VASurecleriMaddeGirilenDeger> VaSurecleriMaddeGirilenDegers { get; set; }
         public ICollection<VASurecleriMaddeVeriGirisDonemleri> VaSurecleriMaddeVeriGirisDonemleris { get; set; }
         public int DosyaCount { get; set; }

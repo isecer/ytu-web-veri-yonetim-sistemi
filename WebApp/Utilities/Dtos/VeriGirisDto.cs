@@ -45,6 +45,8 @@ namespace WebApp.Utilities.Dtos
     public class VeriGirisDetailDto
     {
         public int SurecYil { get; set; }
+        public DateTime BaslangicTarihi { get; set; }
+        public DateTime BitisTarihi { get; set; }
         public bool SurecIsAktif { get; set; }
         public int VASurecID { get; set; }
         public int BirimID { get; set; }

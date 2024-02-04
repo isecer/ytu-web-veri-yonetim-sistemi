@@ -89,9 +89,8 @@ namespace Database
         public virtual DbSet<Unvanlar> Unvanlars { get; set; }
         public virtual DbSet<VACokluVeriDonemleri> VACokluVeriDonemleris { get; set; }
         public virtual DbSet<VASurecleri> VASurecleris { get; set; }
-        public virtual DbSet<VASurecleriBirim> VASurecleriBirims { get; set; }
-        public virtual DbSet<VASurecleriBirimMadde> VASurecleriBirimMaddes { get; set; }
         public virtual DbSet<VASurecleriMadde> VASurecleriMaddes { get; set; }
+        public virtual DbSet<VASurecleriMaddeBirim> VASurecleriMaddeBirims { get; set; }
         public virtual DbSet<VASurecleriMaddeEklenenAciklama> VASurecleriMaddeEklenenAciklamas { get; set; }
         public virtual DbSet<VASurecleriMaddeEklenenDosya> VASurecleriMaddeEklenenDosyas { get; set; }
         public virtual DbSet<VASurecleriMaddeFormulEslesenMadde> VASurecleriMaddeFormulEslesenMaddes { get; set; }

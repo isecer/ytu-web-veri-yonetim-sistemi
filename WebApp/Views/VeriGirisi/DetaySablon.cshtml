@@ -30,9 +30,14 @@
                             <div class="task-text ui-sortable-handle" style="padding-bottom: 0px; font-size: 8.5pt;cursor:default;">
                                 <table>
                                     <tr>
-                                        <td width="160">Veri Giriş Süreci / Birim Adı</td>
+                                        <td width="160">Veri Giriş Süreci</td>
                                         <td width="5">:</td>
-                                        <td>@Model.SurecYil Yılı Süreci / @Model.VeriGirisi.BirimAdi</td>
+                                        <td>@Model.SurecYil Yılı Süreci (@Model.BaslangicTarihi.ToFormatDate()/@Model.BitisTarihi.ToFormatDate()) <span style="color:@(Model.SurecIsAktif?"green;":"maroon;")">Veri Girişi @(Model.SurecIsAktif?"Aktif":"Pasif")</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Veri Giriş Birimi</td>
+                                        <td>:</td>
+                                        <td>@Model.VeriGirisi.BirimAdi</td>
                                     </tr>
                                     <tr>
                                         <td>Madde Türü</td>

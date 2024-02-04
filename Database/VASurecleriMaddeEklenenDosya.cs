@@ -16,7 +16,7 @@ namespace Database
     {
         public int VASurecleriMaddeEklenenDosyaID { get; set; }
         public int VASurecleriMaddeID { get; set; }
-        public int VASurecleriBirimID { get; set; }
+        public int BirimID { get; set; }
         public Nullable<int> VACokluVeriDonemID { get; set; }
         public string DosyaAdi { get; set; }
         public string DosyaYolu { get; set; }
@@ -24,8 +24,8 @@ namespace Database
         public int IslemYapanID { get; set; }
         public string IslemYapanIP { get; set; }
     
+        public virtual Birimler Birimler { get; set; }
         public virtual VACokluVeriDonemleri VACokluVeriDonemleri { get; set; }
-        public virtual VASurecleriBirim VASurecleriBirim { get; set; }
         public virtual VASurecleriMadde VASurecleriMadde { get; set; }
     }
 }

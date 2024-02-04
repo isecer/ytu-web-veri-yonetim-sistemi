@@ -16,15 +16,15 @@ namespace Database
     {
         public int VASurecleriMaddeEklenenAciklamaID { get; set; }
         public int VASurecleriMaddeID { get; set; }
-        public int VASurecleriBirimID { get; set; }
+        public int BirimID { get; set; }
         public Nullable<int> VACokluVeriDonemID { get; set; }
         public string Aciklama { get; set; }
         public System.DateTime IslemTarihi { get; set; }
         public int IslemYapanID { get; set; }
         public string IslemYapanIP { get; set; }
     
+        public virtual Birimler Birimler { get; set; }
         public virtual VACokluVeriDonemleri VACokluVeriDonemleri { get; set; }
-        public virtual VASurecleriBirim VASurecleriBirim { get; set; }
         public virtual VASurecleriMadde VASurecleriMadde { get; set; }
     }
 }

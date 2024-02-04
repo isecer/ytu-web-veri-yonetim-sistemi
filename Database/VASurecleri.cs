@@ -17,7 +17,6 @@ namespace Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public VASurecleri()
         {
-            this.VASurecleriBirims = new HashSet<VASurecleriBirim>();
             this.VASurecleriMaddes = new HashSet<VASurecleriMadde>();
         }
     
@@ -32,8 +31,6 @@ namespace Database
         public int IslemYapanID { get; set; }
         public string IslemYapanIP { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VASurecleriBirim> VASurecleriBirims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMadde> VASurecleriMaddes { get; set; }
     }

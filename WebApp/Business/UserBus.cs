@@ -202,7 +202,7 @@ namespace WebApp.Business
                     frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.DonemID, RoleName = RoleNames.VeriGirisi, SelectedId = vaSurecId });
 
                     var kullaniciBirimIDs = frKullanici.TableRollID[RollTableIDName.BirimID];
-                    var vgBirimId = (from s in db.VASurecleriBirims.Where(p => kullaniciBirimIDs.Contains(p.BirimID) && p.VASurecleriBirimMaddes.Any(a => a.VASurecleriMadde.IsAktif && p.VASurecID == vaSurecId))
+                    var vgBirimId = (from s in db.VASurecleriMaddeBirims.Where(p => kullaniciBirimIDs.Contains(p.BirimID) && p.VASurecleriMadde.IsAktif)
                                      join b in db.Vw_BirimlerTree on s.BirimID equals b.BirimID
                                      select new
                                      {

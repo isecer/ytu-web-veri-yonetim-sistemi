@@ -27,6 +27,10 @@ namespace Database
             this.FRFormlarBirims = new HashSet<FRFormlarBirim>();
             this.KullaniciBirimleris = new HashSet<KullaniciBirimleri>();
             this.Kullanicilars = new HashSet<Kullanicilar>();
+            this.VASurecleriMaddeBirims = new HashSet<VASurecleriMaddeBirim>();
+            this.VASurecleriMaddeEklenenAciklamas = new HashSet<VASurecleriMaddeEklenenAciklama>();
+            this.VASurecleriMaddeEklenenDosyas = new HashSet<VASurecleriMaddeEklenenDosya>();
+            this.VASurecleriMaddeGirilenDegers = new HashSet<VASurecleriMaddeGirilenDeger>();
         }
     
         public int BirimID { get; set; }
@@ -64,5 +68,13 @@ namespace Database
         public virtual ICollection<KullaniciBirimleri> KullaniciBirimleris { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Kullanicilar> Kullanicilars { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeBirim> VASurecleriMaddeBirims { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeEklenenAciklama> VASurecleriMaddeEklenenAciklamas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeEklenenDosya> VASurecleriMaddeEklenenDosyas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeGirilenDeger> VASurecleriMaddeGirilenDegers { get; set; }
     }
 }

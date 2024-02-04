@@ -219,8 +219,7 @@
     function GetDetail(vaSurecId, birimId, maddeId) {
         var RwID = vaSurecId + '_' + birimId + '_' + maddeId;
         var _panel = $('#pnl_' + RwID);
-        _pRefresh(_panel, false);
-
+        _pRefresh(_panel, false); 
             $.ajax({
                 url: '@Url.Action("GetDetail", "VeriGirisi")',
                 data: { vaSurecId, birimId, maddeId },

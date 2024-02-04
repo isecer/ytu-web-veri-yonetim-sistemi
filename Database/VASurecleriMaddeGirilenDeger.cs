@@ -16,7 +16,7 @@ namespace Database
     {
         public int VASurecleriMaddeGirilenDegerID { get; set; }
         public int VASurecleriMaddeID { get; set; }
-        public int VASurecleriBirimID { get; set; }
+        public int BirimID { get; set; }
         public Nullable<int> VACokluVeriDonemID { get; set; }
         public Nullable<bool> IsVeriVar { get; set; }
         public Nullable<decimal> GirilenDeger { get; set; }
@@ -28,8 +28,8 @@ namespace Database
         public Nullable<int> OnayIslemYapanID { get; set; }
         public string OnayIslemYapanIP { get; set; }
     
+        public virtual Birimler Birimler { get; set; }
         public virtual VACokluVeriDonemleri VACokluVeriDonemleri { get; set; }
-        public virtual VASurecleriBirim VASurecleriBirim { get; set; }
         public virtual VASurecleriMadde VASurecleriMadde { get; set; }
     }
 }

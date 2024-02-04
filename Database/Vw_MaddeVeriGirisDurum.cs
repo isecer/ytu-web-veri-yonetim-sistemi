@@ -16,7 +16,6 @@ namespace Database
     {
         public int VASurecID { get; set; }
         public int Yil { get; set; }
-        public int VASurecleriBirimID { get; set; }
         public int BirimID { get; set; }
         public string BirimAdi { get; set; }
         public string BirimTreeAdi { get; set; }
