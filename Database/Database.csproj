@@ -267,6 +267,9 @@
     <Compile Include="VASurecleriMaddeGirilenDeger.cs">
       <DependentUpon>VysDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="VASurecleriMaddeTur.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="VASurecleriMaddeVeriGirisDonemleri.cs">
       <DependentUpon>VysDb.tt</DependentUpon>
     </Compile>

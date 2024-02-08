@@ -1,0 +1,77 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@model FrSurecIslemleri
+@{
+    Layout = null;
+}
+
+<div class="panel" id="PnlMaddeTur_@Model.VASurecID" style="margin:0px;">
+    <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+        <h3 class="panel-title">
+            <i class="fa fa-home"></i>Madde Turleri
+        </h3>
+        <ul class="panel-controls">
+        </ul>
+    </div>
+    <div class="panel" style="margin: 0px; padding: 0px;">
+        <div class="panel-body" style="margin: 0px; padding: 0px; max-height: 465px; overflow: auto;">
+            <table class="table" style="margin-bottom:0px;">
+                <thead>
+                    <tr class="info">
+                        <th height="40" width="75"></th>
+                        <th>Madde Tür Adı</th>
+                        <th width="120">Toplam Madde</th>
+                        <th width="120" style="text-align:center;">Veri Girişi İşlemi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var rowIndex = 0;
+                        foreach (var item in Model.MaddeTurleris)
+                        {
+                            rowIndex++;
+
+                            <tr class="MainRow">
+                                <td>
+                                    @rowIndex
+                                </td>
+                                <td>@item.MaddeTurAdi</td>
+                                <td style="text-align:center;">@item.ToplamMaddeCount</td>
+                                <td>
+                                    <div class="make-switch bSwitch_@Model.VASurecID" data-on-label="Açık" data-off-label="Kapalı" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" onchange="MaddeTurIsVeriGirisDurumKayit(this,@Model.VASurecID,@item.MaddeTurID)" class="toggle" @item.IsVeriGirisiAcik.ToChecked() />
+                                    </div>
+                                </td>
+                            </tr> 
+                        }
+
+
+                    }
+                    @if (Model.MaddeTurleris.Count > 0)
+                    {
+                        <tr class="info">
+                            <td colspan="4" style="text-align: center;">
+                                @Model.Yil Yılı (@Model.BaslangicTarihi.ToFormatDate()/@Model.BitisTarihi.ToFormatDate()) sürecine ait toplam @Model.MaddeTurleris.Count Madde türü bulunmaktadır.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="height:60px;text-align:center;">
+                                @Model.Yil Yılı (@Model.BaslangicTarihi.ToFormatDate()/@Model.BitisTarihi.ToFormatDate()) sürecine ait herhangi bir Madde türü bulunmamaktadır.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('.bSwitch_@Model.VASurecID')['bootstrapSwitch']();
+    });
+
+</script>

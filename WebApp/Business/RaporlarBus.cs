@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using BiskaUtil;
 using Database;
 using WebApp.Models;
@@ -43,12 +39,15 @@ namespace WebApp.Business
 
                 }
                 if (secilenler == null) secilenler = new List<int>();
+                var maddeTurleri = db.MaddeTurleris.Select(s => new { s.MaddeTurID, s.MaddeTurAdi }).ToList();
                 var maddelers = db.sp_MaddeAgaci().Where(p => p.VeriGirisSekliID > 0 && p.IsAktif == true).Select(s => new Maddeler { MaddeID = s.MaddeID.Value, MaddeKod = s.MaddeKod, MaddeAdi = s.MaddeTreeAdi }).OrderBy(o => o.MaddeAdi).ToList();
-                var dataR = maddelers.Select(s => new CheckObject<ChkListDataModel>
-                {
-                    Value = new ChkListDataModel { ID = s.MaddeID, Code = s.MaddeKod, Caption = s.MaddeAdi },
-                    Checked = secilenler.Contains(s.MaddeID)
-                }).OrderByDescending(o => o.Checked);
+                var dataR = (from madde in maddelers
+                             join maddeturu in maddeTurleri on madde.MaddeTurID equals maddeturu.MaddeTurID
+                             select new CheckObject<ChkListDataModel>
+                             {
+                                 Value = new ChkListDataModel { ID = madde.MaddeID, Code = madde.MaddeKod, Caption = maddeturu.MaddeTurAdi + " " + madde.MaddeAdi },
+                                 Checked = secilenler.Contains(madde.MaddeID)
+                             }).OrderByDescending(o => o.Checked);
                 model.Data = dataR;
                 return model;
             }

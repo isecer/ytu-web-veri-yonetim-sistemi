@@ -20,7 +20,13 @@ namespace WebApp.Controllers
         {
             var birimId = UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.BirimID);
             var vaSurecId = VeriGirisiBus.GetLastVaSurecId(UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.DonemID));
-            return Index(new FmVeriGiris { PageSize = 15, VaSurecId = vaSurecId, Expand = vaSurecId.HasValue, BirimId = birimId });
+
+
+            var maddeTurId = UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.MaddeTurID);
+
+            if (!maddeTurId.HasValue && !RoleNames.SurecIslemleri.InRole()) maddeTurId = -1;
+
+            return Index(new FmVeriGiris { PageSize = 15, VaSurecId = vaSurecId, Expand = vaSurecId.HasValue, BirimId = birimId, MaddeTurId = maddeTurId });
         }
 
         [HttpPost]
@@ -31,6 +37,7 @@ namespace WebApp.Controllers
             model.IsAktif = surecBilgi.AktifSurec;
             UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.BirimID, model.BirimId);
             UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.DonemID, model.VaSurecId);
+            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.MaddeTurID, model.MaddeTurId);
             model = VeriGirisiBus.GetVerigirisDataModel(model);
             #region export
             //if (export && false && model.RowCount > 0)
@@ -122,7 +129,7 @@ namespace WebApp.Controllers
             ViewBag.VASurecID = new SelectList(SurecIslemleriBus.CmbVaSurecler(false), "Value", "Caption", model.VaSurecId);
             ViewBag.BirimID = new SelectList(VeriGirisiBus.CmbYetkiliVaSurecBirimlerKullanici(model.VaSurecId.Value, false), "Value", "Caption", model.BirimId);
             ViewBag.MaddeVeriGirisDurumID = new SelectList(ComboData.CmbMaddeDurum(), "Value", "Caption", model.MaddeVeriGirisDurumId);
-            ViewBag.MaddeTurID = new SelectList(VeriGirisiBus.CmbGetVgMaddeTurleri(model.VaSurecId, model.BirimId), "Value", "Caption", model.MaddeTurId);
+            ViewBag.MaddeTurID = new SelectList(VeriGirisiBus.CmbGetVgMaddeTurleri(model.VaSurecId, model.BirimId, true, true), "Value", "Caption", model.MaddeTurId);
             ViewBag.VeriGirisiOnaylandi = new SelectList(ComboData.CmbVeriGirisOnayDurum(), "Value", "Caption", model.VeriGirisiOnaylandi);
 
             return View(model);

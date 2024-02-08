@@ -145,27 +145,53 @@ namespace WebApp.Business
             {
                 var mdl = GetVaSurecKontrol(id);
 
+
+
                 if (tbInx == 1)
                 {
-                    mdl.SBirimDurumID = selectDurumId;
-                    var mBirimIDs = entities.VASurecleriMaddeBirims.Where(p => p.VASurecleriMadde.VASurecID == id && p.VASurecleriMadde.IsAktif).Select(s => s.BirimID).Distinct().ToList();
-                    mdl.BirimData = (from s in entities.Vw_BirimlerTree.Where(p => mBirimIDs.Contains(p.BirimID))
-                                     select new FrBirimler
-                                     {
-                                         BirimID = s.BirimID,
-                                         BirimKod = s.BirimKod,
-                                         BirimAdi = s.BirimTreeAdi,
-                                         IslemTarihi = s.IslemTarihi,
-                                         ToplamCount = entities.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecID == id && p.BirimID == s.BirimID && p.VASurecleriMadde.IsAktif),
-                                         TamamlananCount = entities.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecID == id && p.BirimID == s.BirimID && p.VASurecleriMadde.IsAktif && p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == s.BirimID) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count)
+                    mdl.MaddeTurleris = (from vaSurecleriMaddeTur in entities.VASurecleriMaddeTurs.Where(p => p.VASurecID == id)
+                                         select new VaSurecleriMaddeTurDto
+                                         {
+                                             VASurecleriMaddeTurID = vaSurecleriMaddeTur.VASurecleriMaddeTurID,
+                                             MaddeTurID = vaSurecleriMaddeTur.MaddeTurID,
+                                             MaddeTurAdi = vaSurecleriMaddeTur.MaddeTurleri.MaddeTurAdi,
+                                             IslemTarihi = vaSurecleriMaddeTur.IslemTarihi,
+                                             IsVeriGirisiAcik = vaSurecleriMaddeTur.IsVeriGirisiAcik,
+                                             ToplamMaddeCount = entities.VASurecleriMaddes.Count(p => p.VASurecID == id && p.MaddeTurID == vaSurecleriMaddeTur.MaddeTurID && p.IsAktif),
 
-                                     }).Where(p => !mdl.SBirimDurumID.HasValue || (mdl.SBirimDurumID == 1 ? p.ToplamCount == p.TamamlananCount : p.ToplamCount != p.TamamlananCount)).OrderBy(o => o.BirimAdi).ToList();
-                    mdl.SListBirimDurum = new SelectList(ComboData.CmbSurecBirimDurum(), "Value", "Caption", mdl.SBirimDurumID);
+                                         }).OrderBy(o => o.MaddeTurAdi).ToList();
 
-                    return ViewRenderHelper.RenderPartialView("SurecIslemleri", "GetBirimBilgileri", mdl);
+                    return ViewRenderHelper.RenderPartialView("SurecIslemleri", "ViewMaddeTurleri", mdl);
                 }
-                mdl.SMaddeDurumID = selectDurumId;
-                mdl.MaddeData = (from s in entities.VASurecleriMaddes.Where(p => p.VASurecID == id && p.IsAktif)
+                if (tbInx == 2)
+                {
+                    mdl.SBirimDurumId = selectDurumId;
+                    var mBirimIDs = entities.VASurecleriMaddeBirims.Where(p => p.VASurecleriMadde.VASurecID == id && p.VASurecleriMadde.IsAktif).Select(s => s.BirimID).Distinct().ToList();
+                    var birimDataQuery =
+                        (from s in entities.Vw_BirimlerTree.Where(p => mBirimIDs.Contains(p.BirimID))
+                         select new FrBirimler
+                         {
+                             BirimID = s.BirimID,
+                             BirimKod = s.BirimKod,
+                             BirimAdi = s.BirimTreeAdi,
+                             IslemTarihi = s.IslemTarihi,
+                             ToplamCount = entities.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecID == id && p.BirimID == s.BirimID && p.VASurecleriMadde.IsAktif),
+                             TamamlananCount = entities.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecID == id && p.BirimID == s.BirimID && p.VASurecleriMadde.IsAktif && p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == s.BirimID && p2.IsVeriVar.HasValue) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count),
+                             OnaylananCount = entities.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecID == id && p.BirimID == s.BirimID && p.VASurecleriMadde.IsAktif && p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == s.BirimID && p2.IsVeriVar.HasValue && p2.VeriGirisiOnaylandi) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count)
+
+                         });
+                    if (mdl.SBirimDurumId == 0) birimDataQuery = birimDataQuery.Where(p => p.ToplamCount != p.TamamlananCount);
+                    else if (mdl.SBirimDurumId == 1) birimDataQuery = birimDataQuery.Where(p => p.ToplamCount == p.TamamlananCount);
+                    else if (mdl.SBirimDurumId == 2) birimDataQuery = birimDataQuery.Where(p => p.ToplamCount == p.OnaylananCount);
+                    else if (mdl.SBirimDurumId == 3) birimDataQuery = birimDataQuery.Where(p => p.ToplamCount != p.OnaylananCount);
+
+                    mdl.BirimData = birimDataQuery.OrderBy(o => o.BirimAdi).ToList();
+                    mdl.SListBirimDurum = new SelectList(ComboData.CmbSurecBirimDurum(), "Value", "Caption", mdl.SBirimDurumId);
+                    return ViewRenderHelper.RenderPartialView("SurecIslemleri", "ViewBirimler", mdl);
+                }
+                mdl.SMaddeDurumId = selectDurumId;
+                var maddeDataQuery =
+                                (from s in entities.VASurecleriMaddes.Where(p => p.VASurecID == id && p.IsAktif)
                                  join bt in entities.Maddelers on s.MaddeID equals bt.MaddeID
                                  select new FrMaddeler
                                  {
@@ -173,11 +199,18 @@ namespace WebApp.Business
                                      MaddeKod = s.MaddeKod,
                                      MaddeAdi = bt.MaddeAdi,
                                      ToplamCount = s.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.IsAktif),
-                                     TamamlananCount = s.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.IsAktif && p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == p.BirimID) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count)
+                                     TamamlananCount = s.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.IsAktif && p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == p.BirimID && p2.IsVeriVar.HasValue) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count),
+                                     OnaylananCount = s.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.IsAktif && p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == p.BirimID && p2.IsVeriVar.HasValue && p2.VeriGirisiOnaylandi) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count)
 
-                                 }).Where(predicate: p => !mdl.SMaddeDurumID.HasValue || (mdl.SMaddeDurumID == 1 ? p.ToplamCount == p.TamamlananCount : p.ToplamCount != p.TamamlananCount)).OrderBy(o => o.MaddeAdi).ToList();
-                mdl.SListMaddeDurum = new SelectList(ComboData.CmbSurecMaddeDurum(), "Value", "Caption", mdl.SMaddeDurumID);
-                return ViewRenderHelper.RenderPartialView("SurecIslemleri", "GetMaddeBilgileri", mdl);
+                                 });
+                if (mdl.SMaddeDurumId == 0) maddeDataQuery = maddeDataQuery.Where(p => p.ToplamCount != p.TamamlananCount);
+                else if (mdl.SMaddeDurumId == 1) maddeDataQuery = maddeDataQuery.Where(p => p.ToplamCount == p.TamamlananCount);
+                else if (mdl.SMaddeDurumId == 2) maddeDataQuery = maddeDataQuery.Where(p => p.ToplamCount == p.OnaylananCount);
+                else if (mdl.SMaddeDurumId == 3) maddeDataQuery = maddeDataQuery.Where(p => p.ToplamCount != p.OnaylananCount);
+                mdl.MaddeData = maddeDataQuery.OrderBy(o => o.MaddeAdi).ToList();
+                mdl.SListMaddeDurum = new SelectList(ComboData.CmbSurecMaddeDurum(), "Value", "Caption", mdl.SMaddeDurumId);
+
+                return ViewRenderHelper.RenderPartialView("SurecIslemleri", "ViewMaddeler", mdl);
 
             }
 
@@ -199,7 +232,8 @@ namespace WebApp.Business
                                           IsPlanlananDegerOlacakGelecekYil = vsmd.IsPlanlananDegerOlacakGelecekYil,
                                           PlanlananDeger = s2.PlanlananDeger,
                                           GirilecekVeriSayisi = s2.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count,
-                                          GirilenVeriSayisi = vsmd.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId),
+                                          GirilenVeriSayisi = vsmd.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.IsVeriVar.HasValue),
+                                          OnaylananVeriSayisi = vsmd.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == birimId && p.IsVeriVar.HasValue && p.VeriGirisiOnaylandi),
                                       }).OrderBy(o => o.MaddeAdi).ToList();
 
                 return birimMaddeleri;
@@ -218,7 +252,8 @@ namespace WebApp.Business
                                           BirimKod = br.BirimKod,
                                           BirimAdi = br.BirimTreeAdi,
                                           ToplamCount = s2.VASurecleriMadde.VASurecleriMaddeBirims.Count,
-                                          TamamlananCount = s2.VASurecleriMadde.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == br.BirimID) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count)
+                                          TamamlananCount = s2.VASurecleriMadde.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == br.BirimID && p2.IsVeriVar.HasValue) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count),
+                                          OnaylananCount = s2.VASurecleriMadde.VASurecleriMaddeBirims.Count(p => p.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p2 => p2.BirimID == br.BirimID && p2.IsVeriVar.HasValue && p2.VeriGirisiOnaylandi) == p.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris.Count)
                                       }).OrderBy(o => o.BirimAdi).ToList();
 
                 return maddeBirimleri;
@@ -273,6 +308,13 @@ namespace WebApp.Business
                     mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "BitisTarihi" });
                 }
 
+                if (kModel.VASurecID <= 0)
+                {
+                    if (!kModel.MaddeTurIds.Any())
+                    {
+                        mmMessage.Messages.Add("Sürecin kayıt edilebilmesi için en az 1 Madde Türü seçilmesi gerekmektedir.");
+                    }
+                }
                 #endregion
 
                 if (mmMessage.Messages.Count == 0)
@@ -290,9 +332,12 @@ namespace WebApp.Business
                             Yil = kModel.Yil,
                             BaslangicTarihi = kModel.BaslangicTarihi.Value,
                             BitisTarihi = kModel.BitisTarihi.Value,
+                            IsAktifYilPlanlananVeriGirisiAcik = kModel.IsAktifYilPlanlananVeriGirisiAcik,
+                            IsGelecekYilPlanlananVeriGirisiAcik = kModel.IsGelecekYilPlanlananVeriGirisiAcik,
                             IsAktif = kModel.IsAktif,
-                            IslemTarihi = kModel.IslemTarihi,
-                            IslemYapanID = kModel.IslemYapanID,
+                            VASurecleriMaddeTurs = kModel.MaddeTurIds.Select(s => new VASurecleriMaddeTur { MaddeTurID = s, IsVeriGirisiAcik = true, IslemTarihi = DateTime.Now, IslemYapanID = UserIdentity.Current.Id, IslemYapanIP = UserIdentity.Ip }).ToList(),
+                            IslemTarihi = DateTime.Now,
+                            IslemYapanID = UserIdentity.Current.Id,
                             IslemYapanIP = kModel.IslemYapanIP
 
                         });
@@ -312,6 +357,10 @@ namespace WebApp.Business
                     }
 
                     db.SaveChanges();
+                    if (kModel.VASurecID <= 0)
+                    {
+                        SurecMaddeSenkronizasyonu(vaSureci.VASurecID, kModel.MaddeTurIds);
+                    }
                     kModel.VASurecID = vaSureci.VASurecID;
                     return new DataResult<KmSurecIslemleri>(kModel, true, mmMessage);
 
@@ -320,348 +369,187 @@ namespace WebApp.Business
             }
         }
 
-        private static void BirimleriVeMaddeleriKopyala(SurecVeriKopyalaModel fModel)
-        {
-
-            using (var entities = new VysDBEntities())
-            {
-
-
-                var maddeTurIDs = fModel.Data.Select(s => s.MaddeTurID).ToList();
-
-                var eoDonem = entities.VASurecleris.First(p => p.VASurecID == fModel.VASurecID);
-                var vaSurecleriMaddeler = eoDonem.VASurecleriMaddes.Where(p => maddeTurIDs.Contains(p.MaddeTurID)).ToList();
-                var maddelers = entities.Maddelers.Where(p => p.IsAktif && p.BirimMaddeleris.Any() && maddeTurIDs.Contains(p.MaddeTurID.Value)).ToList();
-                var eklenecekMaddelers = maddelers.Where(p => eoDonem.VASurecleriMaddes.All(a => a.MaddeID != p.MaddeID) && p.MaddeTurleri.IsAktif).ToList();
-                var varolanMaddlers = vaSurecleriMaddeler.Where(p => maddelers.Any(a => a.MaddeID == p.MaddeID)).ToList();
-                var silinecekMaddelers = vaSurecleriMaddeler.Where(p => maddelers.All(a => a.MaddeID != p.MaddeID)).ToList();
-                if (eklenecekMaddelers.Any())
-                {
-                    foreach (var item in eklenecekMaddelers)
-                    {
-                        entities.VASurecleriMaddes.Add(new VASurecleriMadde
-                        {
-                            VASurecID = fModel.VASurecID,
-                            MaddeID = item.MaddeID,
-                            MaddeKod = item.MaddeKod,
-                            MaddeTurID = item.MaddeTurID.Value,
-                            VeriGirisSekliID = item.VeriGirisSekliID,
-                            VeriTipID = item.VeriTipID,
-                            MaddeYilSonuDegerHesaplamaTipID = item.MaddeYilSonuDegerHesaplamaTipID.Value,
-                            HesaplamaFormulu = item.HesaplamaFormulu,
-                            IsPlanlananDegerOlacak = item.MaddeTurleri.IsPlanlananDegerOlacak,
-                            IsPlanlananDegerOlacakGelecekYil = item.MaddeTurleri.IsPlanlananDegerOlacakGelecekYil,
-                            IslemTarihi = DateTime.Now,
-                            IslemYapanID = UserIdentity.Current.Id,
-                            IslemYapanIP = UserIdentity.Ip,
-                            IsAktif = true,
-                            VASurecleriMaddeVeriGirisDonemleris = item.MaddelerVeriGirisDonemleris.ToList().Select(s => new VASurecleriMaddeVeriGirisDonemleri { VACokluVeriDonemID = s.VACokluVeriDonemID, IsDosyaYuklensin = s.IsDosyaYuklensin }).ToList(),
-                        });
-                    }
-                    entities.SaveChanges();
-                    var donemMaddeler = eoDonem.VASurecleriMaddes.ToList();
-                    foreach (var item in eklenecekMaddelers.Where(p => p.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak))
-                    {
-                        var eklenecekFhMadde = donemMaddeler.First(p => p.MaddeID == item.MaddeID);
-                        foreach (var itemF in item.MaddelerFormulEslesenMaddelers)
-                        {
-                            var eslesenMadde = donemMaddeler.First(p => p.MaddeKod == itemF.EslesenMaddeKod);
-                            eklenecekFhMadde.VASurecleriMaddeFormulEslesenMaddes.Add(new VASurecleriMaddeFormulEslesenMadde { EslesenVASurecleriMaddeID = eslesenMadde.VASurecleriMaddeID });
-                        }
-                    }
-                    entities.SaveChanges();
-
-
-                }
-                if (varolanMaddlers.Any())
-                {
-                    foreach (var item in varolanMaddlers)
-                    {
-                        var mturKopyalamaBilgisi = fModel.Data.First(p => p.MaddeTurID == item.MaddeTurID);
-                        var madde = maddelers.First(p => p.MaddeID == item.MaddeID);
-
-                        item.VASurecID = fModel.VASurecID;
-                        item.MaddeID = madde.MaddeID;
-                        item.MaddeKod = madde.MaddeKod;
-                        item.VeriGirisSekliID = madde.VeriGirisSekliID;
-                        item.HesaplamaFormulu = madde.HesaplamaFormulu;
-                        item.VeriTipID = madde.VeriTipID;
-                        item.MaddeYilSonuDegerHesaplamaTipID = madde.MaddeYilSonuDegerHesaplamaTipID.Value;
-                        item.IslemTarihi = DateTime.Now;
-                        item.IslemYapanID = UserIdentity.Current.Id;
-                        item.IslemYapanIP = UserIdentity.Ip;
-                        item.IsAktif = item.MaddeTurleri.IsAktif;
-
-                        if (mturKopyalamaBilgisi.MaddeTurOzellikleriniKopyala)
-                        {
-                            item.IsPlanlananDegerOlacak = madde.MaddeTurleri.IsPlanlananDegerOlacak;
-                            item.IsPlanlananDegerOlacakGelecekYil = madde.MaddeTurleri.IsPlanlananDegerOlacakGelecekYil;
-                            var eklenecekDonems = madde.MaddelerVeriGirisDonemleris.Where(p => item.VASurecleriMaddeVeriGirisDonemleris.Select(s => s.VACokluVeriDonemID).All(a => a != p.VACokluVeriDonemID)).ToList().Select(s => new VASurecleriMaddeVeriGirisDonemleri { VACokluVeriDonemID = s.VACokluVeriDonemID, IsDosyaYuklensin = s.IsDosyaYuklensin, VASurecleriMaddeID = item.VASurecleriMaddeID }).ToList();
-                            var silinecekDonems = item.VASurecleriMaddeVeriGirisDonemleris.Where(p => madde.MaddelerVeriGirisDonemleris.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList();
-                            if (silinecekDonems.Any())
-                            {
-                                entities.VASurecleriMaddeVeriGirisDonemleris.RemoveRange(silinecekDonems);
-                            }
-                            if (eklenecekDonems.Any())
-                            {
-                                entities.VASurecleriMaddeVeriGirisDonemleris.AddRange(eklenecekDonems);
-                            }
-                        }
-                        if (item.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak)
-                        {
-                            entities.VASurecleriMaddeFormulEslesenMaddes.RemoveRange(item.VASurecleriMaddeFormulEslesenMaddes);
-                            foreach (var itemF in madde.MaddelerFormulEslesenMaddelers)
-                            {
-                                var eslesenMadde = eoDonem.VASurecleriMaddes.First(p => p.MaddeKod == itemF.EslesenMaddeKod);
-                                item.VASurecleriMaddeFormulEslesenMaddes.Add(new VASurecleriMaddeFormulEslesenMadde { EslesenVASurecleriMaddeID = eslesenMadde.VASurecleriMaddeID });
-                            }
-                        }
-                        else
-                        {
-                            entities.VASurecleriMaddeFormulEslesenMaddes.RemoveRange(item.VASurecleriMaddeFormulEslesenMaddes);
-                            item.VASurecleriMaddeFormulEslesenMaddes = null;
-                            item.HesaplamaFormulu = null;
-                        }
-                    }
-                }
-                foreach (var item in silinecekMaddelers)
-                    item.IsAktif = false;
-                entities.SaveChanges();
-
-                //var birims = entities.Birimlers.Where(p => p.BirimMaddeleris.Any()).ToList();
-                //var eklenecekBirim = birims.Where(p => eoDonem.VASurecleriBirims.All(a => a.BirimID != p.BirimID)).ToList();
-                //var varolanBirim = eoDonem.VASurecleriBirims.Where(p => birims.Any(a => a.BirimID == p.BirimID)).ToList();
-                //var silinecekBirim = eoDonem.VASurecleriBirims.Where(p => birims.All(a => a.BirimID != p.BirimID)).ToList();
-
-                //var vaSurecleriMaddelers = entities.VASurecleriMaddes.Where(p => p.VASurecID == fModel.VASurecID && maddeTurIDs.Contains(p.MaddeTurID)).ToList();
-                //var pldegerMaddeTurIDs = fModel.Data.Where(p => p.PlanlananDegerleriKopyala).Select(s => s.MaddeTurID).Distinct().ToList();
-                //var oncekiDonemGirilenHedefler = entities.VASurecleriBirimMaddes.Where(p => p.VASurecleriMadde.VASurecleri.Yil == (eoDonem.Yil - 1) && pldegerMaddeTurIDs.Contains(p.VASurecleriMadde.MaddeTurID)).ToList();
-
-                //if (eklenecekBirim.Any())
-                //    entities.VASurecleriBirims.AddRange(eklenecekBirim.Select(item => new VASurecleriBirim
-                //    {
-                //        VASurecID = fModel.VASurecID,
-                //        BirimID = item.BirimID,
-                //        BirimKod = item.BirimKod,
-                //        IslemTarihi = DateTime.Now,
-                //        IslemYapanID = UserIdentity.Current.Id,
-                //        IslemYapanIP = UserIdentity.Ip,
-                //        VASurecleriBirimMaddes = (from s in vaSurecleriMaddelers.Where(p => item.BirimMaddeleris.Any(a => a.MaddeID == p.MaddeID))
-                //                                  join od in oncekiDonemGirilenHedefler on new { s.MaddeID, item.BirimID } equals new { od.VASurecleriMadde.MaddeID, od.VASurecleriBirim.BirimID } into defOd
-                //                                  from od in defOd.DefaultIfEmpty()
-                //                                  select new VASurecleriBirimMadde
-                //                                  {
-                //                                      IslemTarihi = DateTime.Now,
-                //                                      IslemYapanID = UserIdentity.Current.Id,
-                //                                      IslemYapanIP = UserIdentity.Ip,
-                //                                      VASurecleriMaddeID = s.VASurecleriMaddeID,
-                //                                      PlanlananDeger = (od != null && pldegerMaddeTurIDs.Contains(s.MaddeTurID) ? od.PlanlananDegerGelecekYil : null)
-                //                                  }).ToList()
-
-                //    }));
-                // Maddetürü seçeneklerine göre planlanan hedefler seçime göre güncellenecek 
-                //foreach (var item in varolanBirim)
-                //{
-                //    var birim = birims.First(p => p.BirimID == item.BirimID);
-                //    var maddeIDs = birim.BirimMaddeleris.Select(s => s.MaddeID).ToList();
-                //    var vaSurecMaddeIDs = vaSurecleriMaddelers.Where(p => maddeIDs.Contains(p.MaddeID)).Select(s => s.VASurecleriMaddeID).ToList();
-                //    item.IslemTarihi = DateTime.Now;
-                //    item.IslemYapanID = UserIdentity.Current.Id;
-                //    item.IslemYapanIP = UserIdentity.Ip;
-
-                //    var eklenecekEBirims = vaSurecMaddeIDs.Where(p => !item.VASurecleriBirimMaddes.Any(a => maddeTurIDs.Contains(a.VASurecleriMadde.MaddeTurID) && a.VASurecleriMaddeID == p)).Select(s => new VASurecleriBirimMadde
-                //    {
-
-                //        VASurecleriMaddeID = s,
-                //        IslemTarihi = DateTime.Now,
-                //        IslemYapanID = UserIdentity.Current.Id,
-                //        IslemYapanIP = UserIdentity.Ip,
-                //    }).ToList();
-                //    var silinecekEBirims = item.VASurecleriBirimMaddes.Where(p => maddeTurIDs.Contains(p.VASurecleriMadde.MaddeTurID)).Where(p => vaSurecMaddeIDs.All(a => a != p.VASurecleriMaddeID)).ToList();
-                //    if (silinecekEBirims.Any()) entities.VASurecleriBirimMaddes.RemoveRange(silinecekEBirims);
-                //    var guncellenecekEBirims = item.VASurecleriBirimMaddes.Where(p => maddeTurIDs.Contains(p.VASurecleriMadde.MaddeTurID)).Where(p => vaSurecMaddeIDs.Any(a => a == p.VASurecleriMaddeID)).ToList();
-
-                //    foreach (var itemGb in guncellenecekEBirims)
-                //    {
-                //        if (pldegerMaddeTurIDs.Contains(itemGb.VASurecleriMadde.MaddeTurID))
-                //        {
-                //            itemGb.PlanlananDeger = oncekiDonemGirilenHedefler.Where(p => p.VASurecleriMadde.MaddeID == itemGb.VASurecleriMadde.MaddeID && p.VASurecleriBirim.BirimID == itemGb.VASurecleriBirim.BirimID).Select(s => s.PlanlananDegerGelecekYil).FirstOrDefault();
-                //        }
-                //    }
-                //    foreach (var itemMb in eklenecekEBirims)
-                //    {
-                //        var vaSMadde = vaSurecleriMaddelers.First(p => p.VASurecleriMaddeID == itemMb.VASurecleriMaddeID);
-                //        if (pldegerMaddeTurIDs.Contains(vaSMadde.MaddeTurID))
-                //        {
-                //            itemMb.PlanlananDeger = oncekiDonemGirilenHedefler.Where(p => p.VASurecleriMadde.MaddeID == vaSMadde.MaddeID && p.VASurecleriBirim.BirimID == itemMb.VASurecleriBirim.BirimID).Select(s => s.PlanlananDegerGelecekYil).FirstOrDefault();
-                //        }
-                //        item.VASurecleriBirimMaddes.Add(itemMb);
-                //    }
-
-                //}
-                //entities.VASurecleriBirims.RemoveRange(silinecekBirim);
-                eoDonem.IslemTarihi = DateTime.Now;
-                eoDonem.IslemYapanID = UserIdentity.Current.Id;
-                eoDonem.IslemYapanIP = UserIdentity.Ip;
-                //entities.SaveChanges();
-                //var data = entities.VASurecleriMaddeGirilenDegers.Where(p => !p.VASurecleriBirim.VASurecleriBirimMaddes.Any(a => a.VASurecleriBirimID == p.VASurecleriBirimID && a.VASurecleriMaddeID == p.VASurecleriMaddeID)).ToList();
-                //entities.VASurecleriMaddeGirilenDegers.RemoveRange(data);
-                //entities.SaveChanges();
-            }
-        }
-
-        public static IDataResult<SurecVeriKopyalaModel> VeriKopyala(SurecVeriKopyalaModel kModel)
+        public static IResult SurecMaddeSenkronizasyonu(int vaSurecId, List<int> maddeTurIds)
         {
             var mMessage = new MmMessage
             {
                 IsSuccess = false,
-                Title = "Sürece Veri Kopyalama İşlemi Başarısız.",
+                Title = "Süreç Maddeleri Güncelleme ve Kopyalama İşlemi",
                 MessageType = Msgtype.Warning
             };
             try
             {
-                SurecMaddeSenkronizasyonu(kModel.VASurecID);
-                //BirimleriVeMaddeleriKopyala(kModel);
-                mMessage.Title = "Sürece Veri Kopyalama İşlemi Başarılı.";
-                mMessage.IsSuccess = true;
-                mMessage.Messages.Add("Veriler Aktarıldı.");
-                mMessage.MessageType = Msgtype.Success;
+                if (!maddeTurIds.Any())
+                {
+                    mMessage.Messages.Add("Süreç maddeleri güncellenebilmesi için en az 1 Madde türü seçilmelidir.");
+                }
+                else
+                {
+                    SurecMaddeGuncellemeleri(vaSurecId, maddeTurIds);
+                    SurecEslesenMaddeUpdate(vaSurecId);
+                    SurecMaddeTuruUpdate(vaSurecId);
+                    mMessage.IsSuccess = true;
+                    mMessage.Messages.Add("Süreç maddeleri güncellendi.");
+                    mMessage.MessageType = Msgtype.Success;
+                }
 
-                return new DataResult<SurecVeriKopyalaModel>(kModel, true, mMessage);
             }
             catch (Exception ex)
             {
                 mMessage.Messages.Add("Veriler Aktarılırken bir hata oluştu! Hata:" + ex.ToExceptionMessage());
             }
-            return new DataResult<SurecVeriKopyalaModel>(kModel, false, mMessage);
+            return new Result(mMessage.IsSuccess, mMessage);
 
         }
 
 
-        public static IDataResult<bool> SurecMaddeSenkronizasyonu(int vaSurecId)
-        {
-            SurecMaddeGuncellemeleri(vaSurecId);
-            SurecEslesenMaddeUpdate(vaSurecId);
 
-            return new DataResult<bool>(true, true);
-        }
-
-        public class SurecMaddeGuncellemeBulkModel
-        {
-            public List<VASurecleriMadde> BulkInsertVaSurecMaddes { get; set; } = new List<VASurecleriMadde>();
-            public List<VASurecleriMadde> BulkUpdateVaSurecMaddes { get; set; } = new List<VASurecleriMadde>();
-            public List<VASurecleriMadde> BulkDeleteVaSurecMaddes { get; set; } = new List<VASurecleriMadde>();
-
-            //public List<VASurecleriMaddeVeriGirisDonemleri> BulkInsertVASurecleriMaddeVeriGirisDonemleris { get; set; } = new List<VASurecleriMaddeVeriGirisDonemleri>();
-            //public List<VASurecleriMaddeVeriGirisDonemleri> BulkUpdateVASurecleriMaddeVeriGirisDonemleris { get; set; } = new List<VASurecleriMaddeVeriGirisDonemleri>();
-            //public List<VASurecleriMaddeVeriGirisDonemleri> BulkDeleteVASurecleriMaddeVeriGirisDonemleris { get; set; } = new List<VASurecleriMaddeVeriGirisDonemleri>();
-
-            //public List<VASurecleriMaddeBirim> BulkInsertVASurecleriMaddeBirims { get; set; } = new List<VASurecleriMaddeBirim>();
-            //public List<VASurecleriMaddeBirim> BulkUpdateVASurecleriMaddeBirims { get; set; } = new List<VASurecleriMaddeBirim>();
-            //public List<VASurecleriMaddeBirim> BulkDeleteVASurecleriMaddeBirims { get; set; } = new List<VASurecleriMaddeBirim>();
-
-        }
-        private static void SurecMaddeGuncellemeleri(int vaSurecId)
+        private static void SurecMaddeGuncellemeleri(int vaSurecId, List<int> maddeTurIds)
         {
             using (var entities = new VysDBEntities())
             {
 
-                var bulkInsertModel = new SurecMaddeGuncellemeBulkModel();
+                var bulkMergeVaSurecMaddes = new List<VASurecleriMadde>();
+                var bulkDeleteVaSurecMaddes = new List<VASurecleriMadde>();
+                var bulkDeleteVaSurecleriMaddeVeriGirisDonemleris = new List<VASurecleriMaddeVeriGirisDonemleri>();
+                var bulkDeleteVaSurecleriMaddeBirims = new List<VASurecleriMaddeBirim>();
 
-                var aktarilacakMaddelers = entities.Maddelers.Where(p => p.IsAktif && p.MaddeTurleri.IsAktif).ToList();
+                var aktarilacakMaddelers = entities.Maddelers.Where(p => maddeTurIds.Contains(p.MaddeTurID ?? 0) && p.IsAktif && p.MaddeTurleri.IsAktif).ToList();
                 var vaSurecleriMaddelers = entities.VASurecleriMaddes.Where(p => p.VASurecID == vaSurecId).ToList();
+                var vaSurecleriSecilenMaddeTuruMaddelers = vaSurecleriMaddelers.Where(p => maddeTurIds.Contains(p.MaddeTurID)).ToList();
 
-                bulkInsertModel.BulkDeleteVaSurecMaddes.AddRange(vaSurecleriMaddelers.Where(p => aktarilacakMaddelers.Any(a => a.MaddeID == p.MaddeID)).ToList());
+                bulkDeleteVaSurecMaddes.AddRange(vaSurecleriSecilenMaddeTuruMaddelers.Where(p => aktarilacakMaddelers.All(a => a.MaddeID != p.MaddeID)).ToList());
 
-                foreach (var itemMadde in aktarilacakMaddelers)
+                var vaSureci = entities.VASurecleris.Where(f => f.VASurecID == vaSurecId)
+                  .Select(s => new { s.VASurecID, s.Yil, s.VASurecleriMaddeTurs }).First();
+                var oncekiDonemGirilenHedefler = entities.VASurecleriMaddeBirims.Where(p => p.VASurecleriMadde.IsPlanlananDegerOlacak && p.VASurecleriMadde.VASurecleri.Yil == (vaSureci.Yil - 1) && maddeTurIds.Contains(p.VASurecleriMadde.MaddeTurID)).Select(s => new
                 {
-                    var surecMadde = vaSurecleriMaddelers.FirstOrDefault(f => f.MaddeID == itemMadde.MaddeID);
+                    s.BirimID,
+                    s.VASurecleriMadde.MaddeID,
+                    s.PlanlananDegerGelecekYil,
+
+                }).ToList();
+
+                foreach (var itemAktarilacakMadde in aktarilacakMaddelers)
+                {
+                    var surecMadde = vaSurecleriMaddelers.FirstOrDefault(f => f.MaddeID == itemAktarilacakMadde.MaddeID);
                     if (surecMadde != null)
                     {
-                        surecMadde.MaddeKod = itemMadde.MaddeKod;
-                        surecMadde.MaddeTurID = itemMadde.MaddeTurID ?? 0;
-                        surecMadde.VeriGirisSekliID = itemMadde.VeriGirisSekliID;
-                        surecMadde.VeriTipID = itemMadde.VeriTipID;
-                        surecMadde.HesaplamaFormulu = itemMadde.HesaplamaFormulu;
-                        surecMadde.MaddeYilSonuDegerHesaplamaTipID = itemMadde.MaddeYilSonuDegerHesaplamaTipID ?? 0;
-                        surecMadde.IsPlanlananDegerOlacak = itemMadde.MaddeTurleri.IsPlanlananDegerOlacak;
-                        surecMadde.IsPlanlananDegerOlacakGelecekYil = itemMadde.MaddeTurleri.IsPlanlananDegerOlacakGelecekYil;
+                        surecMadde.MaddeKod = itemAktarilacakMadde.MaddeKod;
+                        surecMadde.MaddeTurID = itemAktarilacakMadde.MaddeTurID ?? 0;
+                        surecMadde.VeriGirisSekliID = itemAktarilacakMadde.VeriGirisSekliID;
+                        surecMadde.VeriTipID = itemAktarilacakMadde.VeriTipID;
+                        surecMadde.HesaplamaFormulu = itemAktarilacakMadde.HesaplamaFormulu;
+                        surecMadde.MaddeYilSonuDegerHesaplamaTipID = itemAktarilacakMadde.MaddeYilSonuDegerHesaplamaTipID ?? 0;
+                        surecMadde.IsPlanlananDegerOlacak = itemAktarilacakMadde.MaddeTurleri.IsPlanlananDegerOlacak;
+                        surecMadde.IsPlanlananDegerOlacakGelecekYil = itemAktarilacakMadde.MaddeTurleri.IsPlanlananDegerOlacakGelecekYil;
                         surecMadde.IsAktif = true;
                         surecMadde.IslemTarihi = DateTime.Now;
                         surecMadde.IslemYapanID = UserIdentity.Current.Id;
                         surecMadde.IslemYapanIP = UserIdentity.Ip;
 
-                        var maddeBirimleri = itemMadde.BirimMaddeleris.ToList();
-                        var surecMaddeBirimleris = surecMadde.VASurecleriMaddeBirims.ToList();
 
-                        foreach (var itemMaddeBirim in maddeBirimleri)
-                        {
-                            var surecMaddeBirim = surecMaddeBirimleris.FirstOrDefault(f => f.BirimID == itemMaddeBirim.BirimID);
+                        bulkDeleteVaSurecleriMaddeBirims.AddRange(surecMadde.VASurecleriMaddeBirims.Where(p => itemAktarilacakMadde.BirimMaddeleris.All(a => a.BirimID != p.BirimID)).ToList());
+                        bulkDeleteVaSurecleriMaddeVeriGirisDonemleris.AddRange(surecMadde.VASurecleriMaddeVeriGirisDonemleris.Where(p => itemAktarilacakMadde.MaddelerVeriGirisDonemleris.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList());
 
-                            if (surecMaddeBirim != null)
-                            {
-                                //surecMaddeBirim.PlanlananDeger =  ;
-                                //surecMaddeBirim.PlanlananDegerGelecekYil =  ;
+                        surecMadde.VASurecleriMaddeBirims = (from aktarilacakMaddeBirim in itemAktarilacakMadde.BirimMaddeleris
+                                                             join surecMaddeBirim in surecMadde.VASurecleriMaddeBirims on new { aktarilacakMaddeBirim.BirimID, aktarilacakMaddeBirim.MaddeID } equals new { surecMaddeBirim.BirimID, surecMadde.MaddeID } into defSmb
+                                                             from surecMaddeBirimDef in defSmb.DefaultIfEmpty()
+                                                             join oncekiSurecHedef in oncekiDonemGirilenHedefler on new { aktarilacakMaddeBirim.BirimID, aktarilacakMaddeBirim.MaddeID } equals new { oncekiSurecHedef.BirimID, oncekiSurecHedef.MaddeID } into defOsh
+                                                             from oncekiSurecHedefDef in defOsh.DefaultIfEmpty()
+                                                             select new VASurecleriMaddeBirim
+                                                             {
+                                                                 VASurecleriMaddeBirimID = surecMaddeBirimDef?.VASurecleriMaddeBirimID ?? 0,
+                                                                 VASurecleriMaddeID = surecMadde.VASurecleriMaddeID,
+                                                                 BirimID = aktarilacakMaddeBirim.BirimID,
+                                                                 PlanlananDeger = surecMaddeBirimDef?.PlanlananDeger ?? oncekiSurecHedefDef?.PlanlananDegerGelecekYil,
+                                                                 PlanlananDegerGelecekYil = surecMaddeBirimDef?.PlanlananDegerGelecekYil,
+                                                                 IslemTarihi = surecMaddeBirimDef?.IslemTarihi ?? DateTime.Now,
+                                                                 IslemYapanID = surecMaddeBirimDef?.IslemYapanID ?? UserIdentity.Current.Id,
+                                                                 IslemYapanIP = surecMaddeBirimDef?.IslemYapanIP ?? UserIdentity.Ip
+                                                             }).ToList();
+                        surecMadde.VASurecleriMaddeVeriGirisDonemleris = (from aktarilacakMaddeDonem in itemAktarilacakMadde.MaddelerVeriGirisDonemleris
+                                                                          join surecMaddeDonem in surecMadde.VASurecleriMaddeVeriGirisDonemleris on new { aktarilacakMaddeDonem.VACokluVeriDonemID, aktarilacakMaddeDonem.MaddeID } equals new { surecMaddeDonem.VACokluVeriDonemID, surecMadde.MaddeID } into defSmb
+                                                                          from surecMaddeDonemDef in defSmb.DefaultIfEmpty()
+                                                                          select new VASurecleriMaddeVeriGirisDonemleri
+                                                                          {
+                                                                              VASurecleriMaddeVeriGirisDonemID = surecMaddeDonemDef?.VASurecleriMaddeVeriGirisDonemID ?? 0,
+                                                                              VASurecleriMaddeID = surecMadde.VASurecleriMaddeID,
+                                                                              VACokluVeriDonemID = aktarilacakMaddeDonem.VACokluVeriDonemID,
+                                                                              IsDosyaYuklensin = aktarilacakMaddeDonem.IsDosyaYuklensin
+                                                                          }).ToList();
 
-                                surecMaddeBirim.IslemTarihi = DateTime.Now;
-                                surecMaddeBirim.IslemYapanID = UserIdentity.Current.Id;
-                                surecMaddeBirim.IslemYapanIP = UserIdentity.Ip;
-                            }
+                        bulkMergeVaSurecMaddes.Add(surecMadde);
 
-                        }
-
-                        var silinecekBirimler = surecMadde.VASurecleriMaddeBirims.Where(p => itemMadde.BirimMaddeleris.All(a => a.BirimID != p.BirimID)).ToList();
 
                     }
                     else
                     {
 
-                        bulkInsertModel.BulkInsertVaSurecMaddes.Add(new VASurecleriMadde
+                        bulkMergeVaSurecMaddes.Add(new VASurecleriMadde
                         {
                             VASurecID = vaSurecId,
-                            MaddeID = itemMadde.MaddeID,
-                            MaddeKod = itemMadde.MaddeKod,
-                            MaddeTurID = itemMadde.MaddeTurID ?? 0,
-                            VeriGirisSekliID = itemMadde.VeriGirisSekliID,
-                            VeriTipID = itemMadde.VeriTipID,
-                            HesaplamaFormulu = itemMadde.HesaplamaFormulu,
-                            MaddeYilSonuDegerHesaplamaTipID = itemMadde.MaddeYilSonuDegerHesaplamaTipID ?? 0,
-                            IsPlanlananDegerOlacak = itemMadde.MaddeTurleri.IsPlanlananDegerOlacak,
-                            IsPlanlananDegerOlacakGelecekYil = itemMadde.MaddeTurleri.IsPlanlananDegerOlacakGelecekYil,
+                            MaddeID = itemAktarilacakMadde.MaddeID,
+                            MaddeKod = itemAktarilacakMadde.MaddeKod,
+                            MaddeTurID = itemAktarilacakMadde.MaddeTurID ?? 0,
+                            VeriGirisSekliID = itemAktarilacakMadde.VeriGirisSekliID,
+                            VeriTipID = itemAktarilacakMadde.VeriTipID,
+                            HesaplamaFormulu = itemAktarilacakMadde.HesaplamaFormulu,
+                            MaddeYilSonuDegerHesaplamaTipID = itemAktarilacakMadde.MaddeYilSonuDegerHesaplamaTipID ?? 0,
+                            IsPlanlananDegerOlacak = itemAktarilacakMadde.MaddeTurleri.IsPlanlananDegerOlacak,
+                            IsPlanlananDegerOlacakGelecekYil = itemAktarilacakMadde.MaddeTurleri.IsPlanlananDegerOlacakGelecekYil,
                             IsAktif = true,
                             IslemTarihi = DateTime.Now,
                             IslemYapanID = UserIdentity.Current.Id,
                             IslemYapanIP = UserIdentity.Ip,
-
-                            VASurecleriMaddeVeriGirisDonemleris = itemMadde.MaddelerVeriGirisDonemleris.Select(s => new VASurecleriMaddeVeriGirisDonemleri { VACokluVeriDonemID = s.VACokluVeriDonemID, IsDosyaYuklensin = s.IsDosyaYuklensin }).ToList(),
-                            VASurecleriMaddeBirims = itemMadde.BirimMaddeleris.Select(s => new VASurecleriMaddeBirim { BirimID = s.BirimID, IslemTarihi = DateTime.Now, IslemYapanID = UserIdentity.Current.Id, IslemYapanIP = UserIdentity.Ip }).ToList()
+                            VASurecleriMaddeVeriGirisDonemleris = itemAktarilacakMadde.MaddelerVeriGirisDonemleris.Select(s => new VASurecleriMaddeVeriGirisDonemleri { VACokluVeriDonemID = s.VACokluVeriDonemID, IsDosyaYuklensin = s.IsDosyaYuklensin }).ToList(),
+                            VASurecleriMaddeBirims = (from aktarilacakMaddeBirim in itemAktarilacakMadde.BirimMaddeleris
+                                                      join oncekiSurecHedef in oncekiDonemGirilenHedefler on new { aktarilacakMaddeBirim.BirimID, aktarilacakMaddeBirim.MaddeID } equals new { oncekiSurecHedef.BirimID, oncekiSurecHedef.MaddeID } into defOsh
+                                                      from oncekiSurecHedefDef in defOsh.DefaultIfEmpty()
+                                                      select new VASurecleriMaddeBirim
+                                                      {
+                                                          BirimID = aktarilacakMaddeBirim.BirimID,
+                                                          PlanlananDeger = oncekiSurecHedefDef?.PlanlananDegerGelecekYil,
+                                                          IslemTarihi = DateTime.Now,
+                                                          IslemYapanID = UserIdentity.Current.Id,
+                                                          IslemYapanIP = UserIdentity.Ip
+                                                      }).ToList()
 
                         });
                     }
 
                 }
 
-                if (bulkInsertModel.BulkInsertVaSurecMaddes.Any())
-                {
-                    entities.BulkInsert(bulkInsertModel.BulkInsertVaSurecMaddes);
 
-                    var insertedMaddeIds = bulkInsertModel.BulkInsertVaSurecMaddes.Select(s => s.MaddeID).ToList();
+
+                if (bulkMergeVaSurecMaddes.Any())
+                {
+
+                    //Süreç madde eklemeleri ve güncellemeleri
+                    entities.BulkMerge(bulkMergeVaSurecMaddes);
+
+                    var insertedMaddeIds = bulkMergeVaSurecMaddes.Select(s => s.MaddeID).ToList();
                     var insertedMaddes = entities.VASurecleriMaddes.Where(p => p.VASurecID == vaSurecId && insertedMaddeIds.Contains(p.MaddeID))
                         .Select(s => new { s.VASurecleriMaddeID, s.MaddeID });
-                    foreach (var itemInsertVaSurecMadde in bulkInsertModel.BulkInsertVaSurecMaddes)
+
+                    foreach (var itemInsertVaSurecMadde in bulkMergeVaSurecMaddes)
                     {
                         var vasMadde = insertedMaddes.First(f => f.MaddeID == itemInsertVaSurecMadde.MaddeID);
                         itemInsertVaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.ForEach(f => f.VASurecleriMaddeID = vasMadde.VASurecleriMaddeID);
                         itemInsertVaSurecMadde.VASurecleriMaddeBirims.ForEach(f => f.VASurecleriMaddeID = vasMadde.VASurecleriMaddeID);
                     }
-                    entities.BulkInsert(bulkInsertModel.BulkInsertVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeVeriGirisDonemleris));
-                    entities.BulkInsert(bulkInsertModel.BulkInsertVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeBirims));
+                    //Süreç madde birimleri ve dönemleri eklemeleri ve güncellemeleri
+                    entities.BulkMerge(bulkMergeVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeVeriGirisDonemleris));
+                    entities.BulkMerge(bulkMergeVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeBirims));
+
+
                 }
-                if (bulkInsertModel.BulkDeleteVaSurecMaddes.Any())
+                if (bulkDeleteVaSurecMaddes.Any())
                 {
-                    if (bulkInsertModel.BulkDeleteVaSurecMaddes.Any(a => a.VASurecleriMaddeGirilenDegers.Any() || a.VASurecleriMaddeEklenenAciklamas.Any() || a.VASurecleriMaddeEklenenDosyas.Any()))
+                    //Süreç madde silme işlemleri
+                    if (bulkDeleteVaSurecMaddes.Any(a => a.VASurecleriMaddeGirilenDegers.Any() || a.VASurecleriMaddeEklenenAciklamas.Any() || a.VASurecleriMaddeEklenenDosyas.Any()))
                     {
-                        foreach (var silinecekVaSurecleriMadde in bulkInsertModel.BulkDeleteVaSurecMaddes)
+                        foreach (var silinecekVaSurecleriMadde in bulkDeleteVaSurecMaddes)
                         {
                             silinecekVaSurecleriMadde.IsAktif = false;
                             silinecekVaSurecleriMadde.IslemTarihi = DateTime.Now;
@@ -671,42 +559,143 @@ namespace WebApp.Business
                     }
                     else
                     {
-                        entities.BulkDelete(bulkInsertModel.BulkDeleteVaSurecMaddes);
+                        entities.BulkDelete(bulkDeleteVaSurecMaddes);
                     }
                 }
-
-                //entities.SaveChanges();
-
+                if (bulkDeleteVaSurecleriMaddeVeriGirisDonemleris.Any())
+                {
+                    //Süreç madde güncelleme işlemlerinde dönem bilgileri kaldırılmışsa db den silme işlemi
+                    entities.BulkDelete(bulkDeleteVaSurecleriMaddeVeriGirisDonemleris);
+                }
+                if (bulkDeleteVaSurecleriMaddeBirims.Any())
+                {
+                    //Süreç madde güncelleme işlemlerinde birim bilgileri kaldırılmışsa db den silme işlemi
+                    entities.BulkDelete(bulkDeleteVaSurecleriMaddeBirims);
+                }
             }
 
         }
 
+        private static void SurecMaddeTuruUpdate(int vaSurecId)
+        {
+            using (var entities = new VysDBEntities())
+            {
+
+                var surecMaddeTurIds =
+                    entities.VASurecleriMaddes.Where(p => p.VASurecID == vaSurecId).Select(s => s.MaddeTurID).Distinct().ToList();
+
+                var maddeTurleris = entities.MaddeTurleris.Where(p => surecMaddeTurIds.Contains(p.MaddeTurID)).ToList();
+
+                var surecMaddeTurs = entities.VASurecleriMaddeTurs.Where(p => p.VASurecID == vaSurecId).ToList();
+
+
+                var bulkMergeSurecMaddeTurs = (from maddeTur in maddeTurleris
+                                               join surecMaddeTur in surecMaddeTurs on maddeTur.MaddeTurID equals surecMaddeTur.MaddeTurID into defMt
+                                               from surecMaddeTurDef in defMt.DefaultIfEmpty()
+                                               select new VASurecleriMaddeTur
+                                               {
+                                                   VASurecleriMaddeTurID = surecMaddeTurDef?.VASurecleriMaddeTurID ?? 0,
+                                                   MaddeTurID = maddeTur.MaddeTurID,
+                                                   IsVeriGirisiAcik = surecMaddeTurDef?.IsVeriGirisiAcik ?? true,
+                                                   VASurecID = vaSurecId,
+                                                   IslemTarihi = surecMaddeTurDef?.IslemTarihi ?? DateTime.Now,
+                                                   IslemYapanIP = surecMaddeTurDef?.IslemYapanIP ?? UserIdentity.Ip,
+                                                   IslemYapanID = surecMaddeTurDef?.IslemYapanID ?? UserIdentity.Current.Id
+
+                                               }).ToList();
+                entities.BulkMerge(bulkMergeSurecMaddeTurs);
+                var buldkDeleteSurecMaddeTurs = surecMaddeTurs.Where(p => !surecMaddeTurIds.Contains(p.MaddeTurID)).ToList();
+                if (buldkDeleteSurecMaddeTurs.Any())
+                    entities.BulkDelete(buldkDeleteSurecMaddeTurs);
+            }
+
+        }
         private static void SurecEslesenMaddeUpdate(int vaSurecId)
         {
             using (var entities = new VysDBEntities())
             {
-                var formulMaddeleri = entities.VASurecleriMaddes
-                    .Where(p => p.VASurecID == vaSurecId && p.HesaplamaFormulu != null && p.HesaplamaFormulu != "").ToList();
+
+
+
+                var surecMaddeleri = entities.VASurecleriMaddes
+                    .Where(p => p.VASurecID == vaSurecId).Select(s => new
+                    {
+                        isFormulVar = (s.HesaplamaFormulu != null &&
+                        s.HesaplamaFormulu != ""),
+                        s.MaddeID,
+                        s.VASurecleriMaddeID,
+                        s.VASurecleriMaddeFormulEslesenMaddes,
+                        SurecMadde = s
+                    }).ToList();
+                var formulMaddeleri = surecMaddeleri.Where(p => p.isFormulVar).ToList();
                 var maddeIds = formulMaddeleri.Select(s => s.MaddeID).Distinct().ToList();
                 var maddeler = entities.Maddelers.Where(p => maddeIds.Contains(p.MaddeID)).ToList();
                 foreach (var itemFormulMadde in formulMaddeleri)
                 {
                     var madde = maddeler.First(f => f.MaddeID == itemFormulMadde.MaddeID);
-                    entities.VASurecleriMaddeFormulEslesenMaddes.RemoveRange(itemFormulMadde
-                        .VASurecleriMaddeFormulEslesenMaddes);
-
-                    var vaSurecleriMaddeFormulEslesen = madde.MaddelerFormulEslesenMaddelers.Select(s => new VASurecleriMaddeFormulEslesenMadde
+                    if (madde.MaddelerFormulEslesenMaddelers.Count == madde.MaddelerFormulEslesenMaddelers.Count(a =>
+                            surecMaddeleri.Any(p => p.MaddeID == a.EslesenMaddeID)))
                     {
+                        entities.VASurecleriMaddeFormulEslesenMaddes.RemoveRange(itemFormulMadde
+                            .VASurecleriMaddeFormulEslesenMaddes);
 
-                        VASurecleriMaddeID = itemFormulMadde.VASurecleriMaddeID,
-                        EslesenVASurecleriMaddeID = formulMaddeleri.Where(p => p.MaddeID == s.EslesenMaddeID).Select(se => se.VASurecleriMaddeID).First()
+                        var vaSurecleriMaddeFormulEslesen = madde.MaddelerFormulEslesenMaddelers.Select(s => new VASurecleriMaddeFormulEslesenMadde
+                        {
 
-                    });
-                    entities.VASurecleriMaddeFormulEslesenMaddes.AddRange(vaSurecleriMaddeFormulEslesen);
+                            VASurecleriMaddeID = itemFormulMadde.VASurecleriMaddeID,
+                            EslesenVASurecleriMaddeID = surecMaddeleri.Where(p => p.MaddeID == s.EslesenMaddeID).Select(se => se.VASurecleriMaddeID).First()
+
+                        });
+                        entities.VASurecleriMaddeFormulEslesenMaddes.AddRange(vaSurecleriMaddeFormulEslesen);
+                    }
+                    else
+                    {
+                        entities.VASurecleriMaddes.Remove(surecMaddeleri.First(p => p.MaddeID == madde.MaddeID).SurecMadde);
+                    }
+
 
                 }
-
+                var formulMaddesiOlmayanlar = entities.VASurecleriMaddes
+                    .Where(p => p.VASurecID == vaSurecId && (p.HesaplamaFormulu == null || p.HesaplamaFormulu == "")).ToList();
+                foreach (var item in formulMaddesiOlmayanlar)
+                {
+                    entities.VASurecleriMaddeFormulEslesenMaddes.RemoveRange(item.VASurecleriMaddeFormulEslesenMaddes);
+                }
                 entities.SaveChanges();
+            }
+        }
+        public static IResult MaddeTurIsVeriGirisDurumKayit(int vaSurecId, int maddeTurId, bool isVeriGirisiAcik)
+        {
+            using (var entities = new VysDBEntities())
+            {
+                var mmMessage = new MmMessage
+                {
+                    Title = "Madde Türü Veri Girişi Durum Değişikliği",
+                    MessageType = Msgtype.Error
+                };
+                var vaSurecleriMaddeTur = entities.VASurecleriMaddeTurs.First(p => p.VASurecID == vaSurecId && p.MaddeTurID == maddeTurId);
+
+                try
+                {
+
+                    vaSurecleriMaddeTur.IsVeriGirisiAcik = isVeriGirisiAcik;
+                    vaSurecleriMaddeTur.IslemTarihi = DateTime.Now;
+                    vaSurecleriMaddeTur.IslemYapanID = UserIdentity.Current.Id;
+                    vaSurecleriMaddeTur.IslemYapanIP = UserIdentity.Ip;
+                    entities.SaveChanges();
+                    mmMessage.IsSuccess = true;
+                    mmMessage.MessageType = Msgtype.Success;
+                    mmMessage.Messages.Add("'" + vaSurecleriMaddeTur.MaddeTurleri.MaddeTurAdi + "' madde türü veri giriş işlemine " + (isVeriGirisiAcik ? "Açık" : "Kapalı") + " durumuna geririldir.!");
+                    return new Result(true, mmMessage);
+                }
+                catch (Exception ex)
+                {
+                    mmMessage.Messages.Add("'" + vaSurecleriMaddeTur.MaddeTurleri.MaddeTurAdi + "' madde türü için veri giriş durumu güncellenirken bir hata oluştu! </br> Hata:" + ex.ToExceptionMessage());
+                    SistemBilgilendirmeBus.SistemBilgisiKaydet(mmMessage.Messages[0], ObjectExtensions.GetCurrentMethodPath(), BilgiTipi.OnemsizHata);
+                    mmMessage.IsSuccess = false;
+                    return new Result(false, mmMessage);
+                }
+
             }
         }
         public static IResult SurecSil(int id)
@@ -757,7 +746,6 @@ namespace WebApp.Business
                     }
                 }
                 mmMessage.Messages.Add("Silmek İstediğiniz Süreç Sistemde Bulunamadı!");
-                ;
                 return new Result(true, mmMessage);
 
             }

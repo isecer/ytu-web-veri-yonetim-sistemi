@@ -21,8 +21,19 @@ namespace WebApp.Business
     {
         public static List<ComboModelInt> CmbGetVgMaddeTurleri(int? vaSurecId, int? birimId, bool bosSecimVar = true)
         {
+            return CmbGetVgMaddeTurleriData(vaSurecId, birimId, false, bosSecimVar);
+
+        }
+        public static List<ComboModelInt> CmbGetVgMaddeTurleri(int? vaSurecId, int? birimId, bool isVeriGirisineAcikFiltresiEkle, bool bosSecimVar)
+        {
+            return CmbGetVgMaddeTurleriData(vaSurecId, birimId, bosSecimVar, isVeriGirisineAcikFiltresiEkle);
+
+        }
+        private static List<ComboModelInt> CmbGetVgMaddeTurleriData(int? vaSurecId, int? birimId, bool isVeriGirisineAcikFiltresiEkle = false, bool bosSecimVar = true)
+        {
             var dct = new List<ComboModelInt>();
             if (bosSecimVar) dct.Add(new ComboModelInt());
+            if (isVeriGirisineAcikFiltresiEkle) dct.Add(new ComboModelInt { Value = -1, Caption = "Veri Girişine Açık Olan Maddeleri Listele" });
             using (var db = new VysDBEntities())
             {
                 var data = db.MaddeTurleris.Where(p => p.VASurecleriMaddes.Any(a => a.VASurecID == (vaSurecId ?? a.VASurecID) && a.VASurecleriMaddeBirims.Any(a2 => a2.BirimID == (birimId ?? a2.BirimID)))).OrderBy(o => o.MaddeTurAdi).ToList();
@@ -101,9 +112,11 @@ namespace WebApp.Business
                 var data = db.Vw_MaddeVeriGirisDurum.Where(p => p.VASurecID == model.VaSurecId && p.IsAktif && birimIDs.Contains(p.BirimID) && p.BirimID == (model.BirimId ?? 0)).ToList();
                 var vaSurecBirimIds = data.Select(s => s.BirimID).Distinct().ToList();
                 var vaSurecMaddeIds = data.Select(s => s.VASurecleriMaddeID).Distinct().ToList();
+                var vaSurecMaddeTur = db.VASurecleriMaddeTurs.Where(p => p.VASurecID == model.VaSurecId);
                 var datavm = db.VASurecleriMaddes.Where(p => vaSurecMaddeIds.Contains(p.VASurecleriMaddeID) && p.VASurecleriMaddeBirims.Any(a => vaSurecBirimIds.Contains(a.BirimID))).ToList();
                 var q = (from s in data
                          join vm in datavm on s.VASurecleriMaddeID equals vm.VASurecleriMaddeID
+                         join vmt in vaSurecMaddeTur on vm.MaddeTurID equals vmt.MaddeTurID
                          select new FrVgMaddeler
                          {
                              VASurecID = s.VASurecID,
@@ -112,6 +125,7 @@ namespace WebApp.Business
                              BirimAdi = s.BirimAdi,
                              BirimTreeAdi = s.BirimTreeAdi,
                              MaddeTurID = s.MaddeTurID,
+                             MaddeTurIsVeriGirisiAcik = vmt.IsVeriGirisiAcik,
                              MaddeTurAdi = s.MaddeTurAdi,
                              MaddeID = s.MaddeID,
                              MaddeKod = s.MaddeKod,
@@ -142,7 +156,11 @@ namespace WebApp.Business
                 {
                     q = model.MaddeVeriGirisDurumId == 1 ? q.Where(p => p.GirilecekVeriSayisi == p.GirilenVeriSayisi) : q.Where(p => p.GirilecekVeriSayisi != p.GirilenVeriSayisi);
                 }
-                if (model.MaddeTurId.HasValue) q = q.Where(p => p.MaddeTurID == model.MaddeTurId);
+
+                if (model.MaddeTurId.HasValue)
+                {
+                    q = model.MaddeTurId == -1 ? q.Where(p => p.MaddeTurIsVeriGirisiAcik) : q.Where(p => p.MaddeTurID == model.MaddeTurId);
+                }
                 if (model.VeriGirisiOnaylandi.HasValue) q = q.Where(p => p.VeriGirisiOnaylandi == model.VeriGirisiOnaylandi);
                 model.RowCount = q.Count();
                 q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.MaddeAdi);
@@ -189,9 +207,10 @@ namespace WebApp.Business
                 };
 
                 var vaSurecleriEklenenDosyalar = db.VASurecleriMaddeEklenenDosyas.Where(p =>
-                    p.VASurecleriMadde.VASurecID == vaSurecId && p.VASurecleriMadde.MaddeID == maddeId && p.BirimID==birimId).ToList();
+                    p.VASurecleriMadde.VASurecID == mdl.VASurecID && p.VASurecleriMadde.MaddeID == maddeId && p.BirimID == birimId).ToList();
                 mdl.VeriGirisi = (from maddeVeriGirisDurum in db.Vw_MaddeVeriGirisDurum.Where(p => p.VASurecID == mdl.VASurecID && p.IsAktif)
                                   join vaSurecleriMadde in db.VASurecleriMaddes on maddeVeriGirisDurum.VASurecleriMaddeID equals vaSurecleriMadde.VASurecleriMaddeID
+                                  join vaSurecleriMaddeTur in db.VASurecleriMaddeTurs.Where(p => p.VASurecID == mdl.VASurecID) on maddeVeriGirisDurum.MaddeTurID equals vaSurecleriMaddeTur.MaddeTurID
                                   where birimIDs.Contains(maddeVeriGirisDurum.BirimID) && maddeVeriGirisDurum.BirimID == mdl.BirimID && maddeVeriGirisDurum.MaddeID == mdl.MaddeID
                                   select new FrVgMaddeler
                                   {
@@ -200,6 +219,7 @@ namespace WebApp.Business
                                       BirimAdi = maddeVeriGirisDurum.BirimAdi,
                                       MaddeTurID = maddeVeriGirisDurum.MaddeTurID,
                                       MaddeTurAdi = maddeVeriGirisDurum.MaddeTurAdi,
+                                      MaddeTurIsVeriGirisiAcik = vaSurecleriMaddeTur.IsVeriGirisiAcik,
                                       MaddeID = maddeVeriGirisDurum.MaddeID,
                                       MaddeKod = maddeVeriGirisDurum.MaddeKod,
                                       MaddeAdi = maddeVeriGirisDurum.MaddeAdi,
@@ -226,9 +246,15 @@ namespace WebApp.Business
                                       VaSurecleriMaddeGirilenDegers = vaSurecleriMadde.VASurecleriMaddeGirilenDegers.Where(p => p.BirimID == maddeVeriGirisDurum.BirimID).ToList()
 
                                   }).First();
+                var kullaniciIds = mdl.VeriGirisi.VaSurecleriMaddeGirilenDegers.Where(p => p.IslemYapanID.HasValue).Select(s => s.IslemYapanID.Value).Distinct().ToList();
+                kullaniciIds.AddRange(mdl.VeriGirisi.VaSurecleriMaddeGirilenDegers.Where(p => p.OnayIslemYapanID.HasValue).Select(s => s.OnayIslemYapanID.Value).Distinct().ToList());
 
+                var kullanicilar = db.Kullanicilars.Where(p => kullaniciIds.Contains(p.KullaniciID))
+                    .Select(s => new { s.KullaniciID, AdSoyad = s.Ad + " " + s.Soyad });
                 mdl.VeriGirisi.VgMaddeVerileris = (from vaSurecleriMaddeVeriGirisDonemleri in mdl.VeriGirisi.VaSurecleriMaddeVeriGirisDonemleris
                                                    let vaSurecleriMaddeGirilenDeger = mdl.VeriGirisi.VaSurecleriMaddeGirilenDegers.FirstOrDefault(p => p.VACokluVeriDonemID == (vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID == 0 ? (int?)null : vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID))
+                                                   let veriGiren = kullanicilar.FirstOrDefault(p => p.KullaniciID == vaSurecleriMaddeGirilenDeger.IslemYapanID)
+                                                   let veriOnaylayan = kullanicilar.FirstOrDefault(p => p.KullaniciID == vaSurecleriMaddeGirilenDeger.OnayIslemYapanID)
                                                    select new VgMaddeVerileri
                                                    {
                                                        VaCokluVeriDonemId = vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID.ToNullIntZero(),
@@ -237,13 +263,16 @@ namespace WebApp.Business
                                                        DosyaCount = vaSurecleriEklenenDosyalar.Count(p => p.VACokluVeriDonemID == (vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID == 0 ? p.VACokluVeriDonemID : vaSurecleriMaddeVeriGirisDonemleri.VACokluVeriDonemID)),
                                                        IsVeriVar = vaSurecleriMaddeGirilenDeger?.IsVeriVar,
                                                        GirilenDeger = vaSurecleriMaddeGirilenDeger?.GirilenDeger,
-                                                       VeriGirisiOnaylandi = vaSurecleriMaddeGirilenDeger?.VeriGirisiOnaylandi
+                                                       VeriGirisiOnaylandi = vaSurecleriMaddeGirilenDeger?.VeriGirisiOnaylandi,
+                                                       VeriGirenAdSoyad = veriGiren?.AdSoyad,
+                                                       OnayYapanAdSoyad = veriOnaylayan?.AdSoyad,
                                                    }).OrderBy(o => o.VaCokluVeriDonemId).ToList();
 
                 if (mdl.VeriGirisi.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak)
                 {
                     mdl.VeriGirisi = VeriGirisRowSet(mdl.VeriGirisi, mdl.VASurecID, mdl.BirimID, mdl.MaddeID);
                 }
+
 
                 mdl.VeriGirisiOnaylandi = mdl.VeriGirisi.VgMaddeVerileris.All(a => a.VeriGirisiOnaylandi == true);
                 mdl.FaaliyetData = (from s in db.VASurecleriMaddes.Where(p => p.VASurecID == vaSurecId && p.IsAktif)
@@ -265,7 +294,7 @@ namespace WebApp.Business
                                     }).OrderBy(o => o.FaaliyetAdi).ToList();
                 mdl.EklenenAciklamas = db.VASurecleriMaddeEklenenAciklamas
                     .Where(p => p.VASurecleriMaddeID == mdl.VeriGirisi.VASurecleriMaddeID &&
-                                p.BirimID == mdl.VeriGirisi.BirimID)
+                                p.BirimID == mdl.BirimID)
                     .Include(inc => inc.VACokluVeriDonemleri).ToList();
                 mdl.AciklamaCount = db.VASurecleriMaddeEklenenAciklamas.Count(p =>
                     p.VASurecleriMadde.VASurecID == vaSurecId && p.BirimID == birimId &&
@@ -373,7 +402,6 @@ namespace WebApp.Business
         {
             using (var db = new VysDBEntities())
             {
-
                 var surecBirimMadde = db.VASurecleriMaddeBirims.First(p => p.VASurecleriMadde.MaddeID == maddeId && p.BirimID == birimId && p.VASurecleriMadde.VASurecID == vaSurecId);
                 var surecMadde = surecBirimMadde.VASurecleriMadde;
                 var formulMaddeleri = surecBirimMadde.VASurecleriMadde.VASurecleriMaddeFormulEslesenMaddes;
@@ -410,7 +438,7 @@ namespace WebApp.Business
                         }
                         try
                         {
-                            formul = formul.Replace("[", "").Replace("]", "");
+                            formul = formul.Replace("@", "");
                             model.VaSurecleriMaddeGirilenDegers.Add(new VASurecleriMaddeGirilenDeger
                             {
                                 BirimID = surecBirimMadde.BirimID,
@@ -441,7 +469,7 @@ namespace WebApp.Business
                     {
                         formul = formul.Replace(f.VASurecleriMadde.MaddeKod.ToLower(), f.PlanlananDeger.Value.ToString());
                     });
-                    formul = formul.Replace("[", "").Replace("]", "");
+                    formul = formul.Replace("@", "");;
                     model.PlanlananDeger = (decimal)formul.EvaluateExpression();
                 }
                 if (surecMadde.IsPlanlananDegerOlacakGelecekYil && birimFormulMaddeleri.Count > 0 && birimFormulMaddeleri.Count == birimFormulMaddeleri.Count(c => c.PlanlananDegerGelecekYil.HasValue))
@@ -452,7 +480,7 @@ namespace WebApp.Business
                         formul = formul.Replace(f.VASurecleriMadde.MaddeKod.ToLower(), f.PlanlananDegerGelecekYil.Value.ToString());
                     });
 
-                    formul = formul.Replace("[", "").Replace("]", "");
+                    formul = formul.Replace("@", "");;
                     model.PlanlananDegerGelecekYil = (decimal)formul.EvaluateExpression();
                 }
                 model.MaddeVeriGirisDurumId = model.GirilecekVeriSayisi == model.VaSurecleriMaddeGirilenDegers.Count ? 1 : 0;
@@ -478,6 +506,7 @@ namespace WebApp.Business
             }
             return model;
         }
+       
         public static HtmlString VeriGirisOnayDurumHtml(this FrVgMaddeler row)
         {
             var html = ViewRenderHelper.RenderPartialView("VeriGirisi", "ViewVeriGirisOnayDurum", row);
@@ -672,6 +701,18 @@ namespace WebApp.Business
                             mMessage.Messages.Add("'Veri Var' seçeneği seçilen  " + vaSurecleriDonem.VACokluVeriDonemleri.CokluVeriDonemAdi + " verisi için veri girişi boş bırakılamaz.");
 
                         }
+
+                    }
+
+                    if (!mMessage.Messages.Any())
+                    {
+                        var vaSurecMaddeTur = db.VASurecleriMaddeTurs.First(p => p.VASurecID == kModel.VASurecID && p.MaddeTurID == vaSurecMadde.MaddeTurID);
+                        if (!vaSurecMaddeTur.IsVeriGirisiAcik)
+                        {
+                            mMessage.Messages.Add($"{vaSurecMadde.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
+
+                        }
+
                     }
 
                     if (mMessage.Messages.Count == 0)
@@ -745,11 +786,11 @@ namespace WebApp.Business
                 }
                 else if (!maddeVeriBilgi.IsVeriVar.HasValue)
                 {
-                    mMessage.Messages.Add(secilenVeriDonemi.CokluVeriDonemAdi + " Veri Alım Dönemi için veri durumu seçilmeli. (veri var veya veri yok seçeneklerinden biri seçilmeli)");
+                    mMessage.Messages.Add(secilenVeriDonemi.CokluVeriDonemAdi + " veri alım dönemi için veri durumu seçilmeli. (veri var veya veri yok seçeneklerinden biri seçilmeli)");
                 }
                 else if (veriGirisiOnaylandi && maddeVeriBilgi.IsVeriVar == true && !maddeVeriBilgi.GirilenDeger.HasValue)
                 {
-                    mMessage.Messages.Add(secilenVeriDonemi.CokluVeriDonemAdi + " Veri Alım Dönemi için veri girişi yapılmalı.");
+                    mMessage.Messages.Add(secilenVeriDonemi.CokluVeriDonemAdi + " veri alım dönemi için veri girişi yapılmalı.");
                 }
                 else if (veriGirisiOnaylandi)
 
@@ -769,6 +810,17 @@ namespace WebApp.Business
                     }
                 }
 
+                if (!mMessage.Messages.Any())
+                {
+
+                    var vaSurecMaddeTur = db.VASurecleriMaddeTurs.First(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID);
+                    if (!vaSurecMaddeTur.IsVeriGirisiAcik)
+                    {
+                        mMessage.Messages.Add($"{vaSurecMaddeTur.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
+
+                    }
+
+                }
                 if (mMessage.Messages.Count == 0)
                 {
 
@@ -859,6 +911,17 @@ namespace WebApp.Business
                         mMessage.Messages.Add(kanitDosyasi.FileName + " isimli doyasının boyutu en fazla 10 MB büyüklüğünde olmalıdır.");
                     }
                 }
+
+                if (!mMessage.Messages.Any())
+                {
+
+                    var vaSurecMaddeTur = db.VASurecleriMaddeTurs.First(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID);
+                    if (!vaSurecMaddeTur.IsVeriGirisiAcik)
+                    {
+                        mMessage.Messages.Add($"{vaSurecMaddeTur.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
+
+                    }
+                }
                 if (mMessage.Messages.Count == 0)
                 {
                     try
@@ -930,6 +993,7 @@ namespace WebApp.Business
                     var birimYetki = birimIDs.Contains(birimId);
                     var surec = SurecIslemleriBus.GetVaSurecKontrol(vaSurecId);
                     var girilecekVeriCnt = vaSurecMadde.VASurecleriMaddeVeriGirisDonemleris.Count;
+
                     if (!surec.IsAktif || !surec.AktifSurec)
                     {
                         mMessage.Messages.Add("İşlem yapmaya çalıştığınız Süreç aktif olmadığından herhangi bir işlem yapamazsınız");
@@ -949,6 +1013,11 @@ namespace WebApp.Business
                             )
                     {
                         mMessage.Messages.Add("Veri girişi onaylandığından Veri kanıt dosyası yüklenemez.");
+                    }
+                    else if (db.VASurecleriMaddeTurs.Any(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID && !p.IsVeriGirisiAcik))
+                    {
+                        mMessage.Messages.Add($"{vaSurecMadde.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
+
                     }
                     else
                     {
@@ -1108,6 +1177,11 @@ namespace WebApp.Business
                 {
                     mMessage.Messages.Add("Açıklama bilgisi 2048 karakterden daha uzun olamaz.");
                 }
+                if (db.VASurecleriMaddeTurs.Any(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID && !p.IsVeriGirisiAcik))
+                {
+                    mMessage.Messages.Add($"{vaSurecMadde.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
+
+                }
 
                 if (mMessage.Messages.Count == 0)
                 {
@@ -1195,12 +1269,16 @@ namespace WebApp.Business
                         mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim yetkiniz dahilinde değildir.");
                     }
                     else if (
-                                 (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == kayit.BirimID && c.VeriGirisiOnaylandi)
-                                   ||
-                                 (girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == kayit.BirimID && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()))
+                                 girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == kayit.BirimID && c.VeriGirisiOnaylandi)
+                                 ||
+                                 girilecekVeriCnt == vaSurecMadde.VASurecleriMaddeFormulEslesenMaddes.Select(s => s.VASurecleriMadde1.VASurecleriMaddeGirilenDegers.Count(p => p.BirimID == kayit.BirimID && p.VeriGirisiOnaylandi)).OrderBy(o => o).FirstOrDefault()
                               )
                     {
                         mMessage.Messages.Add("Veri girişi onaylandığından açıklama ekleyemezsiniz.");
+                    }
+                    if (db.VASurecleriMaddeTurs.Any(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID && !p.IsVeriGirisiAcik))
+                    {
+                        mMessage.Messages.Add($"{vaSurecMadde.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
                     }
                     else
                     {

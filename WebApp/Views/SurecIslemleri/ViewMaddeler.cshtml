@@ -1,0 +1,104 @@
+﻿@using WebApp.Models
+@model FrSurecIslemleri
+@{
+    Layout = null;
+}
+
+<div class="panel" id="PnlMadde_@Model.VASurecID" style="margin:0px;">
+    <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+        <h3 class="panel-title">
+            <i class="fa fa-list-alt"></i> Maddeler
+        </h3>
+        <ul class="panel-controls">
+            <li id="FilterInfo_M_@Model.VASurecID">
+            </li>
+            <li>
+                <span class="label label-primary label-form" style="padding:1px;padding-left:3px;padding-right:3px;">
+                    <input style="color:maroon;" type="text" autocomplete="off" name="search" onkeypress="return FilterInputKeyPress(this, event,'M_@Model.VASurecID');" placeholder="ara...">
+                </span>
+
+            </li>
+            <li>
+                <span class="label label-primary" style="padding:1px;padding-left:3px;padding-right:3px;">
+                    Veri Giriş Durumu:
+                    @Html.DropDownList("SelectListMaddeDurum", Model.SListMaddeDurum, new { style = "color:black;", onchange = "setselectedMaddeDurumID($(this).val()," + Model.VASurecID + "); SubData(" + Model.VASurecID + ");" })
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div class="panel" style="margin: 0px; padding: 0px;">
+        <div class="panel-body" style="margin: 0px; padding: 0px;">
+            <table class="table" style="margin-bottom:0px;">
+                <thead>
+                    <tr class="info">
+                        <th height="40" width="75"></th>
+                        <th width="45">M Kod</th>
+                        <th style="">Madde Adı</th>
+                        <th style="text-align:right;" width="120">Veri Girilen</th>
+                        <th style="text-align:right;" width="120">Veri Onaylanan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="padding:0px;">
+                            <div class="scrolkikko" style="height:465px;overflow:auto;">
+                                <table class="table table-hover" style="width:100%;table-layout:fixed;" id="Filter_Table_M_@Model.VASurecID">
+                                    @{
+                                        var rowIndex = 0;
+                                        foreach (var item in Model.MaddeData)
+                                        {
+                                            rowIndex++;
+                                            var rowGd = "M-" + Model.VASurecID + "-" + item.MaddeID;
+
+                                            <tr class="MainRow">
+                                                <td width="75">
+                                                    <table>
+                                                        <tr>
+                                                            <td style="width:30px;">@rowIndex</td>
+                                                            <td>
+                                                                <ul class="panel-controls">
+                                                                    <li id="iShow_@rowGd" onclick="ShowDetail2(@Model.VASurecID,@item.MaddeID,'@rowGd',true)">
+                                                                        <a href="javascript:void(0)"><span class="fa fa-angle-up"></span> </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="45" class="Filter_Col_M_@Model.VASurecID">
+                                                    @item.MaddeKod
+                                                </td>
+                                                <td class="Filter_Col_M_@Model.VASurecID">
+                                                    @item.MaddeAdi
+                                                </td>
+                                                <td width="120" style="text-align:right;color:@(item.TamamlananCount==item.ToplamCount?"green":"maroon");">@item.TamamlananCount / @item.ToplamCount</td>
+                                                <td width="120" style="text-align:right;color:@(item.OnaylananCount==item.ToplamCount?"green":"maroon");">@item.OnaylananCount / @item.ToplamCount</td>
+                                            </tr>
+                                            <tr class="MainRow2 hide cls-@rowGd">
+                                                <td id="cls-@rowGd" colspan="5" style="padding: 1px 1px 2px 75px;">
+                                                    <div class="panel" id="pnl-@rowGd">
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    //$(function () {
+    //    $('.scrolkikko').slimScroll({
+    //        color: 'red',
+    //        height: '565px'
+    //    });
+    //})
+</script>

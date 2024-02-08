@@ -1,11 +1,15 @@
-﻿@using WebApp.Models
+﻿@using WebApp.Business
+@using WebApp.Models
 @using WebApp.Utilities.Extensions
+@using WebApp.Utilities.Helpers
 @using WebApp.Utilities.MessageBox
 @model KmSurecIslemleri
 @{
     var mmMessage = ViewBag.MmMessage as MmMessage;
-    Layout = "~/Views/Shared/_Layout.cshtml"; 
- 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var maddeTurleris = MaddeTurleriBus.GetMaddeTurleri(Model.MaddeTurIds);
+    maddeTurleris.InputName = "MaddeTurIds";
+    maddeTurleris.PanelTitle = "Sürece Dahil Olacak Madde Türlerini Seçiniz";
 }
 
 <div class="row">
@@ -14,7 +18,7 @@
         <div class="col-md-12">
             <div class="panel panel-success" id="pnlEO">
                 <div class="panel-heading padding-0">
-                    <h3 class="panel-title"><i class="glyphicon glyphicon-time"></i> Süreç Kaydı</h3>
+                    <h3 class="panel-title"><i class="glyphicon glyphicon-time"></i> Veri Giriş Süreç Kaydı</h3>
                     <ul class="panel-controls">
                         <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Kayit","SurecIslemleri",new { id = Model.VASurecID })';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
@@ -30,7 +34,7 @@
                                     @Html.DropDownList("Yil", null, new { @class = "form-control", style = "padding:0px;" })
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label class="col-md-3 col-xs-5 control-label">Başlangıç / Bitiş Tarihi</label>
                                 <div class="col-md-9 col-xs-7">
@@ -43,7 +47,7 @@
                                     </table>
 
                                 </div>
-                            </div> 
+                            </div>
                             <div class="form-group">
                                 <label class="col-md-3 col-xs-5 control-label">Aktif Yıl Planlanan Değer Girişi Açık</label>
                                 <div class="col-md-9 col-xs-7">
@@ -60,6 +64,15 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (Model.VASurecID <= 0)
+                            {
+                                <div class="form-group maddeTurleri">
+                                    <label class="col-md-3 col-xs-5 control-label"></label>
+                                    <div class="col-md-9 col-xs-7">
+                                        @maddeTurleris.ToRenderPartialViewHtml("Ajax", "GetChkList")
+                                    </div>
+                                </div>
+                            }
                             <div class="form-group">
                                 <label class="col-md-3 col-xs-5 control-label">Süreç Aktiflik Durum</label>
                                 <div class="col-md-9 col-xs-7">
@@ -91,9 +104,9 @@
                 lang: 'tr',
                 timepicker: false,
                 format: 'd-m-Y'
-            }); 
+            });
         var model = '@Html.Raw(Json.Encode(mmMessage))';
         validateControl(model);
     });
-     
+
 </script>

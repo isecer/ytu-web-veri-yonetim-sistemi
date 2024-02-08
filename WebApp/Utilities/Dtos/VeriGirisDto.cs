@@ -25,6 +25,7 @@ namespace WebApp.Utilities.Dtos
         public bool VeriGirisiOnaylandi { get; set; }
         public int MaddeVeriGirisDurumId { get; set; }
         public string BirimAdi { get; set; }
+        public bool MaddeTurIsVeriGirisiAcik { get; set; }
         public List<VgMaddeVerileri> VgMaddeVerileris { get; set; }
         public List<VASurecleriMaddeGirilenDeger> VaSurecleriMaddeGirilenDegers { get; set; } = new List<VASurecleriMaddeGirilenDeger>();
         public List<VASurecleriMaddeVeriGirisDonemleri> VaSurecleriMaddeVeriGirisDonemleris { get; set; } = new List<VASurecleriMaddeVeriGirisDonemleri>();
@@ -39,6 +40,8 @@ namespace WebApp.Utilities.Dtos
         public int DosyaCount { get; set; }
         public bool? IsVeriVar { get; set; }
         public decimal? GirilenDeger { get; set; }
+        public string VeriGirenAdSoyad { get; set; }
+        public string OnayYapanAdSoyad { get; set; }
 
         public bool? VeriGirisiOnaylandi { get; set; }
     }

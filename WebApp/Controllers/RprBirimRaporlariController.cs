@@ -17,7 +17,7 @@ namespace WebApp.Controllers
     [Authorize(Roles = RoleNames.BirimRaporlari)]
     public class RprBirimRaporlariController : Controller
     {
-        private readonly VysDBEntities db = new VysDBEntities();
+        private readonly VysDBEntities _entities = new VysDBEntities();
         // GET: RprBirimRaporlari
         public ActionResult Index()
         {
@@ -51,15 +51,15 @@ namespace WebApp.Controllers
                 if (export)
                 {
 
-                    var raporTip = db.RaporTipleris.FirstOrDefault(p => p.RaporTipID == raporTipId);
+                    var raporTip = _entities.RaporTipleris.FirstOrDefault(p => p.RaporTipID == raporTipId);
                     var rtMaddeIDs = raporTip.RaporTipleriSecilenMaddelers.Select(s => s.MaddeID).ToList();
                     var gv = new GridView();
 
 
 
                     var q =
-                      (from s in db.Vw_MaddeVeriGirisDurum.Where(p => p.VASurecID == vaSurecId && p.IsAktif)
-                         join vm in db.VASurecleriMaddes on s.VASurecleriMaddeID equals vm.VASurecleriMaddeID
+                      (from s in _entities.Vw_MaddeVeriGirisDurum.Where(p => p.VASurecID == vaSurecId && p.IsAktif)
+                         join vm in _entities.VASurecleriMaddes on s.VASurecleriMaddeID equals vm.VASurecleriMaddeID
 
                        where s.BirimID == (birimId ?? s.BirimID) && rtMaddeIDs.Contains(s.MaddeID)
                        select new FrVgMaddeler

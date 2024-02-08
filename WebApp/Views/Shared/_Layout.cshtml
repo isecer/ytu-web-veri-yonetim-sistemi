@@ -1812,17 +1812,17 @@
 
         </script>
     }
-    @*<script>
-            $(function () {
+    <script>
+        $(function () {
+            layoutOnloatTmr();
+        });
+        function layoutOnloatTmr() {
+            onload();
+            setTimeout(function () {
                 layoutOnloatTmr();
-            });
-            function layoutOnloatTmr() {
-                onload();
-                setTimeout(function () {
-                    layoutOnloatTmr();
-                }, 1000);
-            }
-        </script>*@
+            }, 200);
+        }
+    </script>
 
 </body>
 </html>

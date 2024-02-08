@@ -95,6 +95,7 @@ namespace Database
         public virtual DbSet<VASurecleriMaddeEklenenDosya> VASurecleriMaddeEklenenDosyas { get; set; }
         public virtual DbSet<VASurecleriMaddeFormulEslesenMadde> VASurecleriMaddeFormulEslesenMaddes { get; set; }
         public virtual DbSet<VASurecleriMaddeGirilenDeger> VASurecleriMaddeGirilenDegers { get; set; }
+        public virtual DbSet<VASurecleriMaddeTur> VASurecleriMaddeTurs { get; set; }
         public virtual DbSet<VASurecleriMaddeVeriGirisDonemleri> VASurecleriMaddeVeriGirisDonemleris { get; set; }
         public virtual DbSet<VeriGirisSekilleri> VeriGirisSekilleris { get; set; }
         public virtual DbSet<VeriTipleri> VeriTipleris { get; set; }

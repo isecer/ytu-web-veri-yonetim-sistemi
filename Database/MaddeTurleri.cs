@@ -20,6 +20,7 @@ namespace Database
             this.Maddelers = new HashSet<Maddeler>();
             this.MaddelerEslestirilenTurlers = new HashSet<MaddelerEslestirilenTurler>();
             this.VASurecleriMaddes = new HashSet<VASurecleriMadde>();
+            this.VASurecleriMaddeTurs = new HashSet<VASurecleriMaddeTur>();
         }
     
         public int MaddeTurID { get; set; }
@@ -37,5 +38,7 @@ namespace Database
         public virtual ICollection<MaddelerEslestirilenTurler> MaddelerEslestirilenTurlers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMadde> VASurecleriMaddes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeTur> VASurecleriMaddeTurs { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace WebApp.Controllers
     public class RaporTipleriController : Controller
     {
         // GET: RaporTipleri
-        private readonly VysDBEntities db = new VysDBEntities();
+        private readonly VysDBEntities _entities = new VysDBEntities();
 
         public ActionResult Index()
         {
@@ -31,8 +31,8 @@ namespace WebApp.Controllers
         {
 
 
-            var q = (from s in db.RaporTipleris
-                     join kul in db.Kullanicilars on s.IslemYapanID equals kul.KullaniciID
+            var q = (from s in _entities.RaporTipleris
+                     join kul in _entities.Kullanicilars on s.IslemYapanID equals kul.KullaniciID
                      select new FrRaporTipleri
                      {
                          RaporTipID = s.RaporTipID,
@@ -43,7 +43,7 @@ namespace WebApp.Controllers
                          IslemYapan = kul.KullaniciAdi,
                          IslemYapanID = s.IslemYapanID,
                          IslemYapanIP = s.IslemYapanIP,
-                         RaporMaddeleri = db.Vw_MaddelerTree.Where(p => s.RaporTipleriSecilenMaddelers.Any(a => a.MaddeID == p.MaddeID)).OrderBy(o => o.MaddeTreeAdi).ToList()
+                         RaporMaddeleri = _entities.Vw_MaddelerTree.Where(p => s.RaporTipleriSecilenMaddelers.Any(a => a.MaddeID == p.MaddeID)).OrderBy(o => o.MaddeTreeAdi).ToList()
                      }).AsQueryable();
 
             if (!model.RaporTipAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.RaporTipAdi.Contains(model.RaporTipAdi) || p.Aciklama.Contains(model.RaporTipAdi));
@@ -54,8 +54,8 @@ namespace WebApp.Controllers
             
             
            
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
-            
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -69,7 +69,7 @@ namespace WebApp.Controllers
                 IsAktif = true
             };
             if (!id.HasValue) return View(model);
-            var data = db.RaporTipleris.FirstOrDefault(p => p.RaporTipID == id);
+            var data = _entities.RaporTipleris.FirstOrDefault(p => p.RaporTipID == id);
             if (data != null)
             {
                 model = data;
@@ -118,11 +118,11 @@ namespace WebApp.Controllers
 
                 if (kModel.RaporTipID <= 0)
                 {
-                    raporTipi = db.RaporTipleris.Add(kModel);
+                    raporTipi = _entities.RaporTipleris.Add(kModel);
                 }
                 else
                 {
-                    raporTipi = db.RaporTipleris.First(p => p.RaporTipID == kModel.RaporTipID);
+                    raporTipi = _entities.RaporTipleris.First(p => p.RaporTipID == kModel.RaporTipID);
                     raporTipi.RaporTipAdi = kModel.RaporTipAdi;
                     raporTipi.Aciklama = kModel.Aciklama;
                     raporTipi.IsAktif = kModel.IsAktif;
@@ -133,13 +133,13 @@ namespace WebApp.Controllers
                 #region AddMaddeler 
                 var rmVarolanlar = raporTipi.RaporTipleriSecilenMaddelers.Where(p => maddeId.Contains(p.MaddeID)).ToList();
                 var rmSilinenler = raporTipi.RaporTipleriSecilenMaddelers.Where(p => !maddeId.Contains(p.MaddeID)).ToList();
-                if (rmSilinenler.Any()) db.RaporTipleriSecilenMaddelers.RemoveRange(rmSilinenler);
+                if (rmSilinenler.Any()) _entities.RaporTipleriSecilenMaddelers.RemoveRange(rmSilinenler);
 
                 var rmEklenecekler = maddeId.Where(p => rmVarolanlar.Select(s => s.MaddeID).All(a => a != p)).ToList();
                 foreach (var item in rmEklenecekler)
                     raporTipi.RaporTipleriSecilenMaddelers.Add(new RaporTipleriSecilenMaddeler { MaddeID = item });
                 #endregion 
-                db.SaveChanges();
+                _entities.SaveChanges();
 
                 return RedirectToAction("Index");
             } 
@@ -156,7 +156,7 @@ namespace WebApp.Controllers
         [Authorize(Roles = RoleNames.RaporTipleriKayit)]
         public ActionResult Sil(int id)
         {
-            var kayit = db.RaporTipleris.FirstOrDefault(p => p.RaporTipID == id);
+            var kayit = _entities.RaporTipleris.FirstOrDefault(p => p.RaporTipID == id);
             string message;
             var success = true;
             if (kayit != null)
@@ -165,8 +165,8 @@ namespace WebApp.Controllers
                 try
                 {
                     message = "'" + kayit.RaporTipAdi + "' isimli Rapor Tipi silindi!";
-                    db.RaporTipleris.Remove(kayit);
-                    db.SaveChanges();
+                    _entities.RaporTipleris.Remove(kayit);
+                    _entities.SaveChanges();
                 }
                 catch (Exception ex)
                 {
@@ -184,7 +184,7 @@ namespace WebApp.Controllers
         }
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _entities.Dispose();
             base.Dispose(disposing);
         }
     }

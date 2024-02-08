@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BiskaUtil;
 using Database;
 using WebApp.Models;
 
@@ -18,6 +19,23 @@ namespace WebApp.Business
             }
             return dct;
 
+        }
+        public static ChkListModel GetMaddeTurleri(List<int> selectedMaddeTurIds = null)
+        {
+            selectedMaddeTurIds = selectedMaddeTurIds ?? new List<int>();
+            var model = new ChkListModel();
+            using (var db = new VysDBEntities())
+            {
+
+                var aylars = db.MaddeTurleris.Where(p => p.IsAktif).OrderBy(o => o.MaddeTurAdi).ToList();
+                var dataR = aylars.Select(s => new CheckObject<ChkListDataModel>
+                {
+                    Value = new ChkListDataModel { ID = s.MaddeTurID, Caption = s.MaddeTurAdi },
+                    Checked = selectedMaddeTurIds.Contains(s.MaddeTurID)
+                }).OrderBy(o => o.Value.ID);
+                model.Data = dataR;
+                return model;
+            }
         }
     }
 }

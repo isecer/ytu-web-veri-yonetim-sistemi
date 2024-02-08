@@ -894,6 +894,18 @@ warning 6002: The table/view 'VysDB.dbo.KullanicilarLog' does not have a primary
           <Property Name="OnayIslemYapanID" Type="int" />
           <Property Name="OnayIslemYapanIP" Type="nvarchar" MaxLength="256" />
         </EntityType>
+        <EntityType Name="VASurecleriMaddeTur">
+          <Key>
+            <PropertyRef Name="VASurecleriMaddeTurID" />
+          </Key>
+          <Property Name="VASurecleriMaddeTurID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VASurecID" Type="int" Nullable="false" />
+          <Property Name="MaddeTurID" Type="int" Nullable="false" />
+          <Property Name="IsVeriGirisiAcik" Type="bit" Nullable="false" />
+          <Property Name="IslemTarihi" Type="datetime" Nullable="false" />
+          <Property Name="IslemYapanID" Type="int" Nullable="false" />
+          <Property Name="IslemYapanIP" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="VASurecleriMaddeVeriGirisDonemleri">
           <Key>
             <PropertyRef Name="VASurecleriMaddeVeriGirisDonemID" />
@@ -2467,6 +2479,32 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_VASurecleriMaddeTur_MaddeTurleri">
+          <End Role="MaddeTurleri" Type="Self.MaddeTurleri" Multiplicity="1" />
+          <End Role="VASurecleriMaddeTur" Type="Self.VASurecleriMaddeTur" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaddeTurleri">
+              <PropertyRef Name="MaddeTurID" />
+            </Principal>
+            <Dependent Role="VASurecleriMaddeTur">
+              <PropertyRef Name="MaddeTurID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VASurecleriMaddeTur_VASurecleri">
+          <End Role="VASurecleri" Type="Self.VASurecleri" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="VASurecleriMaddeTur" Type="Self.VASurecleriMaddeTur" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VASurecleri">
+              <PropertyRef Name="VASurecID" />
+            </Principal>
+            <Dependent Role="VASurecleriMaddeTur">
+              <PropertyRef Name="VASurecID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_VASurecleriMaddeVeriGirisDonemleri_VACokluVeriDonemleri">
           <End Role="VACokluVeriDonemleri" Type="Self.VACokluVeriDonemleri" Multiplicity="1" />
           <End Role="VASurecleriMaddeVeriGirisDonemleri" Type="Self.VASurecleriMaddeVeriGirisDonemleri" Multiplicity="*" />
@@ -2604,6 +2642,7 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
           <EntitySet Name="VASurecleriMaddeEklenenDosya" EntityType="Self.VASurecleriMaddeEklenenDosya" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VASurecleriMaddeFormulEslesenMadde" EntityType="Self.VASurecleriMaddeFormulEslesenMadde" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VASurecleriMaddeGirilenDeger" EntityType="Self.VASurecleriMaddeGirilenDeger" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VASurecleriMaddeTur" EntityType="Self.VASurecleriMaddeTur" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VASurecleriMaddeVeriGirisDonemleri" EntityType="Self.VASurecleriMaddeVeriGirisDonemleri" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VeriGirisSekilleri" EntityType="Self.VeriGirisSekilleri" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VeriTipleri" EntityType="Self.VeriTipleri" Schema="dbo" store:Type="Tables" />
@@ -3164,6 +3203,14 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
             <End Role="VASurecleriMadde" EntitySet="VASurecleriMadde" />
             <End Role="VASurecleriMaddeGirilenDeger" EntitySet="VASurecleriMaddeGirilenDeger" />
           </AssociationSet>
+          <AssociationSet Name="FK_VASurecleriMaddeTur_MaddeTurleri" Association="Self.FK_VASurecleriMaddeTur_MaddeTurleri">
+            <End Role="MaddeTurleri" EntitySet="MaddeTurleri" />
+            <End Role="VASurecleriMaddeTur" EntitySet="VASurecleriMaddeTur" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VASurecleriMaddeTur_VASurecleri" Association="Self.FK_VASurecleriMaddeTur_VASurecleri">
+            <End Role="VASurecleri" EntitySet="VASurecleri" />
+            <End Role="VASurecleriMaddeTur" EntitySet="VASurecleriMaddeTur" />
+          </AssociationSet>
           <AssociationSet Name="FK_VASurecleriMaddeVeriGirisDonemleri_VACokluVeriDonemleri" Association="Self.FK_VASurecleriMaddeVeriGirisDonemleri_VACokluVeriDonemleri">
             <End Role="VACokluVeriDonemleri" EntitySet="VACokluVeriDonemleri" />
             <End Role="VASurecleriMaddeVeriGirisDonemleri" EntitySet="VASurecleriMaddeVeriGirisDonemleri" />
@@ -3266,6 +3313,7 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
           <EntitySet Name="VASurecleriMaddeEklenenDosyas" EntityType="VysDBModel.VASurecleriMaddeEklenenDosya" />
           <EntitySet Name="VASurecleriMaddeFormulEslesenMaddes" EntityType="VysDBModel.VASurecleriMaddeFormulEslesenMadde" />
           <EntitySet Name="VASurecleriMaddeGirilenDegers" EntityType="VysDBModel.VASurecleriMaddeGirilenDeger" />
+          <EntitySet Name="VASurecleriMaddeTurs" EntityType="VysDBModel.VASurecleriMaddeTur" />
           <EntitySet Name="VASurecleriMaddeVeriGirisDonemleris" EntityType="VysDBModel.VASurecleriMaddeVeriGirisDonemleri" />
           <EntitySet Name="VeriGirisSekilleris" EntityType="VysDBModel.VeriGirisSekilleri" />
           <EntitySet Name="VeriTipleris" EntityType="VysDBModel.VeriTipleri" />
@@ -3635,6 +3683,10 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
             <End Role="MaddeTurleri" EntitySet="MaddeTurleris" />
             <End Role="VASurecleriMadde" EntitySet="VASurecleriMaddes" />
           </AssociationSet>
+          <AssociationSet Name="FK_VASurecleriMaddeTur_MaddeTurleri" Association="VysDBModel.FK_VASurecleriMaddeTur_MaddeTurleri">
+            <End Role="MaddeTurleri" EntitySet="MaddeTurleris" />
+            <End Role="VASurecleriMaddeTur" EntitySet="VASurecleriMaddeTurs" />
+          </AssociationSet>
           <AssociationSet Name="FK_VASurecleriMadde_MaddeYilSonuDegerHesaplamaTipleri" Association="VysDBModel.FK_VASurecleriMadde_MaddeYilSonuDegerHesaplamaTipleri">
             <End Role="MaddeYilSonuDegerHesaplamaTipleri" EntitySet="MaddeYilSonuDegerHesaplamaTipleris" />
             <End Role="VASurecleriMadde" EntitySet="VASurecleriMaddes" />
@@ -3686,6 +3738,10 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
           <AssociationSet Name="FK_VASurecleriMadde_VASurecleri" Association="VysDBModel.FK_VASurecleriMadde_VASurecleri">
             <End Role="VASurecleri" EntitySet="VASurecleris" />
             <End Role="VASurecleriMadde" EntitySet="VASurecleriMaddes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_VASurecleriMaddeTur_VASurecleri" Association="VysDBModel.FK_VASurecleriMaddeTur_VASurecleri">
+            <End Role="VASurecleri" EntitySet="VASurecleris" />
+            <End Role="VASurecleriMaddeTur" EntitySet="VASurecleriMaddeTurs" />
           </AssociationSet>
           <AssociationSet Name="FK_VASurecleriMadde_VeriGirisSekilleri" Association="VysDBModel.FK_VASurecleriMadde_VeriGirisSekilleri">
             <End Role="VeriGirisSekilleri" EntitySet="VeriGirisSekilleris" />
@@ -4514,6 +4570,7 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
           <NavigationProperty Name="Maddelers" Relationship="VysDBModel.FK_Maddeler_MaddeTurleri" FromRole="MaddeTurleri" ToRole="Maddeler" />
           <NavigationProperty Name="MaddelerEslestirilenTurlers" Relationship="VysDBModel.FK_MaddelerEslestirilenTuler_MaddeTurleri" FromRole="MaddeTurleri" ToRole="MaddelerEslestirilenTurler" />
           <NavigationProperty Name="VASurecleriMaddes" Relationship="VysDBModel.FK_VASurecleriMadde_MaddeTurleri" FromRole="MaddeTurleri" ToRole="VASurecleriMadde" />
+          <NavigationProperty Name="VASurecleriMaddeTurs" Relationship="VysDBModel.FK_VASurecleriMaddeTur_MaddeTurleri" FromRole="MaddeTurleri" ToRole="VASurecleriMaddeTur" />
         </EntityType>
         <EntityType Name="MaddeYilSonuDegerHesaplamaTipleri">
           <Key>
@@ -4718,6 +4775,7 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
           <Property Name="IslemYapanID" Type="Int32" Nullable="false" />
           <Property Name="IslemYapanIP" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="VASurecleriMaddes" Relationship="VysDBModel.FK_VASurecleriMadde_VASurecleri" FromRole="VASurecleri" ToRole="VASurecleriMadde" />
+          <NavigationProperty Name="VASurecleriMaddeTurs" Relationship="VysDBModel.FK_VASurecleriMaddeTur_VASurecleri" FromRole="VASurecleri" ToRole="VASurecleriMaddeTur" />
         </EntityType>
         <EntityType Name="VASurecleriMadde">
           <Key>
@@ -4830,6 +4888,20 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
           <NavigationProperty Name="Birimler" Relationship="VysDBModel.FK_VASurecleriMaddeGirilenDeger_Birimler" FromRole="VASurecleriMaddeGirilenDeger" ToRole="Birimler" />
           <NavigationProperty Name="VACokluVeriDonemleri" Relationship="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VACokluVeriDonemleri" FromRole="VASurecleriMaddeGirilenDeger" ToRole="VACokluVeriDonemleri" />
           <NavigationProperty Name="VASurecleriMadde" Relationship="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VASurecleriMadde" FromRole="VASurecleriMaddeGirilenDeger" ToRole="VASurecleriMadde" />
+        </EntityType>
+        <EntityType Name="VASurecleriMaddeTur">
+          <Key>
+            <PropertyRef Name="VASurecleriMaddeTurID" />
+          </Key>
+          <Property Name="VASurecleriMaddeTurID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VASurecID" Type="Int32" Nullable="false" />
+          <Property Name="MaddeTurID" Type="Int32" Nullable="false" />
+          <Property Name="IsVeriGirisiAcik" Type="Boolean" Nullable="false" />
+          <Property Name="IslemTarihi" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IslemYapanID" Type="Int32" Nullable="false" />
+          <Property Name="IslemYapanIP" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="MaddeTurleri" Relationship="VysDBModel.FK_VASurecleriMaddeTur_MaddeTurleri" FromRole="VASurecleriMaddeTur" ToRole="MaddeTurleri" />
+          <NavigationProperty Name="VASurecleri" Relationship="VysDBModel.FK_VASurecleriMaddeTur_VASurecleri" FromRole="VASurecleriMaddeTur" ToRole="VASurecleri" />
         </EntityType>
         <EntityType Name="VASurecleriMaddeVeriGirisDonemleri">
           <Key>
@@ -6168,6 +6240,18 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_VASurecleriMaddeTur_MaddeTurleri">
+          <End Type="VysDBModel.MaddeTurleri" Role="MaddeTurleri" Multiplicity="1" />
+          <End Type="VysDBModel.VASurecleriMaddeTur" Role="VASurecleriMaddeTur" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaddeTurleri">
+              <PropertyRef Name="MaddeTurID" />
+            </Principal>
+            <Dependent Role="VASurecleriMaddeTur">
+              <PropertyRef Name="MaddeTurID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_VASurecleriMadde_MaddeYilSonuDegerHesaplamaTipleri">
           <End Type="VysDBModel.MaddeYilSonuDegerHesaplamaTipleri" Role="MaddeYilSonuDegerHesaplamaTipleri" Multiplicity="1" />
           <End Type="VysDBModel.VASurecleriMadde" Role="VASurecleriMadde" Multiplicity="*" />
@@ -6330,6 +6414,20 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
               <PropertyRef Name="VASurecID" />
             </Principal>
             <Dependent Role="VASurecleriMadde">
+              <PropertyRef Name="VASurecID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_VASurecleriMaddeTur_VASurecleri">
+          <End Type="VysDBModel.VASurecleri" Role="VASurecleri" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="VysDBModel.VASurecleriMaddeTur" Role="VASurecleriMaddeTur" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VASurecleri">
+              <PropertyRef Name="VASurecID" />
+            </Principal>
+            <Dependent Role="VASurecleriMaddeTur">
               <PropertyRef Name="VASurecID" />
             </Dependent>
           </ReferentialConstraint>
@@ -7433,6 +7531,19 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
                 <ScalarProperty Name="BirimID" ColumnName="BirimID" />
                 <ScalarProperty Name="VASurecleriMaddeID" ColumnName="VASurecleriMaddeID" />
                 <ScalarProperty Name="VASurecleriMaddeGirilenDegerID" ColumnName="VASurecleriMaddeGirilenDegerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VASurecleriMaddeTurs">
+            <EntityTypeMapping TypeName="VysDBModel.VASurecleriMaddeTur">
+              <MappingFragment StoreEntitySet="VASurecleriMaddeTur">
+                <ScalarProperty Name="IslemYapanIP" ColumnName="IslemYapanIP" />
+                <ScalarProperty Name="IslemYapanID" ColumnName="IslemYapanID" />
+                <ScalarProperty Name="IslemTarihi" ColumnName="IslemTarihi" />
+                <ScalarProperty Name="IsVeriGirisiAcik" ColumnName="IsVeriGirisiAcik" />
+                <ScalarProperty Name="MaddeTurID" ColumnName="MaddeTurID" />
+                <ScalarProperty Name="VASurecID" ColumnName="VASurecID" />
+                <ScalarProperty Name="VASurecleriMaddeTurID" ColumnName="VASurecleriMaddeTurID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

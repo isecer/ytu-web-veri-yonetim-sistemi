@@ -18,6 +18,7 @@ namespace Database
         public VASurecleri()
         {
             this.VASurecleriMaddes = new HashSet<VASurecleriMadde>();
+            this.VASurecleriMaddeTurs = new HashSet<VASurecleriMaddeTur>();
         }
     
         public int VASurecID { get; set; }
@@ -33,5 +34,7 @@ namespace Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMadde> VASurecleriMaddes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeTur> VASurecleriMaddeTurs { get; set; }
     }
 }
