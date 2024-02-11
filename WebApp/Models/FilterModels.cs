@@ -57,7 +57,7 @@ namespace WebApp.Models
     public class VaSurecleriMaddeTurDto : VASurecleriMaddeTur
     {
         public string MaddeTurAdi { get; set; }
-        public int ToplamMaddeCount { get; set; } 
+        public int ToplamMaddeCount { get; set; }
     }
     public class FmVeriBilgisi : PagerOption
     {
@@ -230,7 +230,7 @@ namespace WebApp.Models
         public int ToplamCount { get; set; }
         public int TamamlananCount { get; set; }
         public int OnaylananCount { get; set; }
-       
+
     }
     public class FmMaddeTurleri : PagerOption
     {
@@ -758,7 +758,27 @@ namespace WebApp.Models
         public const byte SonAy = 3;
     }
 
+    public static class VaCokluVeriDonemEnum
+    {
+        public const byte HesaplamaSonucu = 0; //rapor için kullanılıyor
 
+        public const byte Ocak = 1;
+        public const byte Subat = 2;
+        public const byte Mart = 3;
+        public const byte Nisan = 4;
+        public const byte Mayis = 5;
+        public const byte Haziran = 6;
+        public const byte Temmuz = 7;
+        public const byte Agustos = 8;
+        public const byte Eylul = 9;
+        public const byte Ekim = 10;
+        public const byte Kasim = 11;
+        public const byte Aralik = 12;
+        public const byte Guz = 20;
+        public const byte Bahar = 25;
+        public const byte Yaz = 30;
+        public const byte Yillik = 50;
+    }
     public static class Cinsiyet
     {
         public const byte Erkek = 1;
@@ -851,6 +871,7 @@ namespace WebApp.Models
         public static int YevmiyeIslendi = 3;
 
     }
+
     public static class HttpDurumKod
     {
         public const int Continue = 100;

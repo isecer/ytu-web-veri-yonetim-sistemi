@@ -851,11 +851,7 @@ namespace WebApp.Controllers
         {
             return View();
         }
-
-        public ActionResult GetChkList()
-        {
-            return View();
-        }
+ 
 
 
         protected override void Dispose(bool disposing)

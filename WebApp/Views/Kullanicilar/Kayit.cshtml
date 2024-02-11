@@ -23,8 +23,9 @@
                         @if (Model.KullaniciID > 0 && erisimYetki)
                         {
                             <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciBirimYetkileri", new { id = Model.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-home"></i> Birim Yetkileri</span></li> 
-                            <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapKodYetkileri", new { id = Model.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-lock"></i> Hesap Kodu Yetkileri</span></li>
                             <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("Yetkilendirme", new { id = Model.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-lock"></i> Erişim Yetkileri</span></li>
+                            <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapKodYetkileri", new { id = Model.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-lock"></i> Hesap Kodu Yetkileri</span></li>
+                            <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapNoYetkileri", new { id = Model.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-lock"></i> Hesap No Yetkileri</span></li>
 
                         }
                         <li><a href="@Url.Action("Kayit", Model.KullaniciID)" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
@@ -171,8 +172,8 @@
                     <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
                     <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
 
-                    <input type="hidden" id="YetkilendirmeyeGit" name="YetkilendirmeyeGit" value="false" />
-                    <a href="javascript:void(0);" class="btn btn-default pull-right prslnAHarci" onclick="$('#YetkilendirmeyeGit').val('true'); $('#kulSbmtFrm').submit();"><i class="fa fa-save"></i>Kaydet ve Birim Yetkilendirmesine Git</a>
+                    <input type="hidden" id="YetkilendirmeyeGit" name="YetkilendirmeyeGit" value="" />
+                    <a href="javascript:void(0);" class="btn btn-default pull-right prslnAHarci" onclick="$('#YetkilendirmeyeGit').val('1'); $('#kulSbmtFrm').submit();"><i class="fa fa-save"></i>Kaydet ve Birim Yetkilendirmesine Git</a>
 
                 </div>
             </div>

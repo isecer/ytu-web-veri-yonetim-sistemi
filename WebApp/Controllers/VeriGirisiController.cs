@@ -127,7 +127,7 @@ namespace WebApp.Controllers
             //}
             #endregion
             ViewBag.VASurecID = new SelectList(SurecIslemleriBus.CmbVaSurecler(false), "Value", "Caption", model.VaSurecId);
-            ViewBag.BirimID = new SelectList(VeriGirisiBus.CmbYetkiliVaSurecBirimlerKullanici(model.VaSurecId.Value, false), "Value", "Caption", model.BirimId);
+            ViewBag.BirimID = new SelectList(VeriGirisiBus.CmbYetkiliVaSurecBirimlerKullanici(model.VaSurecId.Value, true), "Value", "Caption", model.BirimId);
             ViewBag.MaddeVeriGirisDurumID = new SelectList(ComboData.CmbMaddeDurum(), "Value", "Caption", model.MaddeVeriGirisDurumId);
             ViewBag.MaddeTurID = new SelectList(VeriGirisiBus.CmbGetVgMaddeTurleri(model.VaSurecId, model.BirimId, true, true), "Value", "Caption", model.MaddeTurId);
             ViewBag.VeriGirisiOnaylandi = new SelectList(ComboData.CmbVeriGirisOnayDurum(), "Value", "Caption", model.VeriGirisiOnaylandi);

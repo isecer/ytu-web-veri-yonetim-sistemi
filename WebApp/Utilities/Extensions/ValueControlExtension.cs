@@ -38,6 +38,27 @@ namespace WebApp.Utilities.Extensions
 
             return matched;
         }
+
+
+
+        public static List<string> ToMaddeKodlariniBul(this string input)
+        {
+            var codes = new List<string>();
+
+            // Regex deseni tanımlama: @ ile başlayan ve ardından bir veya daha fazla rakam veya harf içeren bloklar
+            var pattern = @"@(\w+)";
+
+            // Girdi içindeki tüm eşleşmeleri bulma
+            var matches = Regex.Matches(input, pattern);
+
+            // Her eşleşmenin değerini listeye ekleme
+            foreach (Match match in matches)
+            {
+                codes.Add(match.Groups[1].Value);
+            }
+
+            return codes;
+        }
         //public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
 
         //public static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);

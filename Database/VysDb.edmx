@@ -606,9 +606,9 @@ warning 6002: The table/view 'VysDB.dbo.KullanicilarLog' does not have a primary
         </EntityType>
         <EntityType Name="MaddelerVeriGirisDonemleri">
           <Key>
-            <PropertyRef Name="MaddelerVeriGirisAyID" />
+            <PropertyRef Name="MaddelerVeriGirisDonemID" />
           </Key>
-          <Property Name="MaddelerVeriGirisAyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MaddelerVeriGirisDonemID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MaddeID" Type="int" Nullable="false" />
           <Property Name="VACokluVeriDonemID" Type="int" Nullable="false" />
           <Property Name="IsDosyaYuklensin" Type="bit" Nullable="false" />
@@ -4546,9 +4546,9 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
         </EntityType>
         <EntityType Name="MaddelerVeriGirisDonemleri">
           <Key>
-            <PropertyRef Name="MaddelerVeriGirisAyID" />
+            <PropertyRef Name="MaddelerVeriGirisDonemID" />
           </Key>
-          <Property Name="MaddelerVeriGirisAyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaddelerVeriGirisDonemID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="MaddeID" Type="Int32" Nullable="false" />
           <Property Name="VACokluVeriDonemID" Type="Int32" Nullable="false" />
           <Property Name="IsDosyaYuklensin" Type="Boolean" Nullable="false" />
@@ -7235,7 +7235,7 @@ warning 6002: The table/view 'VysDB.dbo.Vw_MaddeVeriGirisDurum' does not have a 
                 <ScalarProperty Name="IsDosyaYuklensin" ColumnName="IsDosyaYuklensin" />
                 <ScalarProperty Name="VACokluVeriDonemID" ColumnName="VACokluVeriDonemID" />
                 <ScalarProperty Name="MaddeID" ColumnName="MaddeID" />
-                <ScalarProperty Name="MaddelerVeriGirisAyID" ColumnName="MaddelerVeriGirisAyID" />
+                <ScalarProperty Name="MaddelerVeriGirisDonemID" ColumnName="MaddelerVeriGirisDonemID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

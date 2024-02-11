@@ -60,7 +60,7 @@ namespace WebApp.Controllers
             {
                 Value = s,
                 Checked = sRol.Any(p => p.RolID == s.RolID)
-            });
+            }).ToList();
             ViewBag.Roller = dataR;
             var kategr = roles.Select(s => s.Kategori).Distinct().ToArray();
             var menuK = _entities.Menulers.Where(a => a.BagliMenuID == 0 && kategr.Contains(a.MenuAdi)).ToList();

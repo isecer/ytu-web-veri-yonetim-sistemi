@@ -22,7 +22,7 @@ namespace WebApp.Controllers
     public class MaddelerController : Controller
     {
 
-        private readonly VysDBEntities db = new VysDBEntities();
+        private readonly VysDBEntities _entities = new VysDBEntities();
         // GET: Maddeler
         public ActionResult Index()
         {
@@ -32,11 +32,11 @@ namespace WebApp.Controllers
         [HttpPost]
         public ActionResult Index(FmMaddeler model, bool export = false)
         {
-            var q = (from s in db.Maddelers
-                     join mtr in db.MaddeTurleris on new { s.MaddeTurID } equals new { MaddeTurID = (int?)mtr.MaddeTurID } into df1
+            var q = (from s in _entities.Maddelers
+                     join mtr in _entities.MaddeTurleris on new { s.MaddeTurID } equals new { MaddeTurID = (int?)mtr.MaddeTurID } into df1
                      from mtr in df1.DefaultIfEmpty()
-                     join mt in db.Vw_MaddelerTree on s.MaddeID equals mt.MaddeID
-                     join kul in db.Kullanicilars on s.IslemYapanID equals kul.KullaniciID
+                     join mt in _entities.Vw_MaddelerTree on s.MaddeID equals mt.MaddeID
+                     join kul in _entities.Kullanicilars on s.IslemYapanID equals kul.KullaniciID
                      select new FrMaddeler
                      {
                          MaddeID = s.MaddeID,
@@ -71,9 +71,9 @@ namespace WebApp.Controllers
                 q = model.EslestirmeDurum.Value ? q.Where(p => p.BirimMaddeleris.Count > 0) : q.Where(p => p.BirimMaddeleris.Count == 0 && p.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok);
             }
             if (model.MaddeYilSonuDegerHesaplamaTipID.HasValue) q = q.Where(p => p.MaddeYilSonuDegerHesaplamaTipID == model.MaddeYilSonuDegerHesaplamaTipID.Value);
-            if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value); 
+            if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             if (model.IsDosyaYuklensin.HasValue) q = q.Where(p => p.MaddelerVeriGirisDonemleris.Any(a => a.IsDosyaYuklensin == model.IsDosyaYuklensin));
-            if (!model.Aranan.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeKod == model.Aranan || p.MaddeTreeAdi.ToLower().Contains(model.MaddeAdi.ToLower()));
+            if (!model.Aranan.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeKod.ToLower() == model.Aranan.ToLower().Trim() || p.MaddeTreeAdi.ToLower().Contains(model.MaddeAdi.ToLower()));
 
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.MaddeTreeAdi);
@@ -81,7 +81,8 @@ namespace WebApp.Controllers
 
 
 
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();
+
             #region export
             if (export && model.RowCount > 0)
             {
@@ -116,9 +117,9 @@ namespace WebApp.Controllers
 
 
 
-            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(true), "Value", "Caption", model.IsAktif);
-            ViewBag.IsCokluVeriGiris = new SelectList(ComboData.GetCmbVarYokData(true), "Value", "Caption", model.IsCokluVeriGiris);
-            ViewBag.IsDosyaYuklensin = new SelectList(ComboData.GetCmbEvetHayirData(true), "Value", "Caption", model.IsDosyaYuklensin);
+            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
+            ViewBag.IsCokluVeriGiris = new SelectList(ComboData.GetCmbVarYokData(), "Value", "Caption", model.IsCokluVeriGiris);
+            ViewBag.IsDosyaYuklensin = new SelectList(ComboData.GetCmbEvetHayirData(), "Value", "Caption", model.IsDosyaYuklensin);
             ViewBag.VeriGirisSekliID = new SelectList(MaddelerBus.CmbVeriGirisSekilleri(), "Value", "Caption", model.VeriGirisSekliID);
             ViewBag.MaddeYilSonuDegerHesaplamaTipID = new SelectList(MaddelerBus.CmbMaddeYilsonuDegerHesaplamaTipleri(), "Value", "Caption", model.MaddeYilSonuDegerHesaplamaTipID);
             ViewBag.EslestirmeDurum = new SelectList(ComboData.CmbEslesenEslesmeyenData(), "Value", "Caption", model.EslestirmeDurum);
@@ -137,7 +138,7 @@ namespace WebApp.Controllers
             };
             if (id.HasValue)
             {
-                var data = db.Maddelers.FirstOrDefault(p => p.MaddeID == id);
+                var data = _entities.Maddelers.FirstOrDefault(p => p.MaddeID == id);
                 if (data != null)
                 {
                     model = data;
@@ -149,7 +150,7 @@ namespace WebApp.Controllers
             ViewBag.MaddeYilSonuDegerHesaplamaTipID = new SelectList(MaddelerBus.CmbMaddeYilsonuDegerHesaplamaTipleri(), "Value", "Caption", model.MaddeYilSonuDegerHesaplamaTipID);
             ViewBag.VeriTipID = new SelectList(MaddelerBus.CmbVeriTipleri(true, true), "Value", "Caption", model.VeriTipID);
             ViewBag.MaddeTurID = new SelectList(MaddeTurleriBus.CmbMaddeTurleri(model.MaddeID <= 0, true), "Value", "Caption", model.MaddeTurID);
-            ViewBag.IsUstMadde = db.Maddelers.Any(a => a.UstMaddeID == model.MaddeID);
+            ViewBag.IsUstMadde = _entities.Maddelers.Any(a => a.UstMaddeID == model.MaddeID);
             return View(model);
         }
 
@@ -162,7 +163,7 @@ namespace WebApp.Controllers
                 VACokluVeriDonemID = s.Split('_')[0].ToInt() ?? 0,
                 IsDosyaYuklensin = s.Split('_')[1].ToBoolean() ?? false,
 
-            });
+            }).ToList();
             birimId = birimId ?? new List<int>();
             var mmMessage = new MmMessage();
             #region Kontrol
@@ -171,6 +172,17 @@ namespace WebApp.Controllers
             {
                 mmMessage.Messages.Add("Madde Kodunu giriniz");
                 mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MaddeKod" });
+            }
+            else if (!kModel.MaddeKod.All(char.IsLetterOrDigit))
+            {
+                mmMessage.Messages.Add("Madde Kodu sadece harf ve rakamlardan oluşmalıdır");
+                mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MaddeKod" });
+            }
+            else if (kModel.MaddeKod.Length > 4)
+            {
+                mmMessage.Messages.Add("Madde Kodu en fazla 4 haneli olabilir");
+                mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MaddeKod" });
+
             }
             else mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "MaddeKod" });
             if (kModel.MaddeAdi.IsNullOrWhiteSpace())
@@ -203,15 +215,15 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    var kodlar = kModel.HesaplamaFormulu.ToIkiKarakterArasiKodBul("[", "]");
+                    var kodlar = kModel.HesaplamaFormulu.ToMaddeKodlariniBul();
                     if (kodlar.Any())
                     {
                         var msg = new List<string>();
                         foreach (var item in kodlar)
                         {
-                            var madde = db.Maddelers.FirstOrDefault(a => a.MaddeKod == item && a.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok);
+                            var madde = _entities.Maddelers.FirstOrDefault(a => a.MaddeKod.ToLower() == item.ToLower() && a.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok);
                             if (madde == null)
-                                msg.Add(item + " Kodlu madde sistemde bulunamadı! Lütfen uygun bir maddde kodu giriniz");
+                                msg.Add(item + " Kodlu madde sistemde bulunamadı! Lütfen uygun bir maddde kodu giriniz.");
                             else maddelers.Add(madde);
                         }
                         if (msg.Any() == false) mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "HesaplamaFormulu" });
@@ -235,14 +247,14 @@ namespace WebApp.Controllers
             {
 
                 kModel.MaddeKod = kModel.MaddeKod.ReplaceSpecialCharacter().Trim();
-                if (db.Maddelers.Any(a => a.MaddeID != kModel.MaddeID && a.MaddeKod == kModel.MaddeKod.Trim()))
+                if (_entities.Maddelers.Any(a => a.MaddeID != kModel.MaddeID && a.MaddeKod.ToLower() == kModel.MaddeKod.ToLower().Trim()))
                 {
                     mmMessage.Messages.Add("Girdiğiniz Madde Kodu başka bir maddeye aittir tekrar kullanamazsınız");
                     mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MaddeKod" });
                 }
                 if (kModel.MaddeID > 0 && kModel.VeriTipID.HasValue)
                 {
-                    if (db.Maddelers.Any(a => a.UstMaddeID == kModel.MaddeID))
+                    if (_entities.Maddelers.Any(a => a.UstMaddeID == kModel.MaddeID))
                     {
                         mmMessage.Messages.Add("Veri girişine açılmak istenen bu maddenin altında başka maddeler bulunduğu için Veri girişine açılamaz.");
                         mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MaddeKod" });
@@ -282,11 +294,11 @@ namespace WebApp.Controllers
                 }
                 if (kModel.MaddeID <= 0)
                 {
-                    table = db.Maddelers.Add(kModel);
+                    table = _entities.Maddelers.Add(kModel);
                 }
                 else
                 {
-                    table = db.Maddelers.First(p => p.MaddeID == kModel.MaddeID);
+                    table = _entities.Maddelers.First(p => p.MaddeID == kModel.MaddeID);
                     table.UstMaddeID = kModel.UstMaddeID;
                     table.MaddeKod = kModel.MaddeKod;
                     table.VeriGirisSekliID = kModel.VeriGirisSekliID;
@@ -308,16 +320,16 @@ namespace WebApp.Controllers
 
 
 
-                    var birimMaddeleri = db.BirimMaddeleris.Where(p => p.MaddeID == kModel.MaddeID).ToList();
+                    var birimMaddeleri = _entities.BirimMaddeleris.Where(p => p.MaddeID == kModel.MaddeID).ToList();
                     var varolanlar = birimMaddeleri.Where(p => p.MaddeID == kModel.MaddeID && birimId.Contains(p.BirimID)).ToList();
                     var silinenler = birimMaddeleri.Where(p => p.MaddeID == kModel.MaddeID && !birimId.Contains(p.BirimID)).ToList();
-                    db.BirimMaddeleris.RemoveRange(silinenler);
+                    _entities.BirimMaddeleris.RemoveRange(silinenler);
                     var eklenecekler = birimId.Where(p => varolanlar.Select(s => s.BirimID).All(a => a != p)).ToList();
                     foreach (var item in eklenecekler)
                         table.BirimMaddeleris.Add(new BirimMaddeleri { BirimID = item });
 
 
-                    db.MaddelerFormulEslesenMaddelers.RemoveRange(table.MaddelerFormulEslesenMaddelers);
+                    _entities.MaddelerFormulEslesenMaddelers.RemoveRange(table.MaddelerFormulEslesenMaddelers);
                     if (table.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak)
                         foreach (var item in maddelers)
                         {
@@ -330,7 +342,7 @@ namespace WebApp.Controllers
                 #region AylarSet
 
 
-                var maddeAylari = db.MaddelerVeriGirisDonemleris.Where(p => p.MaddeID == kModel.MaddeID).ToList();
+                var maddeAylari = _entities.MaddelerVeriGirisDonemleris.Where(p => p.MaddeID == kModel.MaddeID).ToList();
                 var maVarolanlar = maddeAylari.Where(p => p.MaddeID == kModel.MaddeID && vaCokluVeriDonems.Any(a => a.VACokluVeriDonemID == p.VACokluVeriDonemID)).ToList();
 
                 foreach (var maVarolan in maVarolanlar)
@@ -340,7 +352,7 @@ namespace WebApp.Controllers
                 }
 
                 var maSilinenler = maddeAylari.Where(p => p.MaddeID == kModel.MaddeID && vaCokluVeriDonems.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList();
-                db.MaddelerVeriGirisDonemleris.RemoveRange(maSilinenler);
+                _entities.MaddelerVeriGirisDonemleris.RemoveRange(maSilinenler);
                 var maEklenecekler = vaCokluVeriDonems.Where(p => maVarolanlar.Select(s => s.VACokluVeriDonemID).All(a => a != p.VACokluVeriDonemID)).ToList();
 
                 foreach (var item in maEklenecekler)
@@ -348,7 +360,7 @@ namespace WebApp.Controllers
 
 
                 #endregion
-                db.SaveChanges();
+                _entities.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -361,14 +373,14 @@ namespace WebApp.Controllers
             ViewBag.VeriTipID = new SelectList(MaddelerBus.CmbVeriTipleri(), "Value", "Caption", kModel.VeriTipID);
             ViewBag.MaddeTurID = new SelectList(MaddeTurleriBus.CmbMaddeTurleri(kModel.MaddeID <= 0, true), "Value", "Caption", kModel.MaddeTurID);
             ViewBag.MmMessage = mmMessage;
-            ViewBag.IsUstMadde = db.Maddelers.Any(a => a.UstMaddeID == kModel.MaddeID);
-            ViewBag.SecilenlerAy = vaCokluVeriDonems;
+            ViewBag.IsUstMadde = _entities.Maddelers.Any(a => a.UstMaddeID == kModel.MaddeID);
+            ViewBag.SecilenlerDonem = vaCokluVeriDonems ?? new List<MaddelerVeriGirisDonemleri>();
             return View(kModel);
         }
 
         public ActionResult MaddeTurGuncelle(int id, int? maddeTurId)
         {
-            var kayit = db.Maddelers.FirstOrDefault(p => p.MaddeID == id);
+            var kayit = _entities.Maddelers.FirstOrDefault(p => p.MaddeID == id);
             string message;
             bool success = true;
             if (kayit != null)
@@ -377,7 +389,7 @@ namespace WebApp.Controllers
                 try
                 {
                     kayit.MaddeTurID = maddeTurId;
-                    db.SaveChanges();
+                    _entities.SaveChanges();
                     string maddeTurAdi = "Kaldırıldı.";
                     if (kayit.MaddeTurID.HasValue) maddeTurAdi = "'" + kayit.MaddeTurleri.MaddeTurAdi + "' Şeklinde Güncellendi.";
                     message = "'" + kayit.MaddeAdi + "' isimli Maddenin Tür bilgisi " + maddeTurAdi;
@@ -399,7 +411,7 @@ namespace WebApp.Controllers
         }
         public ActionResult MaddeYsHesapTipGuncelle(int id, int? maddeYilSonuDegerHesaplamaTipId)
         {
-            var kayit = db.Maddelers.FirstOrDefault(p => p.MaddeID == id);
+            var kayit = _entities.Maddelers.FirstOrDefault(p => p.MaddeID == id);
             string message;
             var success = true;
             if (kayit != null)
@@ -408,7 +420,7 @@ namespace WebApp.Controllers
                 try
                 {
                     kayit.MaddeYilSonuDegerHesaplamaTipID = maddeYilSonuDegerHesaplamaTipId;
-                    db.SaveChanges();
+                    _entities.SaveChanges();
                     string hesapTipAdiTurAdi = "Kaldırıldı.";
                     if (kayit.MaddeYilSonuDegerHesaplamaTipID.HasValue) hesapTipAdiTurAdi = "'" + kayit.MaddeYilSonuDegerHesaplamaTipleri.YilSonuDegerHesaplamaAdi + "' Şeklinde Güncellendi.";
                     message = "'" + kayit.MaddeAdi + "' isimli Maddenin yıl sonu değer hesaplama tip bilgisi " + hesapTipAdiTurAdi;
@@ -430,7 +442,7 @@ namespace WebApp.Controllers
 
         public ActionResult Sil(int id)
         {
-            var kayit = db.Maddelers.FirstOrDefault(p => p.MaddeID == id);
+            var kayit = _entities.Maddelers.FirstOrDefault(p => p.MaddeID == id);
             string message;
             var success = true;
             if (kayit != null)
@@ -439,8 +451,8 @@ namespace WebApp.Controllers
                 try
                 {
                     message = "'" + kayit.MaddeAdi + "' isimli Madde silindi!";
-                    db.Maddelers.Remove(kayit);
-                    db.SaveChanges();
+                    _entities.Maddelers.Remove(kayit);
+                    _entities.SaveChanges();
                 }
                 catch (Exception ex)
                 {
@@ -458,7 +470,7 @@ namespace WebApp.Controllers
         }
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _entities.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -12,6 +12,9 @@ namespace WebApp.Utilities.MenuAndRoles
         [MenuAttribute(MenuID = 80000, MenuAdi = "Veri Giriş İşlemleri", MenuCssClass = "fa fa-signal", MenuUrl = "", DilCeviriYap = false, SiraNo = 6)]
         public const string VeriGirisIslemleri = "Veri Giriş İşlemleri";
 
+        [MenuAttribute(MenuID = 84000, MenuAdi = "Veri Giriş Raporları", MenuCssClass = "fa fa-area-chart", MenuUrl = "", DilCeviriYap = false, SiraNo = 7)]
+        public const string RaporIslemleri = "RaporIslemleri";
+
         [MenuAttribute(MenuID = 85500, MenuAdi = "Bütçe Hazırlık Formları", MenuCssClass = "fa fa-list-alt", MenuUrl = "", DilCeviriYap = false, SiraNo = 14)]
         public const string HazirlikFormlari = "Hazırlık Formları";
         [MenuAttribute(MenuID = 85700, MenuAdi = "Faaliyet Raporları", MenuCssClass = "fa fa-list-alt", MenuUrl = "", DilCeviriYap = false, SiraNo = 18)]
@@ -22,8 +25,7 @@ namespace WebApp.Utilities.MenuAndRoles
         [MenuAttribute(MenuID = 85000, MenuAdi = "Kullanıcı İşlemleri", MenuCssClass = "fa fa-group", MenuUrl = "", DilCeviriYap = false, SiraNo = 22)]
         public const string Tanimlamalar = "Tanımlamalar";
 
-        [MenuAttribute(MenuID = 84000, MenuAdi = "Rapor İşlemleri", MenuCssClass = "fa fa-area-chart", MenuUrl = "", DilCeviriYap = false, SiraNo = 24)]
-        public const string RaporIslemleri = "RaporIslemleri";
+   
 
         [MenuAttribute(MenuID = 100000, MenuAdi = "Sistem", MenuCssClass = "fa fa-desktop", MenuUrl = "", DilCeviriYap = false, SiraNo = 26)]
         public const string Sistem = "Sistem";
@@ -81,26 +83,28 @@ namespace WebApp.Utilities.MenuAndRoles
 
 
         [MenuAttribute(BagliMenuID = 84000, MenuAdi = "Birim Raporları", MenuCssClass = "fa fa-bar-chart-o", MenuUrl = "RprBirimRaporlari/Index", DilCeviriYap = false, SiraNo = 1)]
-        [RoleAttribute(GorunurAdi = "Birim Raporları", Kategori = "Rapor İşlemleri", Aciklama = "")]
+        [RoleAttribute(GorunurAdi = "Birim Raporları", Kategori = "Veri Giriş Raporları", Aciklama = "")]
         public const string BirimRaporlari = "Birim Raporları";
-
+        [MenuAttribute(BagliMenuID = 84000, MenuAdi = "Kurum Raporları", MenuCssClass = "fa fa-bar-chart-o", MenuUrl = "RprKurumRaporlari/Index", DilCeviriYap = false, SiraNo = 2)]
+        [RoleAttribute(GorunurAdi = "Kurum Raporları", Kategori = "Veri Giriş Raporları", Aciklama = "")]
+        public const string KurumRaporlari = "Kurum Raporları";
 
         [MenuAttribute(BagliMenuID = 85000, MenuAdi = "Kullanıcılar", MenuCssClass = "fa fa-user-o", MenuUrl = "Kullanicilar/Index", DilCeviriYap = false, SiraNo = 1)]
-        [RoleAttribute(GorunurAdi = "Kullanıcılar", Kategori = "Tanımlamalar", Aciklama = "")]
+        [RoleAttribute(GorunurAdi = "Kullanıcılar", Kategori = "Kullanıcı İşlemleri", Aciklama = "")]
         public const string Kullanicilar = "Kullanıcılar Listesi";
-        [RoleAttribute(GorunurAdi = "Kullanıcılar Kayıt", Kategori = "Tanımlamalar", Aciklama = "")]
+        [RoleAttribute(GorunurAdi = "Kullanıcılar Kayıt", Kategori = "Kullanıcı İşlemleri", Aciklama = "")]
         public const string KullaniciKayit = "Kullanıcı Kayıt";
-        [RoleAttribute(GorunurAdi = "Online Kullanıcıları Gör", Kategori = "Tanımlamalar", Aciklama = "")]
+        [RoleAttribute(GorunurAdi = "Online Kullanıcıları Gör", Kategori = "Kullanıcı İşlemleri", Aciklama = "")]
         public const string KullanicilarOnlineList = "Online Kullanıcıları Gör";
 
 
         [MenuAttribute(BagliMenuID = 85000, MenuAdi = "Yetki Grupları", MenuCssClass = "fa fa-lock", MenuUrl = "YetkiGruplari/Index", DilCeviriYap = false, SiraNo = 2)]
-        [RoleAttribute(GorunurAdi = "Yetki Grupları", Kategori = "Tanımlamalar", Aciklama = "")]
+        [RoleAttribute(GorunurAdi = "Yetki Grupları", Kategori = "Kullanıcı İşlemleri", Aciklama = "")]
         public const string YetkiGruplari = "Yetki Grupları";
 
 
         [MenuAttribute(BagliMenuID = 85000, MenuAdi = "Birimler", MenuCssClass = "fa fa-home", MenuUrl = "Birimler/Index", DilCeviriYap = false, SiraNo = 3)]
-        [RoleAttribute(GorunurAdi = "Birimler", Kategori = "Tanımlamalar", Aciklama = "")]
+        [RoleAttribute(GorunurAdi = "Birimler", Kategori = "Kullanıcı İşlemleri", Aciklama = "")]
         public const string Birimler = "Birimler";
         //[MenuAttribute(BagliMenuID = 85000, MenuAdi = "Ünvanlar", MenuCssClass = "fa fa-list-alt", MenuUrl = "Unvanlar/Index", DilCeviriYap = false, SiraNo = 4)]
         //[RoleAttribute(GorunurAdi = "Ünvanlar", Kategori = "Tanımlamalar", Aciklama = "")]

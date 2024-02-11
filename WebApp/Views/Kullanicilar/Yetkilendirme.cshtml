@@ -15,8 +15,7 @@
 
 
 <div class="row">
-    @using (Html.BeginForm())
-    {
+    <form method="post" id="kulSbmtFrm" class="form-horizontal" role="form">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="portlet-title">
@@ -29,6 +28,7 @@
                                 <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("Kayit", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-user"></i> Kullanıcı</span></li>
                                 <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciBirimYetkileri", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-home"></i> Birim Yetkileri</span></li>
                                 <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapKodYetkileri", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-list"></i> Hesap Kodu Yetkileri</span></li>
+                                <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapNoYetkileri", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-list"></i> Hesap No Yetkileri</span></li>
 
                             }
                             <li><a href="@Url.Action("Yetkilendirme","Kullanicilar",new {id= user.KullaniciID })" class=""><span class="fa fa-refresh panel-refresh"></span></a></li>
@@ -91,12 +91,12 @@
                 <div class="panel-footer">
                     <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i> Geri Dön</a>
                     <button class="btn btn-primary pull-right"><i class="fa fa-save"></i> Kaydet</button>
+                    <input type="hidden" id="YetkilendirmeyeGit" name="YetkilendirmeyeGit" value="" />
+                    <a href="javascript:void(0);" class="btn btn-default pull-right prslnAHarci" onclick="$('#YetkilendirmeyeGit').val('3'); $('#kulSbmtFrm').submit();"><i class="fa fa-save"></i>Kaydet ve Hesap Kodu Yetkilendirmesine Git</a>
                 </div>
             </div>
-        </div>
-
-
-    }
+        </div> 
+    </form>
 </div>
 <script type="text/javascript">
     function setYetkiGrubu(sndr) {

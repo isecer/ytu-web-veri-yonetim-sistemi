@@ -15,11 +15,11 @@
     brData.InputName = "BirimID";
     brData.PanelTitle = "İlgili Birimleri Seçiniz";
 
-    var secilenlerAy = (List<MaddelerVeriGirisDonemleri>)ViewBag.SecilenlerAy;
-    var ayData = MaddelerBus.GetMaddeAylari(Model.MaddeID, secilenlerAy);
-    ayData.InputName = "VaCokluVeriDonemIDs";
-    ayData.PanelTitle = "Veri Girilecek Dönemleri Seçiniz";
-    ayData.ShowIsDosyaYuklensin = true;
+    var secilenlerDonem = (List<MaddelerVeriGirisDonemleri>)ViewBag.SecilenlerDonem;
+    var donemData = MaddelerBus.GetMaddeVeriGirisDonemleri(Model.MaddeID, secilenlerDonem);
+    donemData.InputName = "VaCokluVeriDonemIDs";
+    donemData.PanelTitle = "Veri Girilecek Dönemleri Seçiniz";
+    donemData.ShowIsDosyaYuklensin = true;
 }
 <div class="row">
     <form method="post" class="form-horizontal" role="form">
@@ -121,7 +121,7 @@
                                 <div class="form-group maddeAylari">
                                     <label class="col-md-2 col-xs-2 control-label"></label>
                                     <div class="col-md-10 col-xs-10">
-                                        @ayData.ToRenderPartialViewHtml("Ajax", "GetChkList")
+                                        @donemData.ToRenderPartialViewHtml("Ajax", "GetChkList")
                                     </div>
                                 </div>
                             </div>

@@ -13,7 +13,7 @@ using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.MessageBox;
 using WebApp.Utilities.SystemData;
 using WebApp.Utilities.SystemSetting;
- 
+
 
 namespace WebApp.Controllers
 {
@@ -96,12 +96,12 @@ namespace WebApp.Controllers
                 Toplam = model.RowCount,
                 Pasif = q.Count(p => p.IsAktif == false)
             };
-            
+
             if (!model.Sort.IsNullOrWhiteSpace())
                 if (model.Sort == "AdSoyad") q = q.OrderBy(o => o.Ad).ThenBy(o => o.Soyad);
                 else if (model.Sort.Contains("AdSoyad") && model.Sort.Contains("DESC")) q = q.OrderByDescending(o => o.Ad).ThenByDescending(o => o.Soyad);
                 else q = DynamicQueryable.OrderBy(q, model.Sort);
-            else q = q.OrderBy(o => o.Ad).ThenBy(t => t.Soyad); 
+            else q = q.OrderBy(o => o.Ad).ThenBy(t => t.Soyad);
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToArray();
             foreach (var item in model.Data)
             {
@@ -118,7 +118,7 @@ namespace WebApp.Controllers
             ViewBag.UnvanID = new SelectList(UnvanlarBus.CmbUnvanlar(), "Value", "Caption", model.UnvanID);
             ViewBag.IsActiveDirectoryUser = new SelectList(ComboData.CmbIsActiveDirectoryUserData(), "Value", "Caption", model.IsActiveDirectoryUser);
             ViewBag.SelectedRolls = rollId;
-            
+
             ViewBag.kIds = q.Select(s => s.KullaniciID).ToList();
             return View(model);
         }
@@ -153,7 +153,7 @@ namespace WebApp.Controllers
         }
         [HttpPost]
         [Authorize(Roles = RoleNames.KullaniciKayit)]
-        public ActionResult Kayit(Kullanicilar kModel, HttpPostedFileBase profilResmi, bool yetkilendirmeyeGit = false)
+        public ActionResult Kayit(Kullanicilar kModel, HttpPostedFileBase profilResmi, int? yetkilendirmeyeGit = null)
         {
             var mmMessage = new MmMessage();
             bool resimVar = false;
@@ -290,7 +290,7 @@ namespace WebApp.Controllers
                 kModel.IslemYapanID = UserIdentity.Current.Id;
                 kModel.IslemTarihi = DateTime.Now;
                 kModel.IslemYapanIP = UserIdentity.Ip;
-                var yeniKullanici = kModel.KullaniciID <= 0; 
+                var yeniKullanici = kModel.KullaniciID <= 0;
                 if (yeniKullanici)
                 {
                     var sfr = kModel.Sifre;
@@ -308,7 +308,7 @@ namespace WebApp.Controllers
                     kModel.BackgroundImage = "wall_2";
 
                     if (profilResmi != null)
-                    { 
+                    {
                         kModel.ResimAdi = UserBus.ResimKaydet(profilResmi);
 
                     }
@@ -352,7 +352,7 @@ namespace WebApp.Controllers
                             var rsmYol = SistemAyar.KullaniciResimYolu.GetAyar();
                             var rsm = Server.MapPath("~/" + rsmYol + "/" + data.ResimAdi);
                             if (System.IO.File.Exists(rsm)) System.IO.File.Delete(rsm);
-                        } 
+                        }
                         data.ResimAdi = UserBus.ResimKaydet(profilResmi);
                     }
                     db.SaveChanges();
@@ -360,8 +360,7 @@ namespace WebApp.Controllers
 
                 }
 
-
-                return yetkilendirmeyeGit ? RedirectToAction("KullaniciBirimYetkileri", new { id = kModel.KullaniciID }) : RedirectToAction("Index");
+                return GetRoute(kModel.KullaniciID, yetkilendirmeyeGit);
             }
 
             MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, mmMessage.Messages.ToArray());
@@ -376,6 +375,22 @@ namespace WebApp.Controllers
             return View(kModel);
         }
 
+        private RedirectToRouteResult GetRoute(int kullaniciId, int? yetkilendirmeyeGit = null)
+        {
+            switch (yetkilendirmeyeGit)
+            {
+                case 1:
+                    return RedirectToAction("KullaniciBirimYetkileri", new { id = kullaniciId });
+                case 2:
+                    return RedirectToAction("Yetkilendirme", new { id = kullaniciId });
+                case 3:
+                    return RedirectToAction("KullaniciHesapKodYetkileri", new { id = kullaniciId });
+                case 4:
+                    return RedirectToAction("KullaniciHesapNoYetkileri", new { id = kullaniciId });
+                default:
+                    return RedirectToAction("Index");
+            }
+        }
         [Authorize(Roles = RoleNames.KullaniciKayit)]
         public ActionResult Yetkilendirme(int? id)
         {
@@ -405,13 +420,13 @@ namespace WebApp.Controllers
         }
         [HttpPost, ActionName("Yetkilendirme")]
         [Authorize(Roles = RoleNames.KullaniciKayit)]
-        public ActionResult Yetkilendirme(List<int> rolId, int kullaniciId, int yetkiGrupId)
+        public ActionResult Yetkilendirme(List<int> rolId, int kullaniciId, int yetkiGrupId, int? yetkilendirmeyeGit = null)
         {
             rolId = rolId ?? new List<int>();
             UserBus.SetUserRoles(kullaniciId, rolId, yetkiGrupId);
             OnlineUsers.YetkiYenile(kullaniciId);
             MessageBox.Show("Yetkiler Kaydedildi", MessageBox.MessageType.Success);
-            return RedirectToAction("Index");
+            return GetRoute(kullaniciId, yetkilendirmeyeGit);
         }
         public ActionResult GetYetkiGrubuRolIDs(int id)
         {
@@ -437,7 +452,7 @@ namespace WebApp.Controllers
         }
         [HttpPost]
         [Authorize(Roles = RoleNames.KullaniciKayit)]
-        public ActionResult KullaniciBirimYetkileri(List<int> birimId, int kullaniciId)
+        public ActionResult KullaniciBirimYetkileri(List<int> birimId, int kullaniciId, int? yetkilendirmeyeGit = null)
         {
             if (kullaniciId <= 0)
             {
@@ -449,11 +464,10 @@ namespace WebApp.Controllers
             var kul = db.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
             kul.KullaniciBirimleris = birimId.Select(s => new KullaniciBirimleri { BirimID = s }).ToList();
             db.SaveChanges();
-            OnlineUsers.YetkiYenile(kul.KullaniciID);
-
-
+            OnlineUsers.YetkiYenile(kul.KullaniciID); 
             MessageBox.Show("Birim Yetkileri Kaydedildi", MessageBox.MessageType.Success);
-            return RedirectToAction("Index");
+
+            return GetRoute(kullaniciId, yetkilendirmeyeGit);
 
         }
 
@@ -475,7 +489,7 @@ namespace WebApp.Controllers
         }
         [HttpPost]
         [Authorize(Roles = RoleNames.KullaniciKayit)]
-        public ActionResult KullaniciHesapKodYetkileri(List<string> gtHesapKodIDs, int kullaniciId)
+        public ActionResult KullaniciHesapKodYetkileri(List<string> gtHesapKodIDs, int kullaniciId, int? yetkilendirmeyeGit = null)
         {
             if (kullaniciId <= 0)
             {
@@ -490,7 +504,8 @@ namespace WebApp.Controllers
             OnlineUsers.YetkiYenile(kul.KullaniciID);
 
             MessageBox.Show("Hesap Kodu Yetkileri Kaydedildi", MessageBox.MessageType.Success);
-            return RedirectToAction("Index");
+
+            return GetRoute(kullaniciId, yetkilendirmeyeGit);
 
 
         }

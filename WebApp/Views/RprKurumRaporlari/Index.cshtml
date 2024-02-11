@@ -2,7 +2,7 @@
 @using WebApp.Utilities.Helpers
 @using WebApp.Utilities.MessageBox
 @{
-    var mmMessage = ViewBag.MmMessage as MmMessage; 
+    var mmMessage = ViewBag.MmMessage as MmMessage;
     var secilenRaporTipIds = (List<int>)ViewBag.RaporTipIds;
 
     var raporTipData = RaporlarBus.GetRaporTipleri(secilenRaporTipIds);
@@ -10,10 +10,9 @@
     raporTipData.PanelTitle = "Rapor Tiplerini Seçiniz";
     raporTipData.ScrollMaxHeight = 250;
 }
-}
 
 <div class="row">
-    @using (Html.BeginForm("Index", "RprBirimRaporlari", FormMethod.Post, new { id = "frmRprBirimRaporlari" }))
+    @using (Html.BeginForm("Index", "RprKurumRaporlari", FormMethod.Post, new { id = "frmRprKurumRaporlari" }))
     {
         <div class="col-md-12">
 
@@ -21,7 +20,7 @@
             <div class="panel panel-info" id="pnlFltr">
                 <div class="panel-heading padding-0">
                     <h3 class="panel-title" id="rTitle">
-                        <i class="fa fa-bar-chart-o"></i>Birim Madde Verileri Listesi Raporu Alma İşlemi
+                        <i class="fa fa-bar-chart-o"></i>Kurum Raporu Alma İşlemi
                     </h3>
                 </div>
                 <div class="panel-body">
@@ -31,16 +30,9 @@
                     <div class="panel panel-default form-horizontal">
                         <div class="panel-body form-group-separated">
                             <div class="form-group">
-                                <label class="col-md-2 col-xs-2 control-label">Süreç</label>
+                                <label class="col-md-2 col-xs-2 control-label">Rapor Süreci Seçiniz</label>
                                 <div class="col-md-10 col-xs-10">
                                     @Html.DropDownList("VASurecID", null, new { @class = "form-control" })
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 col-xs-2 control-label">Birim</label>
-                                <div class="col-md-10 col-xs-10" id="bOList">
-                                    @Html.DropDownList("BirimID", null, "Tümü", new { @class = "form-control" })
                                 </div>
                             </div>
                             <div class="form-group">
@@ -48,11 +40,12 @@
                                 <div class="col-md-10 col-xs-10">
                                     @raporTipData.ToRenderPartialViewHtml("Ajax", "GetChkList")
                                 </div>
-                            </div> 
+                            </div>
+                           
                             <div class="form-group">
                                 <label class="col-md-2 col-xs-2 control-label"></label>
                                 <div class="col-md-10 col-xs-10">
-                                    <a href="javascript:void(0);" onclick="$('#export').val('true'); $('#frmRprBirimRaporlari').submit(); $('#export').val('false');" class="btn btn-info"><i class="fa fa-bar-chart-o fa-lg"></i> Rapor Al</a>
+                                    <a href="javascript:void(0);" onclick="$('#export').val('true'); $('#frmRprKurumRaporlari').submit(); $('#export').val('false');" class="btn btn-info"><i class="fa fa-bar-chart-o fa-lg"></i> Rapor Al</a>
                                 </div>
                             </div>
                         </div>

@@ -14,7 +14,7 @@ namespace Database
     
     public partial class MaddelerVeriGirisDonemleri
     {
-        public int MaddelerVeriGirisAyID { get; set; }
+        public int MaddelerVeriGirisDonemID { get; set; }
         public int MaddeID { get; set; }
         public int VACokluVeriDonemID { get; set; }
         public bool IsDosyaYuklensin { get; set; }

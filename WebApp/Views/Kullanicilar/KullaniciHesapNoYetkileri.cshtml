@@ -32,8 +32,8 @@
                             {
                                 <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("Kayit", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-user"></i> Kullanıcı</span></li>
                                 <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciBirimYetkileri", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-home"></i> Birim Yetkileri</span></li>
-                                <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapKodYetkileri", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-list"></i> Hesap Kod Yetkileri</span></li>
                                 <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("Yetkilendirme", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-lock"></i> Erişim Yetkileri</span></li>
+                                <li><span class="label label-info label-form" onclick="window.location.href='@Url.Action("KullaniciHesapKodYetkileri", new { id = user.KullaniciID })'" style="cursor:pointer;"><i class="fa fa-list"></i> Hesap Kod Yetkileri</span></li>
                             }
 
 
@@ -47,7 +47,7 @@
                     <table class="table" style="width:100%;table-layout:fixed;">
                         <thead>
                             <tr>
-                                <th>Birim Adı</th>
+                                <th>Hesap Numarası Adı</th>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -122,7 +122,7 @@
                 <div class="panel-footer">
                     <a href="@Url.Action("Index")" class="btn btn-default"><i class="fa fa-reply"></i>Geri Dön</a>
                     <button class="btn btn-primary pull-right"><i class="fa fa-save"></i>Kaydet</button>
-                    <input type="hidden" id="YetkilendirmeyeGit" name="YetkilendirmeyeGit" value="false" /> 
+                    <input type="hidden" id="YetkilendirmeyeGit" name="YetkilendirmeyeGit" value="false" />
 
                 </div>
             </div>

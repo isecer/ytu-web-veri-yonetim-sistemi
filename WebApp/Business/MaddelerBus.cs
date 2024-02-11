@@ -102,7 +102,7 @@ namespace WebApp.Business
 
         }
 
-        public static ChkListModel GetMaddeAylari(int? maddeId, List<MaddelerVeriGirisDonemleri> secilenler = null)
+        public static ChkListModel GetMaddeVeriGirisDonemleri(int? maddeId, List<MaddelerVeriGirisDonemleri> secilenler = null)
         {
             var model = new ChkListModel();
             using (var db = new VysDBEntities())

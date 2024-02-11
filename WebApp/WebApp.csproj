@@ -197,6 +197,7 @@
     <Compile Include="Controllers\MesajlarController.cs" />
     <Compile Include="Controllers\RaporTipleriController.cs" />
     <Compile Include="Controllers\RprBirimRaporlariController.cs" />
+    <Compile Include="Controllers\RprKurumRaporlariController.cs" />
     <Compile Include="Controllers\SistemAyarlariController.cs" />
     <Compile Include="Controllers\SistemBilgilendirmeController.cs" />
     <Compile Include="Controllers\SurecIslemleriController.cs" />
@@ -235,6 +236,9 @@
     <Compile Include="Utilities\Helpers\EvaluteExpressionHelper.cs" />
     <Compile Include="Utilities\Helpers\ImageHelper.cs" />
     <Compile Include="Utilities\Helpers\JsonConverter.cs" />
+    <Compile Include="Utilities\Helpers\RaporHesaplama\BirimRaporHesaplama.cs" />
+    <Compile Include="Utilities\Helpers\RaporHesaplama\RaporExportDto.cs" />
+    <Compile Include="Utilities\Helpers\RaporHesaplama\KurumsalRaporHesaplama.cs" />
     <Compile Include="Utilities\Helpers\OnlineUsersHelper.cs" />
     <Compile Include="Utilities\Helpers\StaticDefinitions.cs" />
     <Compile Include="Utilities\Helpers\ThreeDHelper.cs" />
@@ -1883,6 +1887,7 @@
     <Content Include="Views\Shared\_LayoutSelectPdfCss.cshtml" />
     <Content Include="Views\Shared\_MenuPartial.cshtml" />
     <Content Include="Views\SurecIslemleri\ViewMaddeTurleri.cshtml" />
+    <Content Include="Views\RprKurumRaporlari\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
