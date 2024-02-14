@@ -1,15 +1,15 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
-using WebApp.Models;
-using BiskaUtil;
-using System.Net.Mail;
-using System.IO;
-using System.Net.Mime;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -31,11 +31,11 @@ namespace WebApp.Controllers
         {
             var q = from s in db.GonderilenMaillers
                     join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID
-                    where s.Silindi == false  
+                    where s.Silindi == false
                     select new
                     {
                         s.GonderilenMailID,
-                        s.Tarih, 
+                        s.Tarih,
                         s.Konu,
                         s.Aciklama,
                         s.AciklamaHtml,
@@ -160,14 +160,14 @@ namespace WebApp.Controllers
             kModel.Tarih = DateTime.Now;
 
             if (kModel.Konu.IsNullOrWhiteSpace())
-            { 
+            {
                 mmMessage.Messages.Add("Konu Giriniz.");
                 mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "Konu" });
             }
             else mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "Konu" });
 
             if (kModel.Aciklama.IsNullOrWhiteSpace() && kModel.AciklamaHtml.IsNullOrWhiteSpace())
-            { 
+            {
                 mmMessage.Messages.Add("İçerik Giriniz.");
             }
 
@@ -175,7 +175,7 @@ namespace WebApp.Controllers
             #endregion
             if (mmMessage.Messages.Count == 0)
             {
-                kModel.IslemTarihi = DateTime.Now; 
+                kModel.IslemTarihi = DateTime.Now;
                 kModel.IslemYapanID = UserIdentity.Current.Id;
                 kModel.IslemYapanIP = UserIdentity.Ip;
                 kModel.Aciklama = kModel.Aciklama ?? "";
@@ -251,7 +251,7 @@ namespace WebApp.Controllers
             return View(kModel);
         }
 
-         
+
         public ActionResult TekrarGonder(int id)
         {
             var gonderilenMail = db.GonderilenMaillers.FirstOrDefault(p => p.GonderilenMailID == id);

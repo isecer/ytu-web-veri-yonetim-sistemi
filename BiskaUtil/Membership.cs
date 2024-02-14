@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Reflection;
 namespace BiskaUtil
 {
@@ -120,7 +119,7 @@ namespace BiskaUtil
                     var attr = (RoleAttribute)oAttr;
                     var oVal = field.GetValue(null);
                     if (oVal == null) continue;
-                   
+
                     var key = string.IsNullOrWhiteSpace(attr.RolAdi) ? oVal.ToString() : attr.RolAdi;
                     attr.RolAdi = key;
                     var rolKey = field.DeclaringType?.FullName + "." + field.Name;
@@ -128,10 +127,10 @@ namespace BiskaUtil
                     attr.SiraNo = siraNo++;
                     roles.Add(attr);
                 }
-            } 
+            }
             return roles.ToArray();
         }
-    
+
         public static MenuAttribute[] Menus()
         {
             var fields = MenuFields();

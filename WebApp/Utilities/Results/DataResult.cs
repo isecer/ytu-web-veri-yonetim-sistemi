@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using WebApp.Utilities.MessageBox;
+﻿using WebApp.Utilities.MessageBox;
 
 namespace WebApp.Utilities.Results
 {
@@ -16,6 +15,6 @@ namespace WebApp.Utilities.Results
             Data = data;
         }
         public MmMessage Message { get; }
-        public T Data { get; }  
+        public T Data { get; }
     }
 }

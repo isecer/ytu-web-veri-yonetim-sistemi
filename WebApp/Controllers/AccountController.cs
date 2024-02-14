@@ -1,11 +1,11 @@
 ﻿using BiskaUtil;
-using WebApp.Models;
+using Database;
 using System;
 using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -123,9 +123,9 @@ namespace WebApp.Controllers
         }
         [Authorize(Roles = RoleNames.KullanicilarOnlineList)]
         public ActionResult OnlineUserCnt()
-        { 
-            var users = OnlineUsers.users; 
-            return users.Count().ToJsonResult(); 
+        {
+            var users = OnlineUsers.users;
+            return users.Count().ToJsonResult();
         }
 
         public ActionResult getOnlineUserList()
@@ -294,7 +294,7 @@ namespace WebApp.Controllers
                         mmMessage.ReturnUrl = Url.Action("Login", "Account");
                     }
                     else
-                    { 
+                    {
                         mmMessage.Messages.Add("Şifreniz değiştirildi!");
                     }
                 }

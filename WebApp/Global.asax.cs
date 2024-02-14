@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
 using WebApp.Business;
 using WebApp.Models;
@@ -22,15 +21,15 @@ namespace WebApp
 
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas(); 
+            AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BiskaUtil.Membership.OnRequireUserIdentity += Membership_OnRequireUserIdentity;
             BiskaUtil.SystemInformation.OnEvent += SystemInformation_OnEvent;
             RollerBus.UpdateRoles();
             MenulerBus.UpdateMenus();
-            OnlineUsers.users = new List<OnlineUser>();  
-        } 
+            OnlineUsers.users = new List<OnlineUser>();
+        }
 
         protected void Application_Error(object sender, EventArgs e)
         {
@@ -84,7 +83,7 @@ namespace WebApp
             }
         }
         protected void Application_EndRequest(Object sender, EventArgs e)
-        { 
+        {
         }
         void SystemInformation_OnEvent(BiskaUtil.SystemInformation info)
         {

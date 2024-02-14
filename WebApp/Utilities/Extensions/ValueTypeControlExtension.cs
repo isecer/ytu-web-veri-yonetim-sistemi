@@ -1,14 +1,10 @@
-﻿using BiskaUtil;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using WebApp.Models;
+﻿using System.Text;
 
 namespace WebApp.Utilities.Extensions
 {
     public static class ValueTypeControlExtension
     {
-      
+
 
         public static bool IsNumber(this object value)
         {

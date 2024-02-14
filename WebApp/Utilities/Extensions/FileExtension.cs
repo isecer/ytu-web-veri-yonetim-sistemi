@@ -43,7 +43,7 @@ namespace WebApp.Utilities.Extensions
             return new FileInfo(path).Length;
         }
         public static long GetFileSize(this List<string> paths)
-        { 
+        {
             var filesSize = paths.Select(s => new { path = s, fileSize = s.GetFileSize() }).ToList();
             return filesSize.Sum(s => s.fileSize);
         }

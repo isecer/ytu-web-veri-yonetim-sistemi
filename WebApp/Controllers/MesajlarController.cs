@@ -1,15 +1,14 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using WebApp.Models;
-using BiskaUtil;
-using Database;
 using WebApp.Business;
-using WebApp.Utilities.MenuAndRoles;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
+using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.SystemData;
 
 namespace WebApp.Controllers
@@ -92,7 +91,7 @@ namespace WebApp.Controllers
                 item.BirimAdi = db.sp_BirimAgaciGetBr(kul.BirimID).FirstOrDefault().BirimTreeAdi;
             }
             ViewBag.MesajKategoriID = new SelectList(MesajKategorileriBus.CmbMesajKategorileri(true), "Value", "Caption", model.MesajKategoriID);
-            
+
             ViewBag.IsAktif = new SelectList(ComboData.CmbAcikKapaliData(true), "Value", "Caption", model.IsAktif);
             return View(model);
         }

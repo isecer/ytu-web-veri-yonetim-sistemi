@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace WebApp.Utilities.Extensions
 {
@@ -65,7 +64,7 @@ namespace WebApp.Utilities.Extensions
         private static string ExceptionLines(Exception ex)
         {
             try
-            { 
+            {
                 var stackTrace = new StackTrace(ex, true);
                 var linenumbers = (stackTrace.GetFrames() ?? Array.Empty<StackFrame>())
                     .Where(p => p.GetFileLineNumber() > 0).Select(s =>

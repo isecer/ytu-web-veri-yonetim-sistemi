@@ -73,13 +73,13 @@ namespace WebApp.Controllers
 
 
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.DosyaAdi);
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
             ViewBag.FRDonemID = new SelectList(FrFormYukleBus.CmbFrDonemler(false), "Value", "Caption", model.FrDonemId);
             ViewBag.BirimID = new SelectList(UserBus.CmbYetkiliBirimlerKullanici(false), "Value", "Caption", model.BirimId);
             ViewBag.FormYuklemeDurumID = new SelectList(ComboData.CmbFormYuklemeDurum(), "Value", "Caption", model.FormYuklemeDurumId);
-            
+
             return View(model);
 
 
@@ -260,7 +260,8 @@ namespace WebApp.Controllers
             var page = ViewRenderHelper.RenderPartialView("FRFormYukle", "DetaySablon", mdl);
             return Json(new
             {
-                page, UserIdentity.Current.IsAuthenticated
+                page,
+                UserIdentity.Current.IsAuthenticated
             }, "application/json", JsonRequestBehavior.AllowGet);
         }
         public ActionResult DetaySablon(FRFaaliyetDetayModel model)

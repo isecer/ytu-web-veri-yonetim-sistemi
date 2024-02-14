@@ -1,12 +1,12 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebApp.Models;
-using BiskaUtil;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -55,7 +55,7 @@ namespace WebApp.Controllers
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderByDescending(o => o.IslemTarihi);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
-            
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -97,17 +97,17 @@ namespace WebApp.Controllers
             #region Kontrol
 
             if (kModel.SablonAdi.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Şablon Adı Giriniz.");
-                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "SablonAdi"  });
+                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "SablonAdi" });
             }
             else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "SablonAdi" });
 
             if (kModel.Sablon.IsNullOrWhiteSpace() && kModel.SablonHtml.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Sablon Açıklaması Giriniz.");
             }
-        
+
             #endregion
             if (MmMessage.Messages.Count == 0)
             {
@@ -129,7 +129,7 @@ namespace WebApp.Controllers
                         item.Dosya.SaveAs(Server.MapPath("~" + DosyaYolu));
 
                         eklenen.MailSablonlariEkleris.Add(new MailSablonlariEkleri
-                        { 
+                        {
                             EkAdi = item.DosyaEkAdi,
                             EkDosyaYolu = DosyaYolu
                         });
@@ -165,7 +165,7 @@ namespace WebApp.Controllers
                         item.Dosya.SaveAs(Server.MapPath("~" + DosyaYolu));
 
                         data.MailSablonlariEkleris.Add(new MailSablonlariEkleri
-                        { 
+                        {
                             EkAdi = item.DosyaEkAdi,
                             EkDosyaYolu = DosyaYolu
                         });

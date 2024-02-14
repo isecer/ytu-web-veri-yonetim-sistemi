@@ -1,12 +1,10 @@
-﻿using System; 
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using WebApp.Models;
-using BiskaUtil;
+﻿using BiskaUtil;
 using Database;
+using System;
+using System.Linq;
+using System.Web.Mvc;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -49,14 +47,14 @@ namespace WebApp.Controllers
                 q = q.OrderBy(model.Sort);
             }
             else q = q.OrderBy(o => o.KategoriAdi);
-            
-           
+
+
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();
             var IndexModel = new MIndexBilgi();
             IndexModel.Toplam = model.RowCount;
             IndexModel.Aktif = q.Where(p => p.IsAktif).Count();
             IndexModel.Pasif = q.Where(p => !p.IsAktif).Count();
-            
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -79,15 +77,15 @@ namespace WebApp.Controllers
         {
             var MmMessage = new MmMessage();
             if (kModel.KategoriAdi.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Kayıt işlemini yapabilmeniz için kategori adını girmeniz gerekmektedir!");
                 MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "KategoriAdi" });
             }
             else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "KategoriAdi" });
             if (kModel.KategoriAciklamasi.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Kayıt işlemini yapabilmeniz için kategori açıklamasını girmeniz gerekmektedir!");
-                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "KategoriAciklamasi"  });
+                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "KategoriAciklamasi" });
             }
             else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "KategoriAciklamasi" });
 
@@ -108,7 +106,7 @@ namespace WebApp.Controllers
                     var data = db.MesajKategorileris.Where(p => p.MesajKategoriID == kModel.MesajKategoriID).First();
                     data.IsAktif = kModel.IsAktif;
                     data.KategoriAdi = kModel.KategoriAdi;
-                    data.KategoriAciklamasi = kModel.KategoriAciklamasi; 
+                    data.KategoriAciklamasi = kModel.KategoriAciklamasi;
                     data.IslemYapanID = UserIdentity.Current.Id;
                     data.IslemYapanIP = UserIdentity.Ip;
                     data.IslemTarihi = DateTime.Now;

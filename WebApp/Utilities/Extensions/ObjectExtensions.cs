@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Web;
+﻿using System.Diagnostics;
 
 namespace WebApp.Utilities.Extensions
 {
@@ -20,7 +13,7 @@ namespace WebApp.Utilities.Extensions
             var fullName = declaringType != null ? declaringType.FullName + "." + method.Name : "UnknownClass";
             if (isLineBreakPath) fullName += "\r\n";
             return fullName;
-        } 
+        }
 
     }
-}  
+}

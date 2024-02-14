@@ -50,10 +50,10 @@ namespace WebApp.Controllers
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.RaporTipAdi);
-            model.CountIngfos =  new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif),Aktif = q.Count(p=>p.IsAktif)};
-            
-            
-           
+            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+
+
+
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();
 
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
@@ -129,7 +129,7 @@ namespace WebApp.Controllers
                     raporTipi.IslemTarihi = kModel.IslemTarihi;
                     raporTipi.IslemYapanID = kModel.IslemYapanID;
                     raporTipi.IslemYapanIP = kModel.IslemYapanIP;
-                }  
+                }
                 #region AddMaddeler 
                 var rmVarolanlar = raporTipi.RaporTipleriSecilenMaddelers.Where(p => maddeId.Contains(p.MaddeID)).ToList();
                 var rmSilinenler = raporTipi.RaporTipleriSecilenMaddelers.Where(p => !maddeId.Contains(p.MaddeID)).ToList();
@@ -142,7 +142,7 @@ namespace WebApp.Controllers
                 _entities.SaveChanges();
 
                 return RedirectToAction("Index");
-            } 
+            }
             MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, mmMessage.Messages.ToArray());
             ViewBag.SecilenlerMd = maddeId;
             ViewBag.MmMessage = mmMessage;

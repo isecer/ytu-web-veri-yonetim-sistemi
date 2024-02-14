@@ -1,14 +1,11 @@
-﻿using Database;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
+using Database;
 using WebApp.Models;
-using WebApp.Utilities.Dtos;
 using WebApp.Utilities.Extensions;
 
-namespace WebApp.Utilities.Helpers.RaporHesaplama
+namespace WebApp.Utilities.Helpers.Hesaplama
 {
     public class BirimRaporHesaplama
     {
@@ -40,35 +37,70 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
                 Birimlers = entities.sp_BirimAgaci().ToList();
             }
         }
+        public BirimRaporHesaplama(int vaSurecId, int? birimId, List<int> filteredMaddeIds)
+        {
+            filteredMaddeIds = filteredMaddeIds ?? new List<int>();
+            VaSurecId = vaSurecId;
+            _birimId = birimId;
+            using (var entities = new VysDBEntities())
+            {
+                VaSurecleriMaddeBirims = entities.VASurecleriMaddeBirims.Where(p => p.VASurecleriMadde.VASurecID == vaSurecId && p.VASurecleriMadde.IsAktif && p.BirimID == (birimId ?? p.BirimID))
+                  .Include(inc => inc.VASurecleriMadde)
+                  .Include(inc => inc.VASurecleriMadde.VASurecleri)
+                  .Include(inc => inc.VASurecleriMadde.Maddeler)
+                  .Include(inc => inc.VASurecleriMadde.MaddeTurleri)
+                  .Include(inc => inc.VASurecleriMadde.MaddeYilSonuDegerHesaplamaTipleri)
+                  .Include(inc => inc.VASurecleriMadde.VASurecleriMaddeVeriGirisDonemleris)
+                  .Include(inc => inc.VASurecleriMadde.VASurecleriMaddeFormulEslesenMaddes).ToList();
+                VaSurecleriMaddeGirilenDegers = entities.VASurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMadde.VASurecID == vaSurecId).ToList();
+                Birimlers = entities.sp_BirimAgaci().ToList();
+            }
 
-        private List<RaporExportDto> KurumsalRaporExportDtos { get; set; } = new List<RaporExportDto>();
+            if (filteredMaddeIds.Any())
+            {
+                _filteredMaddeIds = filteredMaddeIds;
+            }
+        }
+
+        private List<RaporExportDto> BirimRaporExportDtos { get; set; } = new List<RaporExportDto>();
         public IEnumerable<RaporExportDto> Hesapla()
         {
 
             var normalMaddeHesaplamalari = NormalMaddeleriHesapla();
-            KurumsalRaporExportDtos.AddRange(normalMaddeHesaplamalari);
+            BirimRaporExportDtos.AddRange(normalMaddeHesaplamalari);
             var formulMaddeHesaplamalari = FormulMaddeleriHesapla();
-            KurumsalRaporExportDtos.AddRange(formulMaddeHesaplamalari);
-            return KurumsalRaporExportDtos.OrderBy(o => o.BirimAdi).ThenBy(t => t.MaddeAdi);
+            BirimRaporExportDtos.AddRange(formulMaddeHesaplamalari);
+            return BirimRaporExportDtos.OrderBy(o => o.BirimAdi).ThenBy(t => t.MaddeAdi);
         }
 
         private IEnumerable<RaporExportDto> NormalMaddeleriHesapla()
         {
             var returnData = new List<RaporExportDto>();
-            foreach (var itemMadde in VaSurecleriMaddeBirims.Where(p => _filteredMaddeIds.Contains(p.VASurecleriMadde.MaddeID) && !p.VASurecleriMadde.VASurecleriMaddeFormulEslesenMaddes.Any()))
+            foreach (var itemMadde in VaSurecleriMaddeBirims.Where(p => p.BirimID == (_birimId ?? p.BirimID) && _filteredMaddeIds.Contains(p.VASurecleriMadde.MaddeID) && !p.VASurecleriMadde.VASurecleriMaddeFormulEslesenMaddes.Any()))
             {
                 returnData.Add(MaddeVeriDoldur(itemMadde));
             }
-
             return returnData;
         }
 
         private IEnumerable<RaporExportDto> FormulMaddeleriHesapla()
         {
-            var krHesap = new KurumsalRaporHesaplama(VaSurecId, RaporTipIds, _birimId);
-            var formulMaddeleri = krHesap.HesaplaFormulMaddeleri(_filteredMaddeIds);
+            if (RaporTipIds != null)
+            {
+                var krHesap = new KurumsalRaporHesaplama(VaSurecId, RaporTipIds, _birimId);
+                var formulMaddeleri = krHesap.HesaplaFormulMaddeleri(_filteredMaddeIds);
 
-            return formulMaddeleri;
+                return formulMaddeleri;
+            }
+            if (_birimId != null && _filteredMaddeIds.Any())
+            {
+                var krHesap = new KurumsalRaporHesaplama(VaSurecId, _birimId.Value, _filteredMaddeIds);
+                var formulMaddeleri = krHesap.HesaplaFormulMaddeleri(_filteredMaddeIds);
+
+                return formulMaddeleri;
+            }
+
+            return new List<RaporExportDto>();
         }
         private RaporExportDto MaddeVeriDoldur(VASurecleriMaddeBirim surecMaddeBirim)
         {

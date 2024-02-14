@@ -1,9 +1,6 @@
 ﻿using BiskaUtil;
 using Database;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
@@ -15,14 +12,14 @@ namespace WebApp.Controllers
     {
         //
         // GET: /PageNotFound/
-        public ActionResult PageNotFound(string error,int ErrC)
+        public ActionResult PageNotFound(string error, int ErrC)
         {
             ViewBag.SayfaAdi = error;
             ViewBag.ErrC = ErrC;
             return View();
         }
 
-        public ActionResult Error(string url, int ErrC,Exception exception)
+        public ActionResult Error(string url, int ErrC, Exception exception)
         {
             ViewBag.SayfaAdi = url;
             ViewBag.ErrC = ErrC;

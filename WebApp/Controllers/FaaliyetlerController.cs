@@ -2,7 +2,7 @@
 using Database;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using System.Web.Mvc;
 using WebApp.Business;
 using WebApp.Models;
@@ -53,12 +53,12 @@ namespace WebApp.Controllers
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.FaaliyetAdi);
-            model.CountIngfos =  new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif),Aktif = q.Count(p=>p.IsAktif)};
-            
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
-            
+            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -196,7 +196,7 @@ namespace WebApp.Controllers
                 db.SaveChanges();
 
                 return RedirectToAction("Index");
-            } 
+            }
             MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, mmMessage.Messages.ToArray());
             ViewBag.SecilenlerKy = kaynakId;
             ViewBag.SecilenlerAy = ayId;

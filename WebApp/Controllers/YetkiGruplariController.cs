@@ -1,11 +1,11 @@
-﻿using WebApp.Models;
+﻿using BiskaUtil;
+using Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using BiskaUtil;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -30,12 +30,12 @@ namespace WebApp.Controllers
             if (!model.YetkiGrupAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.YetkiGrupAdi.Contains(model.YetkiGrupAdi));
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(t => t.YetkiGrupAdi);
-            
-           
+
+
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).Select(s => new FrYetkiGruplari
             {
                 YetkiGrupID = s.YetkiGrupID,
-                YetkiGrupAdi = s.YetkiGrupAdi, 
+                YetkiGrupAdi = s.YetkiGrupAdi,
                 YetkiSayisi = s.YetkiGrupRolleris.Count
             }).ToArray();
 
@@ -69,7 +69,7 @@ namespace WebApp.Controllers
             {
                 dct.Add(new ComboModelInt { Value = item.SiraNo.Value, Caption = item.MenuAdi });
             }
-            ViewBag.cats = dct; 
+            ViewBag.cats = dct;
             ViewBag.MmMessage = mmMessage;
             return View(model);
         }
@@ -79,7 +79,7 @@ namespace WebApp.Controllers
             rolId = rolId ?? new List<int>();
             var mmMessage = new MmMessage();
             if (model.YetkiGrupAdi.IsNullOrWhiteSpace())
-            { 
+            {
                 mmMessage.Messages.Add("Yetki Grup Adı Giriniz.");
                 mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "YetkiGrupAdi" });
             }
@@ -156,7 +156,7 @@ namespace WebApp.Controllers
                 catch (Exception ex)
                 {
                     success = false;
-                    message = "'" + kayit.YetkiGrupAdi + "' Yetki Grubu Silinemedi! <br/> Bilgi:" + ex.ToExceptionMessage(); 
+                    message = "'" + kayit.YetkiGrupAdi + "' Yetki Grubu Silinemedi! <br/> Bilgi:" + ex.ToExceptionMessage();
                     SistemBilgilendirmeBus.SistemBilgisiKaydet(message, "YetkiGruplari/Sil<br/><br/>" + ex.ToExceptionStackTrace(), BilgiTipi.OnemsizHata);
                 }
             }

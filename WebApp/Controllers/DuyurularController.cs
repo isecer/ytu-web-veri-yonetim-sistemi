@@ -1,12 +1,12 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WebApp.Models;
-using BiskaUtil;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -27,12 +27,12 @@ namespace WebApp.Controllers
         [HttpPost]
         public ActionResult Index(FmDuyurular model)
         {
-            
+
             var q = from s in db.Duyurulars
-                    join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID 
+                    join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID
                     select new
                     {
-                         
+
                         s.DuyuruID,
                         s.Tarih,
                         s.Baslik,
@@ -44,7 +44,7 @@ namespace WebApp.Controllers
                         Ekler = s.DuyuruEkleris,
                         IsAktif = s.IsAktif,
                         AnaSayfadaGozuksun = s.AnaSayfadaGozuksun,
-                        AnaSayfaPopupAc = s.AnaSayfaPopupAc, 
+                        AnaSayfaPopupAc = s.AnaSayfaPopupAc,
                         YayinSonTarih = s.YayinSonTarih,
                     };
 
@@ -65,7 +65,7 @@ namespace WebApp.Controllers
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderByDescending(o => o.Tarih);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).Select(s => new FrDuyurular
-            { 
+            {
                 DuyuruID = s.DuyuruID,
                 Baslik = s.Baslik,
                 Aciklama = s.Aciklama,
@@ -77,10 +77,10 @@ namespace WebApp.Controllers
                 DuyuruEkleris = s.Ekler,
                 IsAktif = s.IsAktif,
                 AnaSayfadaGozuksun = s.AnaSayfadaGozuksun,
-                AnaSayfaPopupAc = s.AnaSayfaPopupAc, 
+                AnaSayfaPopupAc = s.AnaSayfaPopupAc,
                 YayinSonTarih = s.YayinSonTarih
             }).ToList();
-            
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -119,9 +119,9 @@ namespace WebApp.Controllers
                                join sid in qDuyuruDosyaEkID on s.inx equals sid.inx
                                select new { s.inx, DosyaEkAdi = s.s, DuyuruDosyaEkID = sid.s });
             #region Kontrol
-            
+
             if (kModel.Tarih == DateTime.MinValue)
-            { 
+            {
                 MmMessage.Messages.Add("Geçerli Bir Tarih Giriniz.");
                 MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "Tarih" });
             }
@@ -130,25 +130,25 @@ namespace WebApp.Controllers
                 if (kModel.YayinSonTarih.HasValue)
                 {
                     if (kModel.YayinSonTarih.Value <= kModel.Tarih)
-                    { 
+                    {
                         MmMessage.Messages.Add("Duyurunun yayınlanacağı son tarih Duyuru tarihinden tarihten küçük yada eşit olamaz! ");
-                        MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "Tarih"  });
-                        MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "YayinSonTarih"  });
+                        MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "Tarih" });
+                        MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "YayinSonTarih" });
                     }
                 }
                 MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "Tarih" });
             }
             if (kModel.Baslik.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Başlık Giriniz.");
                 MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "Baslik" });
             }
             else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "Baslik" });
 
             if (kModel.Aciklama.IsNullOrWhiteSpace() && kModel.AciklamaHtml.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Aciklama Giriniz.");
-            } 
+            }
             #endregion
             if (MmMessage.Messages.Count == 0)
             {
@@ -185,7 +185,7 @@ namespace WebApp.Controllers
                     data.Tarih = kModel.Tarih;
                     data.YayinSonTarih = kModel.YayinSonTarih;
                     data.AnaSayfadaGozuksun = kModel.AnaSayfadaGozuksun;
-                    data.AnaSayfaPopupAc = kModel.AnaSayfaPopupAc; 
+                    data.AnaSayfaPopupAc = kModel.AnaSayfaPopupAc;
                     data.IsAktif = kModel.IsAktif;
                     data.IslemTarihi = DateTime.Now;
                     data.IslemYapanID = kModel.IslemYapanID;

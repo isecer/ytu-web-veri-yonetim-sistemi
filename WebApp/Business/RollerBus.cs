@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using BiskaUtil;
+﻿using BiskaUtil;
 using Database;
+using System;
+using System.Linq;
 using WebApp.Models;
 
 namespace WebApp.Business
@@ -48,8 +48,8 @@ namespace WebApp.Business
                             }
                             catch (Exception e)
                             {
-                               SistemBilgilendirmeBus.SistemBilgisiKaydet(e.Message,e.StackTrace,BilgiTipi.Kritik);
-                            } 
+                                SistemBilgilendirmeBus.SistemBilgisiKaydet(e.Message, e.StackTrace, BilgiTipi.Kritik);
+                            }
                         }
                     }
 

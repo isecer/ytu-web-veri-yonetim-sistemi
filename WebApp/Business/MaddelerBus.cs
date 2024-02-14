@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BiskaUtil;
-using Database;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
 
@@ -76,7 +76,7 @@ namespace WebApp.Business
                     s.MaddeTurID,
                     s.MaddeTurAdi,
                     s.IsAktif,
-                }).Distinct().OrderBy(o=>!o.IsAktif).ThenBy(o => o.MaddeTurAdi).ToList();
+                }).Distinct().OrderBy(o => !o.IsAktif).ThenBy(o => o.MaddeTurAdi).ToList();
                 foreach (var item in data)
                 {
                     dct.Add(new ComboModelInt { Value = item.MaddeTurID, Caption = item.MaddeTurAdi + (!item.IsAktif ? " (Pasif)" : "") });

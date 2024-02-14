@@ -12,42 +12,44 @@
         </ul>
     </div>
     <div class="panel-body" style="padding:0px;">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th width="50">Ay</th>
-                    <th>Açıklama</th>
-                    <th width="110">Eklenme Tarihi</th>
-                    <th width="30" style="text-align:center;"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Data)
-                {
+        <div style="overflow:auto;max-height:300px;">
+            <table class="table table-hover">
+                <thead>
                     <tr>
-
-                        <td id="tdAAyAdi_@item.VASurecleriMaddeEklenenAciklamaID">@(item.VACokluVeriDonemID.HasValue ? item.VACokluVeriDonemleri.CokluVeriDonemAdi : "Genel")</td>
-                        <td id="tdAAciklama_@item.VASurecleriMaddeEklenenAciklamaID">
-                            @item.Aciklama
-                        </td>
-                        <td>@item.IslemTarihi.ToFormatDateAndTime()</td>
-                        <td>
-                            @if (Model.KayitYetki)
-                            {
-                                <a href="javascript:void(0)" onclick="AciklamaSilmeOnay(this,@item.VASurecleriMaddeEklenenAciklamaID)"><i class="fa fa-trash-o fa-lg" title="Açıklamayı Sil"></i></a>
-                            }
-                        </td>
+                        <th width="50">Dönem</th>
+                        <th>Açıklama</th>
+                        <th width="110">Eklenme Tarihi</th>
+                        <th width="30" style="text-align:center;"></th>
                     </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
 
-                }
-                @if (Model.Data.Count == 0)
-                {
-                    <tr>
-                        <td colspan="4" style="text-align:center;color:maroon;">Eklenen Açıklama Yok</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                            <td id="tdAAyAdi_@item.VASurecleriMaddeEklenenAciklamaID">@(item.VACokluVeriDonemID.HasValue ? item.VACokluVeriDonemleri.CokluVeriDonemAdi : "Genel")</td>
+                            <td id="tdAAciklama_@item.VASurecleriMaddeEklenenAciklamaID">
+                                @item.Aciklama
+                            </td>
+                            <td>@item.IslemTarihi.ToFormatDateAndTime()</td>
+                            <td>
+                                @if (Model.KayitYetki)
+                                {
+                                    <a href="javascript:void(0)" onclick="AciklamaSilmeOnay(this,@item.VASurecleriMaddeEklenenAciklamaID)"><i class="fa fa-trash-o fa-lg" title="Açıklamayı Sil"></i></a>
+                                }
+                            </td>
+                        </tr>
+
+                    }
+                    @if (Model.Data.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align:center;color:maroon;">Eklenen Açıklama Yok</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

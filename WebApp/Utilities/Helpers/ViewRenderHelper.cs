@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Web;
 using System.Web.Mvc;
-using WebApp.Models; 
-using WebApp.Utilities.Dtos;
 
 namespace WebApp.Utilities.Helpers
 {
     public static class ViewRenderHelper
     {
         public static string RenderPartialView(string controllerName, string partialView, object model)
-        { 
+        {
             if (HttpContext.Current == null)
                 HttpContext.Current = new HttpContext(
                                         new HttpRequest(null, "http://www.vys.yildiz.edu.tr", null),
@@ -35,13 +30,13 @@ namespace WebApp.Utilities.Helpers
                 viewResult.View.Render(viewContext, sw);
                 return sw.GetStringBuilder().ToString();
             }
-           
-        } 
+
+        }
         public static IHtmlString ToRenderPartialViewHtml(this object model, string controllerName, string partialView)
         {
             var strView = RenderPartialView(controllerName, partialView, model);
             return new HtmlString(strView);
         }
-      
+
     }
 }

@@ -1,8 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace WebApp.Models
@@ -14,9 +12,9 @@ namespace WebApp.Models
             public RequestCaptcha()
             {
                 this.RequestTime = DateTime.Now;
-            } 
-            public string RequestCode { get; set; } 
-            public DateTime RequestTime { get; set; } 
+            }
+            public string RequestCode { get; set; }
+            public DateTime RequestTime { get; set; }
             public string Text { get; set; }
         }
 
@@ -70,16 +68,17 @@ namespace WebApp.Models
                 }
                 else
                 {
-                    RequestCaptcha captcha = new RequestCaptcha {
+                    RequestCaptcha captcha = new RequestCaptcha
+                    {
                         Text = CaptchaText,
                         RequestCode = RequestCode
                     };
                     Requests.Add(RequestCode, captcha);
-                }                
+                }
             }
-            catch 
+            catch
             {
-               
+
             }
             finally
             {

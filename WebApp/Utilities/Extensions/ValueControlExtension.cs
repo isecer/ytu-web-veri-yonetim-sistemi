@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace WebApp.Utilities.Extensions
@@ -16,10 +16,15 @@ namespace WebApp.Utilities.Extensions
             if (!isSuccess) isSuccess = !email.IsASCII();
             return isSuccess;
         }
-
+        public static string RemoveInvalidFileNameChars(this string str)
+        {
+            string invalidChars = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            Regex regex = new Regex($"[{Regex.Escape(invalidChars)}]");
+            return regex.Replace(str, "");
+        }
         public static List<string> ToIkiKarakterArasiKodBul(this string body, string start, string end)
         {
-            var matched = new List<string>(); 
+            var matched = new List<string>();
             var exit = false;
             while (!exit)
             {

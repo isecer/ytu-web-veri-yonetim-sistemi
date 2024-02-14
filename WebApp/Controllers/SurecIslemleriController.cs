@@ -7,6 +7,7 @@ using WebApp.Business;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
+using WebApp.Utilities.Helpers.FileController;
 using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.MessageBox;
 using WebApp.Utilities.SystemData;
@@ -32,9 +33,10 @@ namespace WebApp.Controllers
         }
         public ActionResult Kayit(int? id)
         {
+
             var kmSurec = SurecIslemleriBus.GetSurec(id);
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", kmSurec.IsAktif);
-            ViewBag.Yil = new SelectList(ComboData.CmbSurecKayitYillari(), "Value", "Caption", kmSurec.Yil); 
+            ViewBag.Yil = new SelectList(ComboData.CmbSurecKayitYillari(), "Value", "Caption", kmSurec.Yil);
             ViewBag.MmMessage = new MmMessage();
             return View(kmSurec);
         }
@@ -52,7 +54,7 @@ namespace WebApp.Controllers
             MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, result.Message.Messages.ToArray());
             ViewBag.MmMessage = result.Message;
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", kModel.IsAktif);
-            ViewBag.Yil = new SelectList(ComboData.CmbSurecKayitYillari(), "Value", "Caption", kModel.Yil); 
+            ViewBag.Yil = new SelectList(ComboData.CmbSurecKayitYillari(), "Value", "Caption", kModel.Yil);
             return View(kModel);
         }
 
@@ -72,7 +74,10 @@ namespace WebApp.Controllers
             return result.Message.ToJsonResult();
         }
 
-
+        public ActionResult KanitDosyalariniIndir(int vaSurecId)
+        {
+            return new FileController().SurecKanitDosyalariIndir(vaSurecId);
+        }
 
         public ActionResult GetDetail(int id, int tbInx)
         {

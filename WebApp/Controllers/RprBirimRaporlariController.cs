@@ -7,9 +7,7 @@ using System.Web.Mvc;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebApp.Business;
-using WebApp.Models;
-using WebApp.Utilities.Dtos;
-using WebApp.Utilities.Helpers.RaporHesaplama;
+using WebApp.Utilities.Helpers.Hesaplama;
 using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.MessageBox;
 
@@ -211,7 +209,7 @@ namespace WebApp.Controllers
             else
             {
                 MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, mmMessage.Messages.ToArray());
-            } 
+            }
             ViewBag.VASurecID = new SelectList(SurecIslemleriBus.CmbVaSurecler(), "Value", "Caption", vaSurecId);
             ViewBag.BirimID = new SelectList(UserBus.CmbYetkiliBirimlerKullanici(false), "Value", "Caption", birimId);
             ViewBag.RaporTipIds = raporTipIDs;

@@ -1,9 +1,7 @@
 ﻿using BiskaUtil;
 using Database;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApp.Business;
 using WebApp.Models;
@@ -35,7 +33,7 @@ namespace WebApp.Controllers
                          MaddeTurID = s.MaddeTurID,
                          MaddeTurAdi = s.MaddeTurAdi,
                          IsPlanlananDegerOlacak = s.IsPlanlananDegerOlacak,
-                         IsPlanlananDegerOlacakGelecekYil = s.IsPlanlananDegerOlacakGelecekYil, 
+                         IsPlanlananDegerOlacakGelecekYil = s.IsPlanlananDegerOlacakGelecekYil,
                          IsAktif = s.IsAktif,
                          IslemTarihi = s.IslemTarihi,
                          IslemYapan = kul.KullaniciAdi,
@@ -45,16 +43,16 @@ namespace WebApp.Controllers
 
             if (!model.MaddeTurAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeTurAdi.Contains(model.MaddeTurAdi));
             if (model.IsPlanlananDegerOlacak.HasValue) q = q.Where(p => p.IsPlanlananDegerOlacak == model.IsPlanlananDegerOlacak);
-            if (model.IsPlanlananDegerOlacakGelecekYil.HasValue) q = q.Where(p => p.IsPlanlananDegerOlacakGelecekYil == model.IsPlanlananDegerOlacakGelecekYil); 
+            if (model.IsPlanlananDegerOlacakGelecekYil.HasValue) q = q.Where(p => p.IsPlanlananDegerOlacakGelecekYil == model.IsPlanlananDegerOlacakGelecekYil);
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif);
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.MaddeTurAdi);
             model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
             ViewBag.IsPlanlananDegerOlacak = new SelectList(ComboData.GetCmbEvetHayirData(), "Value", "Caption", model.IsPlanlananDegerOlacak);
-            ViewBag.IsPlanlananDegerOlacakGelecekYil = new SelectList(ComboData.GetCmbEvetHayirData(), "Value", "Caption", model.IsPlanlananDegerOlacakGelecekYil); 
+            ViewBag.IsPlanlananDegerOlacakGelecekYil = new SelectList(ComboData.GetCmbEvetHayirData(), "Value", "Caption", model.IsPlanlananDegerOlacakGelecekYil);
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -104,7 +102,7 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    maddeTuru = db.MaddeTurleris.First(p => p.MaddeTurID == kModel.MaddeTurID); 
+                    maddeTuru = db.MaddeTurleris.First(p => p.MaddeTurID == kModel.MaddeTurID);
                     maddeTuru.IsPlanlananDegerOlacak = kModel.IsPlanlananDegerOlacak;
                     maddeTuru.IsPlanlananDegerOlacakGelecekYil = kModel.IsPlanlananDegerOlacakGelecekYil;
                     maddeTuru.MaddeTurAdi = kModel.MaddeTurAdi;

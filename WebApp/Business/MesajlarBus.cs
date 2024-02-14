@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Database;
+﻿using Database;
+using System.Linq;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
 

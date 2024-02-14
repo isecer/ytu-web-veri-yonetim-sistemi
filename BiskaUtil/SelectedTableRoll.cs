@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BiskaUtil
 {
@@ -11,7 +7,7 @@ namespace BiskaUtil
         public string RoleName { get; set; }
         public string TableIdName { get; set; }
         public int TableId { get; set; }
-        public int? SelectedId  { get; set; }
+        public int? SelectedId { get; set; }
         public List<int> RefTableIDs { get; set; }
     }
 }

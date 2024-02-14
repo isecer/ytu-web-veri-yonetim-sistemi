@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BiskaUtil;
+﻿using BiskaUtil;
 using Database;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Utilities.Dtos
 {
     public class FmVeriGiris : PagerOption
     {
+        public bool Export { get; set; }
         public bool IsAktif { get; set; }
         public int? VaSurecId { get; set; }
         public int? BirimId { get; set; }
@@ -19,6 +18,7 @@ namespace WebApp.Utilities.Dtos
         public int? MaddeTurId { get; set; }
         public bool? VeriGirisiOnaylandi { get; set; }
         public List<FrVgMaddeler> Data { get; set; }
+        public List<int> FilteredMaddeIds { get; set; } = new List<int>();
     }
     public class FrVgMaddeler : Vw_MaddeVeriGirisDurum
     {
@@ -89,7 +89,8 @@ namespace WebApp.Utilities.Dtos
     }
     public class VeriKanitDosyaListRw : VASurecleriMaddeEklenenDosya
     {
-        public string AyAdi { get; set; }
+        public string BirimAdi { get; set; }
+        public string DonemAdi { get; set; }
     }
     public class AciklamaGirisModel : VASurecleriMaddeEklenenAciklama
     {

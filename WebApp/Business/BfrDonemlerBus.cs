@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BiskaUtil;
-using Database;
 using WebApp.Models;
 
 namespace WebApp.Business
@@ -25,21 +25,21 @@ namespace WebApp.Business
             {
                 var nowDate = DateTime.Now;
                 var xD = (from s in db.BFRDonemleris.Where(p => p.BFRDonemID == bfrDonemId)
-                    join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID
-                    select new FrBfrDonemleri
-                    {
-                        BFRDonemID = s.BFRDonemID,
-                        DonemYilAdi = s.Yil + " Yılı Dönemi",
-                        Yil = s.Yil,
-                        BaslangicTarihi = s.BaslangicTarihi,
-                        BitisTarihi = s.BitisTarihi,
-                        IsAktif = s.IsAktif,
-                        IslemYapanID = s.IslemYapanID,
-                        IslemYapan = k.KullaniciAdi,
-                        IslemTarihi = s.IslemTarihi,
-                        IslemYapanIP = s.IslemYapanIP,
-                        AktifSurec = (s.BaslangicTarihi <= nowDate && s.BitisTarihi >= nowDate)
-                    }).FirstOrDefault();
+                          join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID
+                          select new FrBfrDonemleri
+                          {
+                              BFRDonemID = s.BFRDonemID,
+                              DonemYilAdi = s.Yil + " Yılı Dönemi",
+                              Yil = s.Yil,
+                              BaslangicTarihi = s.BaslangicTarihi,
+                              BitisTarihi = s.BitisTarihi,
+                              IsAktif = s.IsAktif,
+                              IslemYapanID = s.IslemYapanID,
+                              IslemYapan = k.KullaniciAdi,
+                              IslemTarihi = s.IslemTarihi,
+                              IslemYapanIP = s.IslemYapanIP,
+                              AktifSurec = (s.BaslangicTarihi <= nowDate && s.BitisTarihi >= nowDate)
+                          }).FirstOrDefault();
                 return xD;
             }
         }

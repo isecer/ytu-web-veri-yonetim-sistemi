@@ -21,16 +21,17 @@ namespace WebApp.Utilities.Helpers
         public string KullaniciTipi { get; set; }
         public string UniqueId { get; set; }
         public string ResimAdi { get; set; }
-        public string Ip { get; set; } 
+        public string Ip { get; set; }
     }
     public static class OnlineUsersHelper
     {
         private static readonly List<OnlineUser> Users = null;
         public static int OnlineUserCount = 0;
         private static readonly object LockObject = new object();
-        static OnlineUsersHelper(){
+        static OnlineUsersHelper()
+        {
             Users = new List<OnlineUser>();
-         }
+        }
         public static OnlineUser[] GetUsers => Users.AsReadOnly().ToArray();
 
         public static void AddUser(string userId, string ip)
@@ -81,7 +82,8 @@ namespace WebApp.Utilities.Helpers
             {
                 return Users.FirstOrDefault(p => p.UniqueId == uniqueId);
             }
-            catch {
+            catch
+            {
                 return null;
             }
             finally

@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using BiskaUtil;
+﻿using BiskaUtil;
 using Database;
+using System.Collections.Generic;
+using System.Linq;
 using WebApp.Models;
 using WebApp.Utilities.Helpers;
 
@@ -42,7 +41,7 @@ namespace WebApp.Business
                 }
                 if (secilenler == null) secilenler = new List<int>();
                 var maddeTurleri = db.MaddeTurleris.Select(s => new { s.MaddeTurID, s.MaddeTurAdi }).ToList();
-                var maddelers = db.sp_MaddeAgaci().Where(p => p.VeriGirisSekliID > 0 && p.IsAktif == true).Select(s => new Maddeler { MaddeID = s.MaddeID.Value,MaddeTurID =s.MaddeTurID, MaddeKod = s.MaddeKod, MaddeAdi = s.MaddeTreeAdi }).OrderBy(o => o.MaddeAdi).ToList();
+                var maddelers = db.sp_MaddeAgaci().Where(p => p.VeriGirisSekliID > 0 && p.IsAktif == true).Select(s => new Maddeler { MaddeID = s.MaddeID.Value, MaddeTurID = s.MaddeTurID, MaddeKod = s.MaddeKod, MaddeAdi = s.MaddeTreeAdi }).OrderBy(o => o.MaddeAdi).ToList();
                 var dataR = (from madde in maddelers
                              join maddeturu in maddeTurleri on madde.MaddeTurID equals maddeturu.MaddeTurID
                              select new CheckObject<ChkListDataModel>
@@ -61,7 +60,7 @@ namespace WebApp.Business
             using (var db = new VysDBEntities())
             {
                 if (secilenler == null) secilenler = new List<int>();
-                var raporTipleris = db.RaporTipleris.Where(p => p.IsAktif).Select(s => new { s.RaporTipID, s.RaporTipAdi }).OrderBy(o=>o.RaporTipAdi).ToList();
+                var raporTipleris = db.RaporTipleris.Where(p => p.IsAktif).Select(s => new { s.RaporTipID, s.RaporTipAdi }).OrderBy(o => o.RaporTipAdi).ToList();
                 var dataR = (from raporTipi in raporTipleris
                              select new CheckObject<ChkListDataModel>
                              {
@@ -71,7 +70,7 @@ namespace WebApp.Business
                 model.Data = dataR;
                 return model;
             }
-        } 
+        }
 
     }
 }

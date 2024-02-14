@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using WebApp.Models;
-using BiskaUtil;
+﻿using BiskaUtil;
 using Database;
+using System;
+using System.Linq;
+using System.Web.Mvc;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -32,20 +30,20 @@ namespace WebApp.Controllers
             var q = from s in db.Unvanlars
                     select s;
 
-            if (!model.UnvanAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.UnvanAdi.Contains(model.UnvanAdi)); 
+            if (!model.UnvanAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.UnvanAdi.Contains(model.UnvanAdi));
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             model.RowCount = q.Count();
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderBy(o => o.UnvanAdi);
-            
-           
+
+
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();
             var IndexModel = new MIndexBilgi();
             IndexModel.Toplam = model.RowCount;
             IndexModel.Aktif = q.Where(p => p.IsAktif).Count();
             IndexModel.Pasif = q.Where(p => !p.IsAktif).Count();
-            
-            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif); 
+
+            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
         public ActionResult Kayit(int? id)
@@ -59,7 +57,7 @@ namespace WebApp.Controllers
                 if (data != null) model = data;
             }
 
-            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif); 
+            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
         [HttpPost]
@@ -68,11 +66,11 @@ namespace WebApp.Controllers
             var MmMessage = new MmMessage();
             #region Kontrol  
             if (kModel.UnvanAdi.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Ünvan Adı Boş bırakılamaz.");
-                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "UnvanAdi"  });
+                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "UnvanAdi" });
             }
-            else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "UnvanAdi" }); 
+            else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "UnvanAdi" });
             #endregion
 
             if (MmMessage.Messages.Count == 0)
@@ -87,8 +85,8 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    var data = db.Unvanlars.Where(p => p.UnvanID == kModel.UnvanID).First(); 
-                    data.UnvanAdi = kModel.UnvanAdi; 
+                    var data = db.Unvanlars.Where(p => p.UnvanID == kModel.UnvanID).First();
+                    data.UnvanAdi = kModel.UnvanAdi;
                     data.IsAktif = kModel.IsAktif;
                     data.IslemTarihi = kModel.IslemTarihi;
                     data.IslemYapanID = kModel.IslemYapanID;
@@ -103,7 +101,7 @@ namespace WebApp.Controllers
             }
 
             ViewBag.MmMessage = MmMessage;
-            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", kModel.IsAktif); 
+            ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", kModel.IsAktif);
             return View(kModel);
         }
         public ActionResult Sil(int id)
@@ -112,7 +110,7 @@ namespace WebApp.Controllers
             string message = "";
             bool success = true;
             if (kayit != null)
-            { 
+            {
                 try
                 {
                     message = "'" + kayit.UnvanAdi + "' İsimli Ünvan Silindi!";

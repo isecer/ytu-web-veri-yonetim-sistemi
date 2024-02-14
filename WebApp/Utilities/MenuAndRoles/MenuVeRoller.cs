@@ -1,8 +1,4 @@
 ﻿using BiskaUtil;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace WebApp.Utilities.MenuAndRoles
 {
@@ -25,7 +21,7 @@ namespace WebApp.Utilities.MenuAndRoles
         [MenuAttribute(MenuID = 85000, MenuAdi = "Kullanıcı İşlemleri", MenuCssClass = "fa fa-group", MenuUrl = "", DilCeviriYap = false, SiraNo = 22)]
         public const string Tanimlamalar = "Tanımlamalar";
 
-   
+
 
         [MenuAttribute(MenuID = 100000, MenuAdi = "Sistem", MenuCssClass = "fa fa-desktop", MenuUrl = "", DilCeviriYap = false, SiraNo = 26)]
         public const string Sistem = "Sistem";

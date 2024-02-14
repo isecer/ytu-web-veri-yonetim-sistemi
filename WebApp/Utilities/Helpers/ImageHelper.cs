@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
+﻿using QRCoder;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using QRCoder;
 
 namespace WebApp.Utilities.Helpers
 {
-    public static  class ImageHelper
+    public static class ImageHelper
     {
         public static Image CreateQrCode(this string kod)
         {
-           
+
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(kod, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(10); // QR kod boyutu belirleme (10 ile çarpılarak boyut arttırılabilir)
             return qrCodeImage;
 
-             
+
         }
 
         public static Image ResizeImage(this Image imgToResize, Size size)

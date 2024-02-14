@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BiskaUtil;
+using Database;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using WebApp.Models;
-using BiskaUtil;
-using Database;
 using WebApp.Utilities.Extensions;
 
 namespace WebApp.Controllers
@@ -53,7 +53,7 @@ namespace WebApp.Controllers
                 ViewBag.MesajGroupID = secilenMesaj != null ? mesajGroupId : "";
             }
             else ViewBag.MesajGroupID = "";
-           // OnaylamaAylikUpdate();
+            // OnaylamaAylikUpdate();
             return View();
 
         }

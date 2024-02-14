@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Database;
+using System.Collections.Generic;
 using System.Linq;
-using Database;
 using WebApp.Models;
 
 namespace WebApp.Business

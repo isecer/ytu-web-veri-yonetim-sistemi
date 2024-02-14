@@ -10,8 +10,8 @@ using System.Web.UI.WebControls;
 using WebApp.Business;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
-using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.Helpers;
+using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.MessageBox;
 
 namespace WebApp.Controllers
@@ -97,16 +97,16 @@ namespace WebApp.Controllers
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(o => o.AktarimTarihi).ThenByDescending(t => t.IslemTarihi);
             var indexModel = new MIndexBilgi() { Toplam = model.RowCount };
-            
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
+
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
             model.GTVeriGirisDurumlaris = db.GTVeriGirisDurumlaris.ToList();
             #region export
             if (export && model.RowCount > 0)
             {
 
-                 var detay = q.SelectMany(s => s.GTVerigirisiDetayList).OrderBy(o => o.HesapKod).ToList();
+                var detay = q.SelectMany(s => s.GTVerigirisiDetayList).OrderBy(o => o.HesapKod).ToList();
                 var qData = q.OrderBy(o => o.HesapNo).ThenBy(t => t.AktarimTarihi).ToList();
                 qData.Add(new FrGTVeriGirisi { GTVeriGirisiID = -53, GelenTutar = detay.Sum(s => s.Tutar) });
                 var data = qData.Select((s, inx) => new { s, inx }).ToList();
@@ -146,10 +146,10 @@ namespace WebApp.Controllers
                 gv.RenderControl(htw);
                 return File(System.Text.Encoding.UTF8.GetBytes(sw.ToString()), Response.ContentType, birimAdi + "_Birimi_" + yil + "_Yılı_GelirTakibiListesi.xls");
             }
-            #endregion 
+            #endregion
 
 
-            
+
             ViewBag.GTDonemID = new SelectList(GtDonemlerBus.CmbGtDonemler(false), "Value", "Caption", model.GTDonemID);
             ViewBag.GTBirimID = new SelectList(UserBus.CmbYetkiliGtBirimlerKullanici(), "Value", "Caption", model.GTBirimID);
             ViewBag.GTHesapNoID = new SelectList(GtVeriGirisiBus.CmbHesapNumaralari(model.GTBirimID), "Value", "Caption", model.GTHesapNoID);
@@ -178,7 +178,7 @@ namespace WebApp.Controllers
                         mmMessage.Messages.Add("Düzeltme işlemleri durumu Beklemede olan kayıtlar üzerinde yapılabilir.");
                         MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, mmMessage.Messages.ToArray());
                         return RedirectToAction("Index");
-                    } 
+                    }
                     model = data;
                 }
             }

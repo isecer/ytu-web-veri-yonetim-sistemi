@@ -1,9 +1,7 @@
 ﻿using BiskaUtil;
 using Database;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApp.Business;
 using WebApp.Models;
@@ -51,11 +49,11 @@ namespace WebApp.Controllers
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderBy(o => o.HesapNoAdi);
             var IndexModel = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Where(p => !p.IsAktif).Count() };
-            
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
-            
+
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }

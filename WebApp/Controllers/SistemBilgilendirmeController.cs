@@ -1,7 +1,7 @@
-﻿using WebApp.Models;
+﻿using Database;
 using System.Linq;
 using System.Web.Mvc;
-using Database;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -48,7 +48,7 @@ namespace WebApp.Controllers
             if (!model.AdSoyad.IsNullOrWhiteSpace()) q = q.Where(p => p.KullaniciAdi.Contains(model.AdSoyad) || p.IslemYapanIP.Contains(model.AdSoyad));
             if (model.BilgiTipi.HasValue) q = q.Where(p => p.BilgiTipi == model.BilgiTipi);
 
-            model.RowCount = q.Count(); 
+            model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(o => o.IslemTarihi);
 
 
@@ -66,9 +66,9 @@ namespace WebApp.Controllers
             }).ToArray();
             var btip = new BilgiTipleri();
             ViewBag.BilgiTipi = new SelectList(btip.BilgiTip.Select(s => new { s.BilgiTipID, s.BilgiTipAdi }).ToList(), "BilgiTipID", "BilgiTipAdi", model.BilgiTipi);
-            
+
             return View(model);
-        } 
+        }
 
 
 

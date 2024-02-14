@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace BiskaUtil
+﻿namespace BiskaUtil
 {
     public class NameValue
     {
@@ -16,7 +11,7 @@ namespace BiskaUtil
             this.Name = name;
             this.Value = value;
         }
-        public NameValue(string name, string value,bool ischecked)
+        public NameValue(string name, string value, bool ischecked)
         {
             this.Name = name;
             this.Value = value;

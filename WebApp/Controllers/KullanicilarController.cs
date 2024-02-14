@@ -1,12 +1,12 @@
-﻿using WebApp.Models;
+﻿using BiskaUtil;
+using Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BiskaUtil;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -464,7 +464,7 @@ namespace WebApp.Controllers
             var kul = db.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
             kul.KullaniciBirimleris = birimId.Select(s => new KullaniciBirimleri { BirimID = s }).ToList();
             db.SaveChanges();
-            OnlineUsers.YetkiYenile(kul.KullaniciID); 
+            OnlineUsers.YetkiYenile(kul.KullaniciID);
             MessageBox.Show("Birim Yetkileri Kaydedildi", MessageBox.MessageType.Success);
 
             return GetRoute(kullaniciId, yetkilendirmeyeGit);

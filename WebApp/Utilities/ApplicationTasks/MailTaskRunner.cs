@@ -8,7 +8,7 @@ namespace WebApp.Utilities.ApplicationTasks
         private static Timer _timer;
 
         public static void Start()
-        { 
+        {
             _timer = new Timer(ExecuteTask, null, TimeSpan.Zero, TimeSpan.FromHours(1));
         }
 
@@ -19,8 +19,8 @@ namespace WebApp.Utilities.ApplicationTasks
 
         private static async void StartMezuniyetOtoMailsAsync()
         {
-           
- 
+
+
         }
 
         public static void Stop()

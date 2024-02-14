@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 using System.Xml;
-using System.Security.Principal;
 namespace BiskaUtil
 {
     [Serializable()]
@@ -72,8 +70,8 @@ namespace BiskaUtil
             DateTime.Now,           //Current date and time 
             DateTime.Now.AddMinutes(expirationMinutes), //Expiration date and time 
             createPersistentCookie, //Whether to persist coolkie on client side. If true, 
-                //The authentication ticket will be issued for new sessions from 
-                //the same client PC    
+                                    //The authentication ticket will be issued for new sessions from 
+                                    //the same client PC    
             commaSeperatedRoles,    //Comma seperated user roles 
             cookiePath);            //Path cookie valid for 
             return ticket;
@@ -146,7 +144,7 @@ namespace BiskaUtil
                 //Set the cookie's expiration time to the tickets expiration time 
                 if (ticket.IsPersistent) authCookie.Expires = ticket.Expiration;
                 ////Set the cookie in the Response 
-                HttpContext.Current.Response.Cookies.Set(authCookie);                
+                HttpContext.Current.Response.Cookies.Set(authCookie);
                 //HttpContext.Current.Response.Cookies.Add(authCookie);
             }
         }
@@ -169,8 +167,8 @@ namespace BiskaUtil
                             //If cookie is not supported for forms authentication, then the 
                             //authentication ticket is stored in the Url, which is encrypted. 
                             //So, decrypt it 
-                            ticket = FormsAuthentication.Decrypt(id.Ticket.Name);                            
-                        }                        
+                            ticket = FormsAuthentication.Decrypt(id.Ticket.Name);
+                        }
                         // Get the stored user-data, in this case, user roles 
                         if (!string.IsNullOrEmpty(ticket.UserData))
                         {
@@ -187,23 +185,23 @@ namespace BiskaUtil
             }
         }
 
-        
+
 
         public static void AttachRolesToUser2()
         {
             HttpCookie authCookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
-            if (authCookie != null && authCookie.Expires>DateTime.Now)
+            if (authCookie != null && authCookie.Expires > DateTime.Now)
             {
-                FormsAuthenticationTicket authTicket =FormsAuthentication.Decrypt(authCookie.Value);
+                FormsAuthenticationTicket authTicket = FormsAuthentication.Decrypt(authCookie.Value);
                 string[] roles = authTicket.UserData.Split(new Char[] { ',' });
-                GenericPrincipal userPrincipal =new GenericPrincipal(new GenericIdentity(authTicket.Name),roles);
+                GenericPrincipal userPrincipal = new GenericPrincipal(new GenericIdentity(authTicket.Name), roles);
                 HttpContext.Current.User = userPrincipal;
             }
         }
 
         public static void SignOut()
-        {            
-            FormsAuthentication.SignOut();            
+        {
+            FormsAuthentication.SignOut();
             if (HttpContext.Current != null)
             {
                 try
@@ -235,7 +233,7 @@ namespace BiskaUtil
                 {
                     HttpContext.Current.Response.Cookies.Remove(cookie);
                 }
-            }            
+            }
             //return RedirectToAction(MVC.Home.Index());
         }
     }

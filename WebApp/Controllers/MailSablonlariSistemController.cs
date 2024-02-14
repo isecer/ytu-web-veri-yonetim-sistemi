@@ -1,12 +1,12 @@
 ﻿using BiskaUtil;
-using WebApp.Models;
+using Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Database;
 using WebApp.Business;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 using WebApp.Utilities.MenuAndRoles;
@@ -58,7 +58,7 @@ namespace WebApp.Controllers
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderBy(t => t.SablonTipAdi);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
-            
+
             ViewBag.MailSablonTipID = new SelectList(MailIslemleriBus.CmbMailSablonTipleri(true), "Value", "Caption", model.MailSablonTipID);
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
@@ -103,20 +103,20 @@ namespace WebApp.Controllers
             #region Kontrol
 
             if (kModel.MailSablonTipID <= 0)
-            { 
+            {
                 MmMessage.Messages.Add("Şablon Tipini Seçiniz");
-                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MailSablonTipID"  });
+                MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "MailSablonTipID" });
             }
             else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "MailSablonTipID" });
             if (kModel.SablonAdi.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Mail Konusu Giriniz.");
                 MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "SablonAdi" });
             }
             else MmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "SablonAdi" });
 
             if (kModel.Sablon.IsNullOrWhiteSpace() && kModel.SablonHtml.IsNullOrWhiteSpace())
-            { 
+            {
                 MmMessage.Messages.Add("Sablon Açıklaması Giriniz.");
             }
             #endregion

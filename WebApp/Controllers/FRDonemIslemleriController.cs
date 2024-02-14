@@ -47,9 +47,9 @@ namespace WebApp.Controllers
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(t => t.Yil).ThenByDescending(t => t.BaslangicTarihi);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
-            model.CountIngfos =  new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif),Aktif = q.Count(p=>p.IsAktif)};
-            
-            
+            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -228,8 +228,8 @@ namespace WebApp.Controllers
         [Authorize(Roles = RoleNames.FRDonemIslemleriKayitYetkisi)]
         public ActionResult Sil(int id)
         {
-            var mmMessage = new MmMessage(); 
-            var kayit = db.FRDonemleris.FirstOrDefault(p => p.FRDonemID == id); 
+            var mmMessage = new MmMessage();
+            var kayit = db.FRDonemleris.FirstOrDefault(p => p.FRDonemID == id);
             string message;
             if (kayit != null)
             {

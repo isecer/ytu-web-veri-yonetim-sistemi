@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using BiskaUtil;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using BiskaUtil;
 using WebApp.Business;
-using WebApp.Utilities.Helpers.RaporHesaplama;
-using WebApp.Utilities.MessageBox;
+using WebApp.Utilities.Helpers.Hesaplama;
 using WebApp.Utilities.MenuAndRoles;
+using WebApp.Utilities.MessageBox;
 
 namespace WebApp.Controllers
 {
@@ -41,7 +41,7 @@ namespace WebApp.Controllers
             else mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Success, PropertyName = "VASurecID" });
 
             if (mmMessage.Messages.Count == 0)
-            { 
+            {
                 if (export)
                 {
                     var kurumsalRaporHesap = new KurumsalRaporHesaplama(vaSurecId.Value, raporTipIDs);
@@ -56,7 +56,7 @@ namespace WebApp.Controllers
                     Response.BinaryWrite(System.Text.Encoding.UTF8.GetPreamble());
                     gv.RenderControl(htmlTextWriter);
                     return File(System.Text.Encoding.UTF8.GetBytes(stringWriter.ToString()), Response.ContentType, "Kurumsal Rapor - Madde Veri Listesi.xls");
-                } 
+                }
             }
             else
             {

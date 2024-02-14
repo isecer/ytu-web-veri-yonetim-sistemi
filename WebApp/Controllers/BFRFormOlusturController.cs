@@ -53,12 +53,12 @@ namespace WebApp.Controllers
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             model.RowCount = q.Count();
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.FormAdi);
-            model.CountIngfos =  new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif),Aktif = q.Count(p=>p.IsAktif)};
-            
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
-            
+            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -200,7 +200,7 @@ namespace WebApp.Controllers
 
 
                 return RedirectToAction("Index");
-            } 
+            }
             MessageBox.Show("Uyarı", MessageBox.MessageType.Warning, mmMessage.Messages.ToArray());
             ViewBag.SecilenlerMd = birimId;
             ViewBag.MmMessage = mmMessage;
@@ -222,7 +222,7 @@ namespace WebApp.Controllers
 
                 try
                 {
-                    message = "'" + kayit.FormAdi + "' isimli form silindi!"; 
+                    message = "'" + kayit.FormAdi + "' isimli form silindi!";
                     entities.BFRFormlars.Remove(kayit);
                     entities.SaveChanges();
                     var path = Server.MapPath("~" + kayit.DosyaYolu);

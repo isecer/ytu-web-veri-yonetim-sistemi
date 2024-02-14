@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebApp.Models; using WebApp.Utilities.Dtos;
+﻿using System.Collections.Generic;
 
 namespace WebApp.Utilities.Helpers
 {
@@ -10,9 +6,9 @@ namespace WebApp.Utilities.Helpers
     {
         public static string Tuz = "@BİSKAmcumu";
 
-        public static  int UniversiteYtuKod { get; } = 67;
-        public static  int PageSize = 15;
-       
+        public static int UniversiteYtuKod { get; } = 67;
+        public static int PageSize = 15;
+
         public static List<int> GetOgrenimTurKods()
         {
             var oTurList = new List<int>
@@ -75,6 +71,6 @@ namespace WebApp.Utilities.Helpers
 
 
             return bTurList;
-        } 
+        }
     }
 }

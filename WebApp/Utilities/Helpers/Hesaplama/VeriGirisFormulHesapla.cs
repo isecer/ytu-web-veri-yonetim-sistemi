@@ -1,32 +1,44 @@
-﻿using System;
+﻿using Database;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using Database;
+using System;
+using System.Data.Entity;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
 
-namespace WebApp.Utilities.Helpers.RaporHesaplama
+namespace WebApp.Utilities.Helpers.Hesaplama
 {
-
-    public class KurumsalRaporHesaplama
+    public class VeriGirisFormulHesapla
     {
-
         private List<sp_BirimAgaci_Result> Birimlers { get; set; }
 
         private List<VASurecleriMadde> VaSurecleriMaddes { get; set; }
         private List<VASurecleriMaddeGirilenDeger> VaSurecleriMaddeGirilenDegers { get; set; }
-        private List<int> FilteredMaddeIds { get; set; }
-        private readonly int? _birimId;
-        public KurumsalRaporHesaplama(int vaSurecId, ICollection<int> raporTipIds, int? birimId = null)
+        private List<int> FilteredMaddeIds { get; set; } = new List<int>();
+
+        public VeriGirisFormulHesapla(int vaSurecId, List<int> maddeIds)
         {
-            _birimId = birimId;
             using (var entities = new VysDBEntities())
             {
+                maddeIds = maddeIds ?? new List<int>();
+                FilteredMaddeIds.AddRange(maddeIds);
 
-                FilteredMaddeIds = entities.RaporTipleriSecilenMaddelers.Where(p => raporTipIds.Contains(p.RaporTipID)).Select(s => s.MaddeID).ToList();
+                var formulMaddes = (from vaSurecleriMadde in entities.VASurecleriMaddes
+                                    join vaSurecleriMaddeFormulEslesen in entities.VASurecleriMaddeFormulEslesenMaddes on
+                                        vaSurecleriMadde.VASurecleriMaddeID equals vaSurecleriMaddeFormulEslesen.VASurecleriMaddeID
+                                    where maddeIds.Contains(vaSurecleriMadde.MaddeID)
+                                    select new
+                                    {
+                                        vaSurecleriMadde.MaddeID,
+                                        EslesenMaddeId = vaSurecleriMaddeFormulEslesen.VASurecleriMadde1.MaddeID,
 
-                VaSurecleriMaddes = entities.VASurecleriMaddes.Where(p => p.VASurecID == vaSurecId && p.IsAktif)
+                                    }).Distinct().ToList();
+                foreach (var formulMadde in formulMaddes)
+                {
+                    maddeIds.Add(formulMadde.MaddeID);
+                    maddeIds.Add(formulMadde.EslesenMaddeId);
+                }
+                VaSurecleriMaddes = entities.VASurecleriMaddes.Where(p => maddeIds.Contains(p.MaddeID) && p.VASurecID == vaSurecId && p.IsAktif)
                     .Include(inc => inc.VASurecleri)
                     .Include(inc => inc.Maddeler)
                     .Include(inc => inc.MaddeTurleri)
@@ -41,41 +53,18 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
 
         private List<RaporExportDto> KurumsalRaporExportDtos { get; set; } = new List<RaporExportDto>();
 
-        public IEnumerable<RaporExportDto> HesaplaTumu()
+        public IEnumerable<RaporExportDto> HesaplaFormulMaddeleri()
         {
 
-            var normalMaddeHesaplamalari = NormalMaddeleriHesapla();
-            KurumsalRaporExportDtos.AddRange(normalMaddeHesaplamalari);
             var formulMaddeHesaplamalari = FormulMaddeleriHesapla();
             KurumsalRaporExportDtos.AddRange(formulMaddeHesaplamalari);
             return KurumsalRaporExportDtos;
-        }
-
-        public IEnumerable<RaporExportDto> HesaplaFormulMaddeleri(List<int> filteredMaddeIds = null)
-        {
-
-            FilteredMaddeIds = filteredMaddeIds ?? new List<int>();
-            var formulMaddeHesaplamalari = FormulMaddeleriHesapla();
-            KurumsalRaporExportDtos.AddRange(formulMaddeHesaplamalari);
-            return KurumsalRaporExportDtos;
-        }
-
-        private IEnumerable<RaporExportDto> NormalMaddeleriHesapla()
-        {
-            var returnData = new List<RaporExportDto>();
-            foreach (var itemMadde in VaSurecleriMaddes.Where(p => FilteredMaddeIds.Contains(p.MaddeID) && !p.VASurecleriMaddeFormulEslesenMaddes.Any()))
-            {
-                returnData.Add(MaddeHesap(itemMadde));
-            }
-
-            return returnData;
         }
         private IEnumerable<RaporExportDto> FormulMaddeleriHesapla()
         {
             var returnData = new List<RaporExportDto>();
 
-            var hesaplanacakMaddeler = VaSurecleriMaddes.Where(p => FilteredMaddeIds.Contains(p.MaddeID) && p.VASurecleriMaddeFormulEslesenMaddes.Any());
-            if (_birimId.HasValue) hesaplanacakMaddeler = hesaplanacakMaddeler.Where(p => p.VASurecleriMaddeBirims.Any(a => a.BirimID == _birimId)).ToList();
+            var hesaplanacakMaddeler = VaSurecleriMaddes.Where(p => FilteredMaddeIds.Contains(p.MaddeID) && p.VASurecleriMaddeFormulEslesenMaddes.Any()).ToList();
             foreach (var itemMadde in hesaplanacakMaddeler)
             {
 
@@ -93,8 +82,8 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
 
             return returnData;
         }
-     
- 
+
+
 
 
         private RaporExportDto FormulMaddesiHesapla(VASurecleriMadde surecMadde, List<RaporExportDto> hesaplananFormulMaddeleri)
@@ -117,13 +106,14 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
                     surecMaddeHesaplanan.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = itemDonem });
                     girilenDeger = surecMaddeHesaplanan.VaSurecleriMaddeGirilenDegers.First(f => f.VaCokluVeriDonemId == itemDonem);
                 }
-                var formul = surecMadde.HesaplamaFormulu;
+                var formul = surecMadde.HesaplamaFormulu.ToLower();
                 foreach (var itemHesaplananMaddeGirilenDeger in hesaplananFormulMaddeleri.SelectMany(s => s.VaSurecleriMaddeGirilenDegers.Where(p => p.VaCokluVeriDonemId == itemDonem.Value)))
                 {
-                    formul = formul.Replace("@" + itemHesaplananMaddeGirilenDeger.MaddeKod, itemHesaplananMaddeGirilenDeger.GirilenDeger.Value.ToString());
+                    formul = formul.Replace("@" + itemHesaplananMaddeGirilenDeger.MaddeKod.ToLower(), itemHesaplananMaddeGirilenDeger.GirilenDeger.Value.ToString());
                 }
                 try
                 {
+                    girilenDeger.VeriGirisiOnaylandi= hesaplananFormulMaddeleri.SelectMany(s=>s.VaSurecleriMaddeGirilenDegers).Where(p=>p.VaCokluVeriDonemId==itemDonem).All(a=>a.VeriGirisiOnaylandi);
                     var hesaplanmayanMaddeKodlari = formul.ToMaddeKodlariniBul();
                     if (!hesaplanmayanMaddeKodlari.Any())
                         girilenDeger.GirilenDeger = (decimal?)formul.EvaluateExpression();
@@ -243,22 +233,25 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
                 PlanlananHedef = MaddePlanlananDegerHesap(surecMadde, true),
                 PlanlananVeriGelecekYil = MaddePlanlananDegerHesap(surecMadde, false)
             };
-            if (returnData.Ocak.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Ocak, GirilenDeger = returnData.Ocak.Value }); }
-            if (returnData.Subat.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Subat, GirilenDeger = returnData.Subat.Value }); }
-            if (returnData.Mart.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Mart, GirilenDeger = returnData.Mart.Value }); }
-            if (returnData.Nisan.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Nisan, GirilenDeger = returnData.Nisan.Value }); }
-            if (returnData.Mayis.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Mayis, GirilenDeger = returnData.Mayis.Value }); }
-            if (returnData.Haziran.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Haziran, GirilenDeger = returnData.Haziran.Value }); }
-            if (returnData.Temmuz.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Temmuz, GirilenDeger = returnData.Temmuz.Value }); }
-            if (returnData.Agustos.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Agustos, GirilenDeger = returnData.Agustos.Value }); }
-            if (returnData.Eylul.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Eylul, GirilenDeger = returnData.Eylul.Value }); }
-            if (returnData.Ekim.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Ekim, GirilenDeger = returnData.Ekim.Value }); }
-            if (returnData.Kasim.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Kasim, GirilenDeger = returnData.Kasim.Value }); }
-            if (returnData.Aralik.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Aralik, GirilenDeger = returnData.Aralik.Value }); }
-            if (returnData.Guz.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Guz, GirilenDeger = returnData.Guz.Value }); }
-            if (returnData.Bahar.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Bahar, GirilenDeger = returnData.Bahar.Value }); }
-            if (returnData.Yaz.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Yaz, GirilenDeger = returnData.Yaz.Value }); }
-            if (returnData.YillikVeri.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Yillik, GirilenDeger = returnData.YillikVeri.Value }); }
+            if (returnData.Ocak.HasValue)
+            {
+                returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Ocak, GirilenDeger = returnData.Ocak.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak && p.VeriGirisiOnaylandi).All(a => a.VeriGirisiOnaylandi) });
+            }
+            if (returnData.Subat.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Subat, GirilenDeger = returnData.Subat.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Mart.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Mart, GirilenDeger = returnData.Mart.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Nisan.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Nisan, GirilenDeger = returnData.Nisan.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Mayis.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Mayis, GirilenDeger = returnData.Mayis.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Haziran.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Haziran, GirilenDeger = returnData.Haziran.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Temmuz.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Temmuz, GirilenDeger = returnData.Temmuz.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Agustos.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Agustos, GirilenDeger = returnData.Agustos.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Eylul.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Eylul, GirilenDeger = returnData.Eylul.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Ekim.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Ekim, GirilenDeger = returnData.Ekim.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Kasim.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Kasim, GirilenDeger = returnData.Kasim.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Aralik.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Aralik, GirilenDeger = returnData.Aralik.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Guz.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Guz, GirilenDeger = returnData.Guz.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Bahar.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Bahar, GirilenDeger = returnData.Bahar.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.Yaz.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Yaz, GirilenDeger = returnData.Yaz.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
+            if (returnData.YillikVeri.HasValue) { returnData.VaSurecleriMaddeGirilenDegers.Add(new GirilenDegerler { MaddeKod = surecMadde.MaddeKod, VaCokluVeriDonemId = VaCokluVeriDonemEnum.Yillik, GirilenDeger = returnData.YillikVeri.Value, VeriGirisiOnaylandi = VaSurecleriMaddeGirilenDegers.Where(p => p.VASurecleriMaddeID == surecMadde.VASurecleriMaddeID && p.VACokluVeriDonemID == VaCokluVeriDonemEnum.Ocak).All(a => a.VeriGirisiOnaylandi) }); }
 
             if (surecMadde.MaddeYilSonuDegerHesaplamaTipID == MaddeYilSonuDegerHesaplamaTip.Kümülatif)
                 returnData.HesaplamaSonucu = returnData.VaSurecleriMaddeGirilenDegers.Sum(s => s.GirilenDeger.Value);
@@ -323,7 +316,6 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
             return toplamGirilenDeger / maddeDonemindeTumGirilenDegers.Select(s => s.BirimID).Distinct().Count();
 
         }
-
 
     }
 }

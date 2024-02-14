@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 
 namespace WebApp.Utilities.Extensions
@@ -22,7 +19,7 @@ namespace WebApp.Utilities.Extensions
             return fname;
 
         }
-       public static string RemoveNonAlphanumeric(this string input)
+        public static string RemoveNonAlphanumeric(this string input)
         {
             // Yalnızca harfler ve sayıları koru
             const string pattern = "[^a-zA-Z0-9]";

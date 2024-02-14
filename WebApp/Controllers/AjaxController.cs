@@ -1,5 +1,5 @@
 ﻿using BiskaUtil;
-using WebApp.Models;
+using Database;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,14 +10,14 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
-using Database;
 using System.Web.Script.Serialization;
 using WebApp.Business;
-using WebApp.Utilities.MenuAndRoles;
-using WebApp.Utilities.SystemSetting;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
+using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.MessageBox;
+using WebApp.Utilities.SystemSetting;
 
 namespace WebApp.Controllers
 {
@@ -360,7 +360,7 @@ namespace WebApp.Controllers
                 else
                 {
                     var kul = db.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
-                    var eskiResim = kul.ResimAdi; 
+                    var eskiResim = kul.ResimAdi;
                     kul.ResimAdi = yeniResim = UserBus.ResimKaydet(kProfilResmi);
                     kul.IslemYapanID = UserIdentity.Current.Id;
                     kul.IslemYapanIP = UserIdentity.Ip;
@@ -851,7 +851,7 @@ namespace WebApp.Controllers
         {
             return View();
         }
- 
+
 
 
         protected override void Dispose(bool disposing)

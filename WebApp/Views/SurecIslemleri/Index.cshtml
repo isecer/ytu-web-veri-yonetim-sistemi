@@ -67,6 +67,9 @@
                                                                 </li>
                                                                 @if (kayitYetki && (item.AktifSurec || UserIdentity.Current.IsAdmin))
                                                                 {
+                                                                    <li>
+                                                                        <a href="javascript:void(0)" onclick="GetKanitDosyalari(@item.VASurecID)"><i class="fa fa-file-archive-o fa-lg"></i>Kanıt Dosyalarını İndir</a>
+                                                                    </li>
                                                                     <li role="presentation" class="dropdown-header">Kopyalama</li>
                                                                     <li>
                                                                         <a href="javascript:void(0)" onclick="VeriKopyalaDialog(@item.VASurecID)"><i class="fa fa-copy fa-lg"></i>Süreç Maddelerini Güncelle</a>
@@ -215,6 +218,12 @@
         if (tbHtml == "") {
             SubData(bsvID, false, null);
         }
+    }
+    function GetKanitDosyalari(vaSurecId) {
+        toastr["success"]("Kanıt dosyaları indirilmeye başlandı. Bu işlem dosyaların büyüklüğüne göre uzun sürebilir. İşlem yapılırken bekleyiniz.", "Kanıt Dosyası İndirme İşlemi");
+
+        window.location.href = '@Url.Action("KanitDosyalariniIndir", "SurecIslemleri")?vaSurecId=' + vaSurecId; 
+       
     }
     function GetBirimMaddeleriView(VASurecID, BirimID, RwID) {
         var _panel = $('#pnl-' + RwID).first();

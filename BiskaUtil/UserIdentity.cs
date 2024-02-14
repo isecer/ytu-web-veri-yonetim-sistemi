@@ -28,7 +28,7 @@ namespace BiskaUtil
         public string Description { get; set; }
         public bool IsActiveDirectoryUser { get; set; }
         public bool? IsActiveDirectoryImpersonateWorking { get; set; }
-        public string ImagePath { get; set; } 
+        public string ImagePath { get; set; }
         public Dictionary<string, List<int>> TableRollId { get; set; }
         public List<SelectedTableRoll> SelectedTableRoll { get; set; }
 
@@ -65,8 +65,8 @@ namespace BiskaUtil
             return new UserPrincipal(this);
         }
 
-      
-        public bool HasToChahgePassword { get; set; } 
+
+        public bool HasToChahgePassword { get; set; }
         public static string Ip
         {
             get

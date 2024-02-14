@@ -3,7 +3,6 @@ using Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApp.Business;
 using WebApp.Models;
@@ -41,7 +40,7 @@ namespace WebApp.Controllers
                          IslemYapan = kul.KullaniciAdi,
                          IslemYapanID = s.IslemYapanID,
                          IslemYapanIP = s.IslemYapanIP,
-                         GTHesapKodlariGelirNitelikleris=s.GTHesapKodlariGelirNitelikleris
+                         GTHesapKodlariGelirNitelikleris = s.GTHesapKodlariGelirNitelikleris
                      }).AsQueryable();
 
             if (!model.HesapKod.IsNullOrWhiteSpace()) q = q.Where(p => p.HesapKod.StartsWith(model.HesapKod));
@@ -53,11 +52,11 @@ namespace WebApp.Controllers
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderBy(o => o.HesapKodAdi);
             var IndexModel = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Where(p => !p.IsAktif).Count() };
-            
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
-            
+
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -160,15 +159,15 @@ namespace WebApp.Controllers
                     var EklenecekGNT = qGelirNiteliks.Where(p => p.GTHesapKodlariGelirNiteligiID == 0).ToList();
 
                     db.GTHesapKodlariGelirNitelikleris.RemoveRange(SilinecekGNT);
-                    foreach (var item in EklenecekGNT) 
-                        Table.GTHesapKodlariGelirNitelikleris.Add(item); 
-                  
+                    foreach (var item in EklenecekGNT)
+                        Table.GTHesapKodlariGelirNitelikleris.Add(item);
+
                     foreach (var item in VarolanGNT)
                     {
-                       var GNT= Table.GTHesapKodlariGelirNitelikleris.Where(p => p.GTHesapKodlariGelirNiteligiID == item.GTHesapKodlariGelirNiteligiID).First();
+                        var GNT = Table.GTHesapKodlariGelirNitelikleris.Where(p => p.GTHesapKodlariGelirNiteligiID == item.GTHesapKodlariGelirNiteligiID).First();
                         GNT.GelirNiteligiAdi = item.GelirNiteligiAdi;
-                    } 
-                    
+                    }
+
                 }
                 db.SaveChanges();
 

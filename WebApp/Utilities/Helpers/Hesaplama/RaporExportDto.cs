@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace WebApp.Utilities.Helpers.RaporHesaplama
+namespace WebApp.Utilities.Helpers.Hesaplama
 {
     public class RaporExportDto
-    { 
+    {
         public int Yil { get; set; }
-        public string BirimAdi { get; set; } 
+        public string BirimAdi { get; set; }
         public string MaddeKod { get; set; }
         public string MaddeTurAdi { get; set; }
         public string MaddeAdi { get; set; }
@@ -36,9 +36,10 @@ namespace WebApp.Utilities.Helpers.RaporHesaplama
     }
 
     public class GirilenDegerler
-    { 
+    {
         public string MaddeKod { get; set; }
-        public int? VaCokluVeriDonemId { get; set; } 
+        public int? VaCokluVeriDonemId { get; set; }
         public decimal? GirilenDeger { get; set; }
+        public bool VeriGirisiOnaylandi { get; set; }
     }
 }

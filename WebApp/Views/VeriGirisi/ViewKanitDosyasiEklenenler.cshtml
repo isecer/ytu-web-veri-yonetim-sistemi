@@ -2,34 +2,35 @@
 @model  WebApp.Utilities.Dtos.VeriKanitDosyaListModel
 @{
     Layout = null;
-     
+
 }
-<div class="panel panel-danger" id="VKListPnl"  style="margin-top:10px;">
+<div class="panel panel-danger" id="VKListPnl" style="margin-top:10px;">
     <div class="panel-heading padding-0">
         <h3 class="panel-title"><i class="fa fa-folder-open-o fa-lg"></i>Eklenen Veri Kayıt Dosyaları</h3>
-        <ul class="panel-controls"> 
+        <ul class="panel-controls">
             <li><a href="javascript:void(0);" onclick="GetVeriKanitDosyaListesi(@Model.VaCokluVeriDonemId);" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
         </ul>
     </div>
     <div class="panel-body" style="padding:0px;">
-        <table class="table table-hover">
-            <thead>
+        <div style="overflow:auto;max-height:300px;">
+            <table class="table table-hover">
+                <thead>
                 <tr>
-                    <th width="50">Ay</th>
+                    <th width="50">Dönem</th>
                     <th field="MaddeAdi">Dosya Adı</th>
                     <th width="110">Eklenme Tarihi</th>
                     <th width="30" style="text-align:center;"></th>
 
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 @foreach (var item in Model.Data)
                 {
                     <tr>
 
-                        <td id="tdAyAdi_@item.VASurecleriMaddeEklenenDosyaID">@item.AyAdi</td>
+                        <td id="tdAyAdi_@item.VASurecleriMaddeEklenenDosyaID">@item.DonemAdi</td>
                         <td id="tdDosyaAdi_@item.VASurecleriMaddeEklenenDosyaID">
-                            <a href="@item.DosyaYolu" target="_blank">@item.DosyaAdi</a>
+                            <a href="@item.DosyaYolu" target="_blank">@Html.Raw(item.DosyaAdi)</a>
                         </td>
                         <td>@item.IslemTarihi.ToFormatDateAndTime()</td>
                         <td>
@@ -47,8 +48,9 @@
                         <td colspan="4" style="text-align:center;color:maroon;">Eklenen Dosya Yok</td>
                     </tr>
                 }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

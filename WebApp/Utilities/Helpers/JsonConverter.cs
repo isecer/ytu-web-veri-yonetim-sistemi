@@ -127,7 +127,7 @@ namespace WebApp.Utilities.Helpers
 
             var aaa = typeof(IEnumerable);
             var aaa2 = typeof(IList);
-            if (objectType ==  typeof(IEnumerable))
+            if (objectType == typeof(IEnumerable))
             {
                 #region enumarable
                 var sb4 = new StringBuilder();

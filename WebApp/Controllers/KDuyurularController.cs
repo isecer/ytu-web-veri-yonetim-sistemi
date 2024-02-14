@@ -1,11 +1,8 @@
-﻿using WebApp.Models;
+﻿using Database;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using BiskaUtil;
-using Database;
+using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
 
@@ -25,9 +22,9 @@ namespace WebApp.Controllers
         {
             var q = from s in db.Duyurulars
                     join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID
-                    where s.IsAktif && (s.YayinSonTarih.HasValue ? s.YayinSonTarih.Value >= DateTime.Now : 1 == 1) 
+                    where s.IsAktif && (s.YayinSonTarih.HasValue ? s.YayinSonTarih.Value >= DateTime.Now : 1 == 1)
                     select new
-                    {   
+                    {
                         s.DuyuruID,
                         s.Tarih,
                         s.Baslik,
@@ -76,7 +73,7 @@ namespace WebApp.Controllers
                     join k in db.Kullanicilars on s.IslemYapanID equals k.KullaniciID
                     where s.IsAktif && s.Tarih <= DateTime.Now && (s.YayinSonTarih.HasValue ? s.YayinSonTarih.Value >= DateTime.Now : 1 == 1)
                     select new
-                    { 
+                    {
                         s.DuyuruID,
                         s.Tarih,
                         s.Baslik,
@@ -87,13 +84,13 @@ namespace WebApp.Controllers
                         EkSayisi = s.DuyuruEkleris.Count,
                         Ekler = s.DuyuruEkleris,
                         s.AnaSayfadaGozuksun,
-                        s.AnaSayfaPopupAc, 
+                        s.AnaSayfaPopupAc,
                         s.YayinSonTarih,
                         s.IsAktif
                     };
-            if (PopupTipID == DuyuruPopupTipleri.AnaSayfa) q = q.Where(p => p.AnaSayfaPopupAc); 
+            if (PopupTipID == DuyuruPopupTipleri.AnaSayfa) q = q.Where(p => p.AnaSayfaPopupAc);
             fModel.Data = q.Select(s => new FrDuyurular
-            {  
+            {
                 DuyuruID = s.DuyuruID,
                 Baslik = s.Baslik,
                 Aciklama = s.Aciklama,
@@ -104,7 +101,7 @@ namespace WebApp.Controllers
                 EkSayisi = s.EkSayisi,
                 DuyuruEkleris = s.Ekler,
                 AnaSayfadaGozuksun = s.AnaSayfadaGozuksun,
-                AnaSayfaPopupAc = s.AnaSayfaPopupAc, 
+                AnaSayfaPopupAc = s.AnaSayfaPopupAc,
                 YayinSonTarih = s.YayinSonTarih
             }).OrderByDescending(o => o.Tarih).ToList();
 

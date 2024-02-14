@@ -1,9 +1,7 @@
 ﻿using BiskaUtil;
 using Database;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApp.Business;
 using WebApp.Models;
@@ -50,8 +48,8 @@ namespace WebApp.Controllers
             else q = q.OrderByDescending(t => t.Yil).ThenByDescending(t => t.BaslangicTarihi);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
             var IndexModel = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Where(p => !p.IsAktif).Count() };
-            
-            
+
+
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }
@@ -93,7 +91,7 @@ namespace WebApp.Controllers
         public ActionResult Kayit(KmGTDonemleri kModel, bool IsSinavVar = false)
         {
             var MmMessage = new MmMessage();
-             
+
             #region Kontrol  
             if (kModel.Yil <= 0)
             {
@@ -175,7 +173,7 @@ namespace WebApp.Controllers
                 }
 
                 db.SaveChanges();
-         
+
                 return RedirectToAction("Index");
             }
             else

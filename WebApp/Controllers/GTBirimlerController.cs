@@ -3,7 +3,6 @@ using Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebApp.Business;
 using WebApp.Models;
@@ -48,11 +47,11 @@ namespace WebApp.Controllers
             if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
             else q = q.OrderBy(o => o.BirimAdi);
             var IndexModel = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Where(p => !p.IsAktif).Count() };
-            
-            
-           
-            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();;
-            
+
+
+
+            model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
+
             return View(model);
         }
         public ActionResult Kayit(int? id)
@@ -150,7 +149,7 @@ namespace WebApp.Controllers
                     Table.GTBirimHesapNumaralaris.Add(new GTBirimHesapNumaralari { GTHesapNoID = item });
                 foreach (var item in GTHesapKodID)
                     Table.GTBirimHesapKodlaris.Add(new GTBirimHesapKodlari { GTHesapKodID = item });
-                db.SaveChanges(); 
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             else

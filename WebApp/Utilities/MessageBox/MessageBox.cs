@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using WebApp.Models;
+﻿using System.Collections.Generic;
 
 namespace WebApp.Utilities.MessageBox
 {
@@ -12,8 +8,8 @@ namespace WebApp.Utilities.MessageBox
     }
     public class MrMessage
     {
-         
-        public bool IsSucces { get; set; } 
+
+        public bool IsSucces { get; set; }
         public string PropertyName { get; set; }
         public bool AddIcon { get; set; }
         public string HtmlData { get; set; }
