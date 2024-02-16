@@ -53,6 +53,8 @@ namespace BiskaUtil
         }
 
         public int RowCount { get; set; }
+        public int AktifCount { get; set; }
+        public int PasifCount => RowCount > 0 ? RowCount - AktifCount : 0;
 
         public int StartRowIndex => (this.PageIndex - 1) * this.PageSize;
         public int PagingStartRowIndex => RowCount <= StartRowIndex ? RowCount / PageSize : StartRowIndex;
@@ -84,8 +86,7 @@ namespace BiskaUtil
         public bool CanFirst => this.RowCount > 0 && this.PageIndex > 1;
 
         public bool CanLast => this.RowCount > 0 && this.PageIndex != this.PageCount;
-
-        public MIndexBilgi CountIngfos = new MIndexBilgi();
+         
         public PagerOption()
         {
             this.PageIndex = 1;
@@ -133,13 +134,7 @@ namespace BiskaUtil
 
     }
 
-    public class MIndexBilgi
-    {
-        public int Toplam { get; set; }
-        public int Aktif { get; set; }
-        public int Pasif { get; set; }
-
-    }
+   
 
 
 }

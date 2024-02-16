@@ -46,9 +46,9 @@ namespace WebApp.Controllers
                     };
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif);
             model.RowCount = q.Count();
+            model.AktifCount = q.Count(p => p.IsAktif);
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(t => t.Yil).ThenByDescending(t => t.BaslangicTarihi);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             return View(model);
         }

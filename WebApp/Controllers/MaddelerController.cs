@@ -64,21 +64,21 @@ namespace WebApp.Controllers
                          Aciklama = s.Aciklama,
                      }).AsQueryable();
 
-            if (model.MaddeTurID.HasValue) q = q.Where(p => p.MaddeTurID == model.MaddeTurID.Value);
-            if (model.VeriGirisSekliID.HasValue) q = q.Where(p => p.VeriGirisSekliID == model.VeriGirisSekliID.Value);
+            if (model.MaddeTurId.HasValue) q = q.Where(p => p.MaddeTurID == model.MaddeTurId.Value);
+            if (model.VeriGirisSekliId.HasValue) q = q.Where(p => p.VeriGirisSekliID == model.VeriGirisSekliId.Value);
             if (model.EslestirmeDurum.HasValue)
             {
                 q = model.EslestirmeDurum.Value ? q.Where(p => p.BirimMaddeleris.Count > 0) : q.Where(p => p.BirimMaddeleris.Count == 0 && p.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok);
             }
-            if (model.MaddeYilSonuDegerHesaplamaTipID.HasValue) q = q.Where(p => p.MaddeYilSonuDegerHesaplamaTipID == model.MaddeYilSonuDegerHesaplamaTipID.Value);
+            if (model.MaddeYilSonuDegerHesaplamaTipId.HasValue) q = q.Where(p => p.MaddeYilSonuDegerHesaplamaTipID == model.MaddeYilSonuDegerHesaplamaTipId.Value);
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             if (model.IsDosyaYuklensin.HasValue) q = q.Where(p => p.MaddelerVeriGirisDonemleris.Any(a => a.IsDosyaYuklensin == model.IsDosyaYuklensin));
             if (!model.Aranan.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeKod.ToLower() == model.Aranan.ToLower().Trim() || p.MaddeTreeAdi.ToLower().Contains(model.MaddeAdi.ToLower()));
 
             model.RowCount = q.Count();
+            model.AktifCount = q.Count(p => p.IsAktif);
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.MaddeTreeAdi);
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
-
+            
 
 
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList();
@@ -120,12 +120,12 @@ namespace WebApp.Controllers
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             ViewBag.IsCokluVeriGiris = new SelectList(ComboData.GetCmbVarYokData(), "Value", "Caption", model.IsCokluVeriGiris);
             ViewBag.IsDosyaYuklensin = new SelectList(ComboData.GetCmbEvetHayirData(), "Value", "Caption", model.IsDosyaYuklensin);
-            ViewBag.VeriGirisSekliID = new SelectList(MaddelerBus.CmbVeriGirisSekilleri(), "Value", "Caption", model.VeriGirisSekliID);
-            ViewBag.MaddeYilSonuDegerHesaplamaTipID = new SelectList(MaddelerBus.CmbMaddeYilsonuDegerHesaplamaTipleri(), "Value", "Caption", model.MaddeYilSonuDegerHesaplamaTipID);
+            ViewBag.VeriGirisSekliID = new SelectList(MaddelerBus.CmbVeriGirisSekilleri(), "Value", "Caption", model.VeriGirisSekliId);
+            ViewBag.MaddeYilSonuDegerHesaplamaTipID = new SelectList(MaddelerBus.CmbMaddeYilsonuDegerHesaplamaTipleri(), "Value", "Caption", model.MaddeYilSonuDegerHesaplamaTipId);
             ViewBag.EslestirmeDurum = new SelectList(ComboData.CmbEslesenEslesmeyenData(), "Value", "Caption", model.EslestirmeDurum);
-            ViewBag.MaddeTurID = new SelectList(MaddelerBus.CmbMaddeTurleriFilterData(), "Value", "Caption", model.MaddeTurID);
-            ViewBag.MaddeTurID2 = new SelectList(MaddeTurleriBus.CmbMaddeTurleri(true, true), "Value", "Caption", model.MaddeTurID);
-            ViewBag.MaddeYilSonuDegerHesaplamaTipID2 = new SelectList(MaddelerBus.CmbMaddeYilsonuDegerHesaplamaTipleri(), "Value", "Caption", model.MaddeYilSonuDegerHesaplamaTipID);
+            ViewBag.MaddeTurID = new SelectList(MaddelerBus.CmbMaddeTurleriFilterData(), "Value", "Caption", model.MaddeTurId);
+            ViewBag.MaddeTurID2 = new SelectList(MaddeTurleriBus.CmbMaddeTurleri(true, true), "Value", "Caption", model.MaddeTurId);
+            ViewBag.MaddeYilSonuDegerHesaplamaTipID2 = new SelectList(MaddelerBus.CmbMaddeYilsonuDegerHesaplamaTipleri(), "Value", "Caption", model.MaddeYilSonuDegerHesaplamaTipId);
             return View(model);
         }
         public ActionResult Kayit(int? id)

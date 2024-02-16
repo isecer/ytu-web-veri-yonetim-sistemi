@@ -52,8 +52,8 @@ namespace WebApp.Controllers
             if (!model.FaaliyetAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.FaaliyetAdi.Contains(model.FaaliyetAdi) || p.TakipGostergesi.Contains(model.FaaliyetAdi));
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             model.RowCount = q.Count();
+            model.AktifCount = q.Count(p => p.IsAktif); 
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.FaaliyetAdi);
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
 
 
 

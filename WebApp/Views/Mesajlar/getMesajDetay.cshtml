@@ -61,7 +61,7 @@
                     <td width="120">@itemx.Tarih.ToFormatDateAndTime()</td>
 
                 </tr>
-                <tr class="MainRow2 @(openRow?"":"hide") cls-@gd @rowCls">
+                <tr class="@(openRow?"":"hide") cls-@gd @rowCls">
                     <td id="cls-@gd" colspan="6" style="padding: 1px 1px 2px 35px;">
                         <input type="text" id="AciklamaHtml_@itemx.MesajID" value="@itemx.Icerik" style="display:none;" />
                         <div class="panel" style="padding-top:0px;">

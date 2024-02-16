@@ -1,0 +1,51 @@
+﻿@using WebApp.Models
+@using WebApp.Utilities.Extensions
+@model  List<Database.MaddeTurleri>
+@{
+    Layout = null;
+    var surecBilgi = (FrSurecIslemleri)ViewBag.SurecBilgi; 
+}
+
+@using (Ajax.BeginForm("KanitDosyalariniIndirPost", null, new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "KanitDosyalariniIndirForm" }))
+{
+    @Html.Hidden("VASurecID", surecBilgi.VASurecID)
+    <div class="panel panel-info" style="margin: 0px; padding: 0px;" id="_VKopyala">
+        <div class="panel-body" style="padding: 0px;">
+            <div class="tasks ui-sortable">
+                <div class="task-item task-success" style="margin-bottom:0px;">
+                    <div class="task-text ui-sortable-handle" style="padding-bottom: 0px; font-size: 8.5pt;cursor:default;">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td width="110">Veri Giriş Süreci</td>
+                                    <td width="5">:</td>
+                                    <td>@surecBilgi.Yil Yılı Süreci @surecBilgi.BaslangicTarihi.ToFormatDate() / @surecBilgi.BitisTarihi.ToFormatDate()) <span style="color:@(surecBilgi.AktifSurec?"green;":"maroon")">@(surecBilgi.AktifSurec? "Veri Girişi Aktif": "Veri Girişi Pasif")</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                       * Madde türlerini seçilip "İndirmeye Başla" butonuna basınız ve sistem indirme işlemini tamamlayana kadar bekleyiniz.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-hover" style="width:100%;">
+                <tbody>
+                    @foreach (var item in Model.Select((s, inx) => new { s, inx }))
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="MaddeTurID" class="chkMtur" style="width:16px;height:16px;" value="@item.s.MaddeTurID" />
+                            </td>
+                            <td style="cursor:pointer;" onclick="$(this).parent().find('.chkMtur').first().click();">@item.s.MaddeTurAdi</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+}

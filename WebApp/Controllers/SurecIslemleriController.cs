@@ -11,6 +11,7 @@ using WebApp.Utilities.Helpers.FileController;
 using WebApp.Utilities.MenuAndRoles;
 using WebApp.Utilities.MessageBox;
 using WebApp.Utilities.SystemData;
+using WebApp.Utilities.Results;
 
 namespace WebApp.Controllers
 {
@@ -59,11 +60,11 @@ namespace WebApp.Controllers
         }
 
 
-        public ActionResult VeriKopyalamaIslemi(int id)
+        public ActionResult VeriKopyalamaIslemi(int vaSurecId)
         {
             var maddetTurleris = _entities.MaddeTurleris.Where(p => p.IsAktif).ToList().OrderBy(o => o.MaddeTurAdi).ToList();
-            ViewBag.SurecMaddeTurIds = _entities.VASurecleriMaddeTurs.Where(p => p.VASurecID == id).Select(s => s.MaddeTurID).ToList();
-            ViewBag.SurecBilgi = SurecIslemleriBus.GetVaSurecKontrol(id);
+            ViewBag.SurecMaddeTurIds = _entities.VASurecleriMaddeTurs.Where(p => p.VASurecID == vaSurecId).Select(s => s.MaddeTurID).ToList();
+            ViewBag.SurecBilgi = SurecIslemleriBus.GetVaSurecKontrol(vaSurecId);
             return View(maddetTurleris);
         }
         [Authorize(Roles = RoleNames.SurecIslemleriKayitYetkisi)]
@@ -74,9 +75,41 @@ namespace WebApp.Controllers
             return result.Message.ToJsonResult();
         }
 
-        public ActionResult KanitDosyalariniIndir(int vaSurecId)
+
+        public ActionResult ViewKanitDosyalariIndir(int vaSurecId)
         {
-            return new FileController().SurecKanitDosyalariIndir(vaSurecId);
+
+            var maddetTurleris = _entities.MaddeTurleris.Where(p => p.IsAktif).ToList().OrderBy(o => o.MaddeTurAdi).ToList();
+            ViewBag.SurecBilgi = SurecIslemleriBus.GetVaSurecKontrol(vaSurecId);
+            return View(maddetTurleris);
+        }
+        //public ActionResult KanitDosyalariniIndirPost(int vaSurecId, List<int> maddeTurId)
+        //{
+        //    var result = new FileController().SurecKanitDosyalariZipFileBytes(vaSurecId, maddeTurId);
+        //    return result.ToJsonResult();
+        //}
+        public ActionResult KanitDosyalariniIndirPost(List<int> maddeTurId)
+        {
+            maddeTurId = maddeTurId ?? new List<int>();
+            var mMessage = new MmMessage
+            {
+                IsSuccess = false,
+                Title = "Veri kanıt dosyası indirme işlemi",
+                MessageType = Msgtype.Warning
+            };
+            if (!maddeTurId.Any())
+            {
+                mMessage.Messages.Add("İndirme işlemi için en az 1 madde türü seçmeniz gerekmektedir.");
+                return new Result(false, mMessage).ToJsonResult();
+            }
+            var maddeTurdAdlaris = _entities.MaddeTurleris.Where(p => maddeTurId.Contains(p.MaddeTurID)).Select(s=>s.MaddeTurAdi).ToList();
+            mMessage.Messages.Add(string.Join("<br/>", maddeTurdAdlaris) + " <br/>türündeki madde kanıt dosyaları indirme işlemi başlatıldı.");
+            return new { Success = true, Message = mMessage, maddeTurId }.ToJsonResult();
+        }
+        public ActionResult GetDosyalariniIndir(int vaSurecId, List<int> maddeTurId)
+        {
+            var result = new FileController().SurecKanitDosyalariZipFileContent(vaSurecId, maddeTurId);
+            return result;
         }
 
         public ActionResult GetDetail(int id, int tbInx)

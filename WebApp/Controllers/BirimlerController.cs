@@ -18,7 +18,7 @@ namespace WebApp.Controllers
     [Authorize(Roles = RoleNames.Birimler)]
     public class BirimlerController : Controller
     {
-        private readonly VysDBEntities db = new VysDBEntities();
+        private readonly VysDBEntities _entities = new VysDBEntities();
         public ActionResult Index()
         {
             return Index(new FmBirimler { PageSize = 15 });
@@ -27,12 +27,12 @@ namespace WebApp.Controllers
         public ActionResult Index(FmBirimler model)
         {
 
-            var brmTree = db.sp_BirimAgaci().ToList();
-            var mdTree = db.sp_MaddeAgaci().ToList();
-            var brms = db.Birimlers.ToList();
+            var brmTree = _entities.sp_BirimAgaci().ToList();
+            var mdTree = _entities.sp_MaddeAgaci().ToList();
+            var brms = _entities.Birimlers.ToList();
             var q = (from s in brms
                      join bt in brmTree on s.BirimID equals bt.BirimID
-                     join kul in db.Kullanicilars on s.IslemYapanID equals kul.KullaniciID
+                     join kul in _entities.Kullanicilars on s.IslemYapanID equals kul.KullaniciID
                      select new FrBirimler
                      {
                          BirimID = s.BirimID,
@@ -65,8 +65,8 @@ namespace WebApp.Controllers
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             if (model.IsMaddeEklenebilir.HasValue) q = q.Where(p => p.IsMaddeEklenebilir == model.IsMaddeEklenebilir.Value);
             model.RowCount = q.Count();
-            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.UstBirimID.HasValue).ThenBy(o => o.BirimTreeAdi);
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+            model.AktifCount = q.Count(p => p.IsAktif);
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.UstBirimID.HasValue).ThenBy(o => o.BirimTreeAdi); 
 
 
 
@@ -88,7 +88,7 @@ namespace WebApp.Controllers
             };
             if (id.HasValue)
             {
-                var data = db.Birimlers.FirstOrDefault(p => p.BirimID == id);
+                var data = _entities.Birimlers.FirstOrDefault(p => p.BirimID == id);
                 if (data != null)
                 {
                     model = data;
@@ -130,7 +130,7 @@ namespace WebApp.Controllers
             if (mmMessage.Messages.Count == 0)
             {
                 kModel.BirimKod = kModel.BirimKod.ReplaceSpecialCharacter().Trim();
-                if (db.Birimlers.Any(a => a.BirimID != kModel.BirimID && a.BirimKod == kModel.BirimKod))
+                if (_entities.Birimlers.Any(a => a.BirimID != kModel.BirimID && a.BirimKod == kModel.BirimKod))
                 {
                     mmMessage.Messages.Add("Girdiğiniz Birime Kodu başka bir birime aittir tekrar kullanamazsınız");
                     mmMessage.MessagesDialog.Add(new MrMessage { MessageType = Msgtype.Warning, PropertyName = "BirimKod" });
@@ -145,11 +145,18 @@ namespace WebApp.Controllers
                 if (kModel.BirimID <= 0)
                 {
                     kModel.IsAktif = true;
-                    table = db.Birimlers.Add(kModel);
+                    table = _entities.Birimlers.Add(kModel);
+
+                    var admins = _entities.Kullanicilars.Where(p => p.YetkiGrupID == 2 && p.IsAktif).ToList();
+                    foreach (var admin in admins)
+                    {
+                        table.KullaniciBirimleris.Add(new KullaniciBirimleri { KullaniciID = admin.KullaniciID });
+                    }
+
                 }
                 else
                 {
-                    table = db.Birimlers.First(p => p.BirimID == kModel.BirimID);
+                    table = _entities.Birimlers.First(p => p.BirimID == kModel.BirimID);
                     table.BirimKod = kModel.BirimKod;
                     table.BirimAdi = kModel.BirimAdi.Trim();
                     table.BirimKisaAdi = kModel.BirimKisaAdi.ToStrObjEmptString().Trim();
@@ -162,15 +169,16 @@ namespace WebApp.Controllers
                     table.IslemYapanIP = kModel.IslemYapanIP;
                 }
                 #region MaddelerSet
-                var birimMaddeleri = db.BirimMaddeleris.Where(p => p.BirimID == kModel.BirimID).ToList();
+                var birimMaddeleri = _entities.BirimMaddeleris.Where(p => p.BirimID == kModel.BirimID).ToList();
                 var varolanlar = birimMaddeleri.Where(p => p.BirimID == kModel.BirimID && maddeId.Contains(p.MaddeID)).ToList();
                 var silinenler = birimMaddeleri.Where(p => p.BirimID == kModel.BirimID && !maddeId.Contains(p.MaddeID)).ToList();
-                db.BirimMaddeleris.RemoveRange(silinenler);
+                _entities.BirimMaddeleris.RemoveRange(silinenler);
                 var eklenecekler = maddeId.Where(p => varolanlar.Select(s => s.MaddeID).All(a => a != p)).ToList();
                 foreach (var item in eklenecekler)
                     table.BirimMaddeleris.Add(new BirimMaddeleri { MaddeID = item });
+
                 #endregion
-                db.SaveChanges();
+                _entities.SaveChanges();
                 return RedirectToAction("Index");
             }
             else
@@ -187,7 +195,7 @@ namespace WebApp.Controllers
 
         public ActionResult Sil(int id)
         {
-            var kayit = db.Birimlers.FirstOrDefault(p => p.BirimID == id);
+            var kayit = _entities.Birimlers.FirstOrDefault(p => p.BirimID == id);
             string message;
             var success = true;
             if (kayit != null)
@@ -196,8 +204,8 @@ namespace WebApp.Controllers
                 try
                 {
                     message = "'" + kayit.BirimAdi + "' İsimli Birim Silindi!";
-                    db.Birimlers.Remove(kayit);
-                    db.SaveChanges();
+                    _entities.Birimlers.Remove(kayit);
+                    _entities.SaveChanges();
                 }
                 catch (Exception ex)
                 {
@@ -215,7 +223,7 @@ namespace WebApp.Controllers
         }
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _entities.Dispose();
             base.Dispose(disposing);
         }
 

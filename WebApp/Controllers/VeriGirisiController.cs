@@ -22,11 +22,11 @@ namespace WebApp.Controllers
         // GET: VeriGirisi
         public ActionResult Index()
         {
-            var birimId = UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.BirimID);
-            var vaSurecId = VeriGirisiBus.GetLastVaSurecId(UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.DonemID));
+            var birimId = UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIdName.BirimId);
+            var vaSurecId = VeriGirisiBus.GetLastVaSurecId(UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIdName.DonemId));
 
 
-            var maddeTurId = UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.MaddeTurID);
+            var maddeTurId = UserIdentity.GetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIdName.MaddeTurId);
 
             if (!maddeTurId.HasValue && !RoleNames.SurecIslemleri.InRole()) maddeTurId = -1;
 
@@ -39,9 +39,9 @@ namespace WebApp.Controllers
             model.VaSurecId = model.VaSurecId ?? 0;
             var surecBilgi = SurecIslemleriBus.GetVaSurecKontrol(model.VaSurecId.Value);
             model.IsAktif = surecBilgi.AktifSurec;
-            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.BirimID, model.BirimId);
-            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.DonemID, model.VaSurecId);
-            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIDName.MaddeTurID, model.MaddeTurId);
+            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIdName.BirimId, model.BirimId);
+            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIdName.DonemId, model.VaSurecId);
+            UserIdentity.SetPageSelectedTableId(RoleNames.VeriGirisi, RollTableIdName.MaddeTurId, model.MaddeTurId);
             model = VeriGirisiBus.GetVerigirisDataModel(model);
             if (model.Export)
             {
@@ -60,9 +60,10 @@ namespace WebApp.Controllers
                 return File(System.Text.Encoding.UTF8.GetBytes(stringWriter.ToString()), Response.ContentType, "Madde Veri Listesi.xls");
 
 
-            } 
+            }
             ViewBag.VASurecID = new SelectList(SurecIslemleriBus.CmbVaSurecler(false), "Value", "Caption", model.VaSurecId);
-            ViewBag.BirimID = new SelectList(VeriGirisiBus.CmbYetkiliVaSurecBirimlerKullanici(model.VaSurecId.Value, true), "Value", "Caption", model.BirimId);
+
+            ViewBag.BirimData = VeriGirisiBus.VaSurecBirimlerTreeList(model.VaSurecId.Value);
             ViewBag.MaddeVeriGirisDurumID = new SelectList(ComboData.CmbMaddeDurum(), "Value", "Caption", model.MaddeVeriGirisDurumId);
             ViewBag.MaddeTurID = new SelectList(VeriGirisiBus.CmbGetVgMaddeTurleri(model.VaSurecId, model.BirimId, true, true), "Value", "Caption", model.MaddeTurId);
             ViewBag.VeriGirisiOnaylandi = new SelectList(ComboData.CmbVeriGirisOnayDurum(), "Value", "Caption", model.VeriGirisiOnaylandi);

@@ -11,7 +11,7 @@ using WebApp.Utilities.Extensions;
 
 namespace WebApp
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         public static void Log(string log)
         {

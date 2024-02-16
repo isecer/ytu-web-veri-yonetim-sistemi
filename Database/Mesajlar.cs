@@ -41,12 +41,12 @@ namespace Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GonderilenMailler> GonderilenMaillers { get; set; }
-        public virtual Kullanicilar Kullanicilar { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MesajEkleri> MesajEkleris { get; set; }
         public virtual MesajKategorileri MesajKategorileri { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Mesajlar> Mesajlar1 { get; set; }
         public virtual Mesajlar Mesajlar2 { get; set; }
+        public virtual Kullanicilar Kullanicilar { get; set; }
     }
 }

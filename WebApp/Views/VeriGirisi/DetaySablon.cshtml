@@ -30,7 +30,7 @@
                             <div class="task-text ui-sortable-handle" style="padding-bottom: 0px; font-size: 8.5pt;cursor:default;">
                                 <table>
                                     <tr>
-                                        <td width="160">Veri Giriş Süreci</td>
+                                        <td width="130">Veri Giriş Süreci</td>
                                         <td width="5">:</td>
                                         <td>@Model.SurecYil Yılı Süreci (@Model.BaslangicTarihi.ToFormatDate()/@Model.BitisTarihi.ToFormatDate())</td>
                                     </tr>
@@ -79,7 +79,7 @@
                                                 }
                                                 else if (!Model.VeriGirisi.MaddeTurIsVeriGirisiAcik)
                                                 {
-                                                    <span style="color:maroon;">'@Model.VeriGirisi.MaddeTurAdi' madde türü için veri giriş işlemleri kapalı olduğundan bu maddeye veri girilemez. Detaylı bilgi için duyuruları takip edin yada sistem yöneticisi ile iletişime geçiniz.</span>
+                                                    <span style="color:maroon;">'@Model.VeriGirisi.MaddeTurAdi' madde türü için veri giriş işlemleri kapalı olduğundan bu maddeye veri girilemez. Detaylı bilgi için duyuruları takip edebilirsiniz veya sistem yöneticisi ile iletişime geçiniz.</span>
                                                 }
                                             </td>
                                         </tr>
@@ -113,10 +113,10 @@
                             <tr class="warning">
                                 <td></td>
                                 <td colspan="4" style="text-align:right;padding-right:5px;">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" style="margin:0px;">
                                         @if (Model.VeriGirisi.IsPlanlananDegerOlacak)
                                         {
-                                            <div class="col-md-6">
+                                            <div class="col-md-6"style="margin:0px;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" style="border-color: transparent; background-color: transparent; color: black; ">@(Model.SurecYil) Yılı Planlanan Hedef</span>
                                                     @if (isPlanlananVeriGirisiAcik && Model.IsAktifYilPlanlananVeriGirisiAcik)
@@ -137,7 +137,7 @@
                                         }
                                         @if (Model.VeriGirisi.IsPlanlananDegerOlacakGelecekYil)
                                         {
-                                            <div class="col-md-6">
+                                            <div class="col-md-6"style="margin:0px;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" style="border-color: transparent; background-color: transparent; color: black;">@(Model.SurecYil+1) Yılı Planlanan Hedef</span>
                                                     @if (isPlanlananVeriGirisiAcik && Model.IsGelecekYilPlanlananVeriGirisiAcik)
@@ -208,8 +208,7 @@
 
                                         </td>
                                     }
-                                    <td style="text-align:right;padding-right:5px;">
-                                        <div class="col-md-12">
+                                    <td style="text-align:right;padding-right:5px;"> 
                                             <div class="input-group input-group-sm" style="text-align: right;" title="@(isSurecYetkisi && item.IsVeriVar.HasValue ?"Veri Girişi Yapan: "+item.VeriGirenAdSoyad:"")">
                                                 @if (isVeriVar == true && item.IsDosyaYuklensin && vgElle)
                                                 {
@@ -228,8 +227,7 @@
                                                     <span class="input-group-addon disabled" style="height: 22px; padding: 1px;background-color:transparent;border-color:lightgray;"></span>
 
                                                 }
-                                            </div>
-                                        </div>
+                                            </div> 
                                     </td>
                                     <td style="text-align: right; padding-right: 5px;">
                                         @if (onayYetki && item.IsVeriVar.HasValue && vgElle)
@@ -279,7 +277,7 @@
                 <td colspan="2" style="padding-left:10px;text-align:left;">
                     <div style="overflow:auto;max-height:300px;">
 
-                        <table class="table table-hover" style="margin-bottom:0px;">
+                        <table class="table table-hover" style="margin-bottom: 0px; font-size: 8.5pt;">
                             <thead>
                                 <tr class="info">
                                     <th width="50">Sıra No</th>
@@ -343,7 +341,7 @@
                                 @foreach (var item in Model.FaaliyetData)
                                 {
                                     <div class="task-item task-info" style="padding:3px;cursor:default;">
-                                        <table class="" style="margin:0px;">
+                                        <table class="" style="margin: 0px; font-size: 8.5pt; ">
 
                                             <tr>
                                                 <td width="120" style="">Faaliyet Adı</td>
@@ -370,7 +368,7 @@
                                                     <ul class="list-tags">
                                                         @foreach (var itemFa in item.FaaliyetAylari.OrderBy(o => o.AyID))
                                                         {
-                                                            <li><a href="javascript:void(0);" style=""><span class="fa fa-tag"></span> @itemFa.AyAdi</a></li>
+                                                            <li><a href="javascript:void(0);" style="padding-right: 3px; padding-left: 3px; "><span class="fa fa-tag"></span> @itemFa.AyAdi</a></li>
                                                         }
                                                     </ul>
                                                 </td>
@@ -382,7 +380,7 @@
                                                     <ul class="list-tags">
                                                         @foreach (var itemKa in item.FaaliyetKaynaklari.OrderBy(o => o.KaynakAdi))
                                                         {
-                                                            <li><a href="javascript:void(0);" style=""><span class="fa fa-tag"></span> @itemKa.KaynakAdi</a></li>
+                                                            <li><a href="javascript:void(0);" style="padding-right: 3px; padding-left: 3px; "><span class="fa fa-tag"></span> @itemKa.KaynakAdi</a></li>
                                                         }
                                                     </ul>
                                                 </td>

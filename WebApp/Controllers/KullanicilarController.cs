@@ -21,7 +21,7 @@ namespace WebApp.Controllers
     [OutputCache(NoStore = false, Duration = 4, VaryByParam = "*")]
     public class KullanicilarController : Controller
     {
-        private readonly VysDBEntities db = new VysDBEntities();
+        private readonly VysDBEntities _entities = new VysDBEntities();
         [Authorize(Roles = RoleNames.Kullanicilar)]
         public ActionResult Index()
         {
@@ -33,13 +33,14 @@ namespace WebApp.Controllers
         {
 
             rollId = rollId ?? new List<int>();
-            var brms = db.sp_BirimAgaci().ToList();
-            var q = from s in db.Kullanicilars
-                    join ktl in db.YetkiGruplaris on s.YetkiGrupID equals ktl.YetkiGrupID
-                    where !model.YetkiliBirimID.HasValue || s.KullaniciBirimleris.Any(a => a.BirimID == model.YetkiliBirimID)
+            var brms = _entities.sp_BirimAgaci().ToList();
+            var q = from s in _entities.Kullanicilars
+                    join ktl in _entities.YetkiGruplaris on s.YetkiGrupID equals ktl.YetkiGrupID
+                    where !model.YetkiliBirimId.HasValue || s.KullaniciBirimleris.Any(a => a.BirimID == model.YetkiliBirimId)
                     select new FrKullanicilar
                     {
                         KullaniciID = s.KullaniciID,
+                        UserKey = s.UserKey,
                         YetkiGrupID = s.YetkiGrupID,
                         YetkiGrupAdi = ktl.YetkiGrupAdi,
                         UnvanID = s.UnvanID,
@@ -78,29 +79,26 @@ namespace WebApp.Controllers
 
             if (!model.AdSoyad.IsNullOrWhiteSpace()) q = q.Where(p => (p.Ad + " " + p.Soyad).Contains(model.AdSoyad) || p.EMail.Contains(model.AdSoyad) || p.Tel.Contains(model.AdSoyad) || p.KullaniciAdi.Contains(model.AdSoyad));
 
-            if (model.YetkiGrupID.HasValue) q = q.Where(p => p.YetkiGrupID == model.YetkiGrupID.Value);
+            if (model.YetkiGrupId.HasValue) q = q.Where(p => p.YetkiGrupID == model.YetkiGrupId.Value);
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             if (model.IsActiveDirectoryUser.HasValue) q = q.Where(p => p.IsActiveDirectoryUser == model.IsActiveDirectoryUser.Value);
 
-            if (model.BirimID.HasValue)
+            if (model.BirimId.HasValue)
             {
-                var sbKods = model.BirimID.Value.GetSubBirimIDs();
+                var sbKods = model.BirimId.Value.GetSubBirimIDs();
                 q = q.Where(p => sbKods.Contains(p.BirimID));
             }
 
+            if (model.UnvanId.HasValue) q = q.Where(p => p.UnvanID == model.UnvanId.Value);
+
             if (model.IsAdmin.HasValue) q = q.Where(p => p.IsAdmin == model.IsAdmin);
 
-            model.RowCount = q.Count();
-            var indexModel = new MIndexBilgi
-            {
-                Toplam = model.RowCount,
-                Pasif = q.Count(p => p.IsAktif == false)
-            };
-
+            model.RowCount = q.Count(); 
+            model.AktifCount = q.Count(p => p.IsAktif); 
             if (!model.Sort.IsNullOrWhiteSpace())
                 if (model.Sort == "AdSoyad") q = q.OrderBy(o => o.Ad).ThenBy(o => o.Soyad);
                 else if (model.Sort.Contains("AdSoyad") && model.Sort.Contains("DESC")) q = q.OrderByDescending(o => o.Ad).ThenByDescending(o => o.Soyad);
-                else q = DynamicQueryable.OrderBy(q, model.Sort);
+                else q = q.OrderBy(model.Sort);
             else q = q.OrderBy(o => o.Ad).ThenBy(t => t.Soyad);
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToArray();
             foreach (var item in model.Data)
@@ -108,14 +106,14 @@ namespace WebApp.Controllers
                 var secilenB = brms.FirstOrDefault(p => p.BirimID == item.BirimID);
                 item.BirimAdi = secilenB.BirimTreeAdi2;
             }
-            ViewBag.YetkiGrupID = new SelectList(YetkiGrupBus.CmbYetkiGruplari(), "Value", "Caption", model.YetkiGrupID);
+            ViewBag.YetkiGrupID = new SelectList(YetkiGrupBus.CmbYetkiGruplari(), "Value", "Caption", model.YetkiGrupId);
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);
             ViewBag.IsAdmin = new SelectList(ComboData.GetCmbVarYokData(), "Value", "Caption", model.IsAdmin);
             ViewBag.RollID = new SelectList(RollerBus.GetAllRoles(), "RolID", "GorunurAdi");
             var birimlers = BirimlerBus.CmbBirimlerTree();
-            ViewBag.BirimID = new SelectList(birimlers, "Value", "Caption", model.BirimID);
-            ViewBag.YetkiliBirimID = new SelectList(birimlers, "Value", "Caption", model.YetkiliBirimID);
-            ViewBag.UnvanID = new SelectList(UnvanlarBus.CmbUnvanlar(), "Value", "Caption", model.UnvanID);
+            ViewBag.BirimID = new SelectList(birimlers, "Value", "Caption", model.BirimId);
+            ViewBag.YetkiliBirimID = new SelectList(birimlers, "Value", "Caption", model.YetkiliBirimId);
+            ViewBag.UnvanID = new SelectList(UnvanlarBus.CmbUnvanlar(false), "Value", "Caption", model.UnvanId);
             ViewBag.IsActiveDirectoryUser = new SelectList(ComboData.CmbIsActiveDirectoryUserData(), "Value", "Caption", model.IsActiveDirectoryUser);
             ViewBag.SelectedRolls = rollId;
 
@@ -134,7 +132,7 @@ namespace WebApp.Controllers
             var resimVar = false;
             if (id > 0)
             {
-                var data = db.Kullanicilars.FirstOrDefault(p => p.KullaniciID == id);
+                var data = _entities.Kullanicilars.FirstOrDefault(p => p.KullaniciID == id);
                 if (data != null)
                 {
                     resimVar = data.ResimAdi.IsNullOrWhiteSpace() == false;
@@ -159,7 +157,7 @@ namespace WebApp.Controllers
             bool resimVar = false;
             if (kModel.KullaniciID > 0)
             {
-                var kul = db.Kullanicilars.First(p => p.KullaniciID == kModel.KullaniciID);
+                var kul = _entities.Kullanicilars.First(p => p.KullaniciID == kModel.KullaniciID);
                 resimVar = kul.ResimAdi.IsNullOrWhiteSpace() == false;
                 kModel.ResimAdi = kul.ResimAdi.ToKullaniciResim();
             }
@@ -264,7 +262,7 @@ namespace WebApp.Controllers
                 kModel.EMail = kModel.EMail.Trim();
                 kModel.Tel = kModel.Tel.Trim();
                 kModel.KullaniciAdi = kModel.KullaniciAdi.Trim();
-                var qKullanici = db.Kullanicilars.AsQueryable();
+                var qKullanici = _entities.Kullanicilars.AsQueryable();
 
                 var cUserName = qKullanici.Count(p => p.IsAktif && p.KullaniciID != kModel.KullaniciID && p.KullaniciAdi == kModel.KullaniciAdi);
                 if (cUserName > 0)
@@ -313,8 +311,8 @@ namespace WebApp.Controllers
 
                     }
 
-                    kModel = db.Kullanicilars.Add(kModel);
-                    db.SaveChanges();
+                    kModel = _entities.Kullanicilars.Add(kModel);
+                    _entities.SaveChanges();
 
                     var excpt = MailManager.YeniHesapMailGonder(kModel, sfr);
                     if (excpt != null)
@@ -326,7 +324,7 @@ namespace WebApp.Controllers
                 }
                 else
                 {
-                    var data = db.Kullanicilars.First(p => p.KullaniciID == kModel.KullaniciID);
+                    var data = _entities.Kullanicilars.First(p => p.KullaniciID == kModel.KullaniciID);
                     data.YetkiGrupID = kModel.YetkiGrupID;
                     data.Ad = kModel.Ad;
                     data.Soyad = kModel.Soyad;
@@ -355,7 +353,7 @@ namespace WebApp.Controllers
                         }
                         data.ResimAdi = UserBus.ResimKaydet(profilResmi);
                     }
-                    db.SaveChanges();
+                    _entities.SaveChanges();
                     if (data.KullaniciID == UserIdentity.Current.Id) { UserIdentity.Current.ImagePath = data.ResimAdi.ToKullaniciResim(); }
 
                 }
@@ -408,7 +406,7 @@ namespace WebApp.Controllers
             });
             ViewBag.Roller = data;
             var kategr = roles.Select(s => s.Kategori).Distinct().ToArray();
-            var menuK = db.Menulers.Where(a => a.BagliMenuID == 0 && kategr.Contains(a.MenuAdi)).ToList();
+            var menuK = _entities.Menulers.Where(a => a.BagliMenuID == 0 && kategr.Contains(a.MenuAdi)).ToList();
             var dct = new List<ComboModelInt>();
             foreach (var item in menuK)
             {
@@ -430,7 +428,7 @@ namespace WebApp.Controllers
         }
         public ActionResult GetYetkiGrubuRolIDs(int id)
         {
-            var rolIDs = db.YetkiGrupRolleris.Where(p => p.YetkiGrupID == id).Select(s => new { s.RolID, s.Roller.GorunurAdi }).ToList();
+            var rolIDs = _entities.YetkiGrupRolleris.Where(p => p.YetkiGrupID == id).Select(s => new { s.RolID, s.Roller.GorunurAdi }).ToList();
             return Json(rolIDs, "application/json", JsonRequestBehavior.AllowGet);
         }
 
@@ -438,7 +436,7 @@ namespace WebApp.Controllers
         public ActionResult KullaniciBirimYetkileri(int? id)
         {
             if (id.HasValue == false) return RedirectToAction("Index");
-            var birimlers = db.Birimlers.ToList();
+            var birimlers = _entities.Birimlers.ToList();
             var tBirimlers = birimlers.ToOrderedList("BirimID", "UstBirimID", "BirimAdi");
             //var mAgacs = db.sp_MaddeAgaci().ToList();
             //foreach (var item in tMaddelers)
@@ -446,7 +444,7 @@ namespace WebApp.Controllers
             //    item.MaddeAdi = mAgacs.Where(p => p.MaddeID == item.MaddeID).FirstOrDefault().MaddeTreeAdi;
             //}
             var kullanici = UserBus.GetUser(id.Value);
-            ViewBag.YetkiliBirimleri = db.KullaniciBirimleris.Where(p => p.KullaniciID == id.Value).ToList();
+            ViewBag.YetkiliBirimleri = _entities.KullaniciBirimleris.Where(p => p.KullaniciID == id.Value).ToList();
             ViewBag.Kullanici = kullanici;
             return View(tBirimlers);
         }
@@ -459,11 +457,11 @@ namespace WebApp.Controllers
                 return RedirectToAction("Index");
             }
             birimId = birimId ?? new List<int>();
-            var kMadde = db.KullaniciBirimleris.Where(p => p.KullaniciID == kullaniciId).ToList();
-            db.KullaniciBirimleris.RemoveRange(kMadde);
-            var kul = db.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
+            var kMadde = _entities.KullaniciBirimleris.Where(p => p.KullaniciID == kullaniciId).ToList();
+            _entities.KullaniciBirimleris.RemoveRange(kMadde);
+            var kul = _entities.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
             kul.KullaniciBirimleris = birimId.Select(s => new KullaniciBirimleri { BirimID = s }).ToList();
-            db.SaveChanges();
+            _entities.SaveChanges();
             OnlineUsers.YetkiYenile(kul.KullaniciID);
             MessageBox.Show("Birim Yetkileri Kaydedildi", MessageBox.MessageType.Success);
 
@@ -476,14 +474,14 @@ namespace WebApp.Controllers
         public ActionResult KullaniciHesapKodYetkileri(int? id)
         {
             if (id.HasValue == false) return RedirectToAction("Index");
-            var birimlers = db.GTBirimlers.OrderBy(o => o.BirimAdi).ToList();
+            var birimlers = _entities.GTBirimlers.OrderBy(o => o.BirimAdi).ToList();
             //var mAgacs = db.sp_MaddeAgaci().ToList();
             //foreach (var item in tMaddelers)
             //{
             //    item.MaddeAdi = mAgacs.Where(p => p.MaddeID == item.MaddeID).FirstOrDefault().MaddeTreeAdi;
             //}
             var kullanici = UserBus.GetUser(id.Value);
-            ViewBag.YetkiliHesapKodlari = db.KullaniciGTHesapKodlaris.Where(p => p.KullaniciID == id.Value).ToList();
+            ViewBag.YetkiliHesapKodlari = _entities.KullaniciGTHesapKodlaris.Where(p => p.KullaniciID == id.Value).ToList();
             ViewBag.Kullanici = kullanici;
             return View(birimlers);
         }
@@ -497,10 +495,10 @@ namespace WebApp.Controllers
             }
             var hesapKodYetkileri = gtHesapKodIDs.Select(s => new { GTBirimID = s.Split('/')[0].ToInt().Value, GTHesapKodID = s.Split('/')[1].ToInt().Value }).ToList();
 
-            var kul = db.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
-            db.KullaniciGTHesapKodlaris.RemoveRange(kul.KullaniciGTHesapKodlaris);
+            var kul = _entities.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
+            _entities.KullaniciGTHesapKodlaris.RemoveRange(kul.KullaniciGTHesapKodlaris);
             kul.KullaniciGTHesapKodlaris = hesapKodYetkileri.Select(s => new KullaniciGTHesapKodlari { GTBirimID = s.GTBirimID, GTHesapKodID = s.GTHesapKodID }).ToList();
-            db.SaveChanges();
+            _entities.SaveChanges();
             OnlineUsers.YetkiYenile(kul.KullaniciID);
 
             MessageBox.Show("Hesap Kodu Yetkileri Kaydedildi", MessageBox.MessageType.Success);
@@ -513,10 +511,10 @@ namespace WebApp.Controllers
         public ActionResult KullaniciHesapNoYetkileri(int? id)
         {
             if (id.HasValue == false) return RedirectToAction("Index");
-            var birimlers = db.GTBirimlers.OrderBy(o => o.BirimAdi).ToList();
+            var birimlers = _entities.GTBirimlers.OrderBy(o => o.BirimAdi).ToList();
 
             var kullanici = UserBus.GetUser(id.Value);
-            ViewBag.YetkiliHesapNumalari = db.KullaniciGTHesapNumaralaris.Where(p => p.KullaniciID == id.Value).ToList();
+            ViewBag.YetkiliHesapNumalari = _entities.KullaniciGTHesapNumaralaris.Where(p => p.KullaniciID == id.Value).ToList();
             ViewBag.Kullanici = kullanici;
             return View(birimlers);
         }
@@ -530,10 +528,10 @@ namespace WebApp.Controllers
             }
             var hesapNoYetkileri = gtHesapNoIDs.Select(s => new { GTBirimID = s.Split('/')[0].ToInt().Value, GTHesapNoID = s.Split('/')[1].ToInt().Value }).ToList();
 
-            var kul = db.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
-            db.KullaniciGTHesapNumaralaris.RemoveRange(kul.KullaniciGTHesapNumaralaris);
+            var kul = _entities.Kullanicilars.First(p => p.KullaniciID == kullaniciId);
+            _entities.KullaniciGTHesapNumaralaris.RemoveRange(kul.KullaniciGTHesapNumaralaris);
             kul.KullaniciGTHesapNumaralaris = hesapNoYetkileri.Select(s => new KullaniciGTHesapNumaralari { GTBirimID = s.GTBirimID, GTHesapNoID = s.GTHesapNoID }).ToList();
-            db.SaveChanges();
+            _entities.SaveChanges();
             OnlineUsers.YetkiYenile(kul.KullaniciID);
 
             MessageBox.Show("Hesap Numarası Yetkileri Kaydedildi", MessageBox.MessageType.Success);
@@ -544,12 +542,36 @@ namespace WebApp.Controllers
 
 
 
+        [AllowAnonymous]
+        public ActionResult SetLogin(Guid userKey, string key = "")
+        {
 
+            if (!key.IsNullOrWhiteSpace())
+            {
+                var sUserKey = UserIdentity.Current.Informations.Where(p => p.Key == key).Select(s => s.Value.ToGuidObj()).FirstOrDefault();
+                userKey = sUserKey ?? UserIdentity.Current.UserKey;
+
+            }
+            else if (!RoleNames.KullaniciHesabinaGecmeYetkisi.InRole()) return RedirectToAction("Index", "Home");
+            var kullanici = _entities.Kullanicilars.First(p => p.UserKey == userKey);
+
+            var prevUserKey = Guid.NewGuid().ToString();
+
+            FormsAuthenticationUtil.SetAuthCookie(kullanici.KullaniciAdi, String.Empty, false);
+            var ui = UserBus.GetUserIdentity(kullanici.KullaniciAdi);
+            ui.Informations.Add("PrevUserKey", prevUserKey);
+            ui.Informations.Add(prevUserKey, UserIdentity.Current.UserKey);
+            Session["UserIdentity"] = ui;
+            UserIdentity.SetCurrent();
+
+
+            return RedirectToAction("Index");
+        }
 
         [Authorize(Roles = RoleNames.KullaniciKayit)]
         public ActionResult Sil(int id)
         {
-            var kayit = db.Kullanicilars.FirstOrDefault(p => p.KullaniciID == id);
+            var kayit = _entities.Kullanicilars.FirstOrDefault(p => p.KullaniciID == id);
 
             string message;
             var success = true;
@@ -558,8 +580,8 @@ namespace WebApp.Controllers
                 try
                 {
                     message = "'" + kayit.Ad + " " + kayit.Soyad + "' Kullanıcısı Silindi!";
-                    db.Kullanicilars.Remove(kayit);
-                    db.SaveChanges();
+                    _entities.Kullanicilars.Remove(kayit);
+                    _entities.SaveChanges();
                 }
                 catch (Exception ex)
                 {
@@ -577,7 +599,7 @@ namespace WebApp.Controllers
         }
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _entities.Dispose();
             base.Dispose(disposing);
         }
     }

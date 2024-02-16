@@ -21,6 +21,7 @@
                             <tr>
                                 <th>Yetki Grup Adı</th>
                                 <th style="width: 125px;">Yetki Sayısı</th>
+                                <th style="width: 125px;">Kullanıcı Sayısı</th>
                                 <th style="width: 35px; text-align: center;"></th>
                             </tr>
                         </thead>
@@ -31,21 +32,25 @@
                                 </td>
                                 <td style="padding: 0px;"></td>
                                 <td style="padding: 0px;"></td>
+                                <td style="padding: 0px;"></td>
 
                             </tr>
-                            @if (Model.Data.Count() > 0)
+                            @if (Model.Data.Any())
                             {
                                 foreach (var item in Model.Data)
                                 {
                                     <tr>
 
-                                        <td id="tdMad_@item.YetkiGrupID" style="padding-top: 0px;padding-bottom: 0px;vertical-align:middle;">@item.YetkiGrupAdi</td>
+                                        <td id="tdMad_@item.YetkiGrupId" style="padding-top: 0px;padding-bottom: 0px;vertical-align:middle;">@item.YetkiGrupAdi</td>
                                         <td style="padding: 4px; vertical-align: middle;">
                                             @item.YetkiSayisi
                                         </td>
+                                        <td style="padding: 4px; vertical-align: middle;">
+                                            <i class="fa fa-user-o"></i> @item.KullaniciSayisi
+                                        </td>
                                         <td>
-                                            <a href="@Url.Action("Kayit", "YetkiGruplari", new { id = item.YetkiGrupID })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
-                                            <a href="javascript:void(0)" onclick="SilmeOnay(this,@item.YetkiGrupID)"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
+                                            <a href="@Url.Action("Kayit", "YetkiGruplari", new { id = item.YetkiGrupId })"><i class="fa fa-edit fa-lg tooltips" data-style="blue" data-original-title="Düzelt"></i></a>
+                                            <a href="javascript:void(0)" onclick="SilmeOnay(this,@item.YetkiGrupId)"><i class="fa fa-trash-o fa-lg tooltips" data-style="blue" data-original-title="Sil"></i></a>
 
                                         </td>
                                     </tr>
@@ -56,7 +61,7 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="3" style="text-align: center">
+                                    <td colspan="4" style="text-align: center">
                                         [ Listelenen Kayıt Yok ]
                                     </td>
                                 </tr>

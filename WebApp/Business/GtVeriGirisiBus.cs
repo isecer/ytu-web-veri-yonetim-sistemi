@@ -30,7 +30,7 @@ namespace WebApp.Business
             if (bosSecimVar) dct.Add(new ComboModelInt { });
             using (var db = new VysDBEntities())
             {
-                var hesapNos = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapNoID, gtBirimId).SelectMany(s => s.RefTableIDs).ToList();
+                var hesapNos = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapNoId, gtBirimId).SelectMany(s => s.RefTableIDs).ToList();
                 var data = db.GTHesapNumaralaris.Where(p => p.GTBirimHesapNumaralaris.Any(a => a.GTBirimID == (gtBirimId ?? a.GTBirimID)) && hesapNos.Contains(p.GTHesapNoID)).OrderBy(o => o.HesapNoAdi).ToList();
                 foreach (var item in data)
                 {

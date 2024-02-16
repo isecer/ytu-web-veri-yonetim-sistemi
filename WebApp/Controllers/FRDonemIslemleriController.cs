@@ -45,9 +45,9 @@ namespace WebApp.Controllers
                         AktifSurec = (s.BaslangicTarihi <= nowDate && s.BitisTarihi >= nowDate)
                     };
             model.RowCount = q.Count();
+            model.AktifCount = q.Count(p => p.IsAktif);
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(t => t.Yil).ThenByDescending(t => t.BaslangicTarihi);
-            model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+            model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList(); 
 
 
             ViewBag.IsAktif = new SelectList(ComboData.GetCmbAktifPasifData(), "Value", "Caption", model.IsAktif);

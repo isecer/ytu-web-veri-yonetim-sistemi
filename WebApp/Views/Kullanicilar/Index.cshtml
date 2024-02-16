@@ -5,7 +5,8 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var kayit = RoleNames.KullaniciKayit.InRole();
-    
+
+    var kHesabaGecme = RoleNames.KullaniciHesabinaGecmeYetkisi.InRole();
     var mailGonder = RoleNames.MailIslemleri.InRole();
     var mKids = (List<int>)ViewBag.kIds;
 }
@@ -43,7 +44,7 @@
                                     <tr>
                                         <td width="150">Kullanıcı Birimi</td>
                                         <td>
-                                            @Html.DropDownList("BirimID", null,  new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmKullanicilar').submit();" })
+                                            @Html.DropDownList("BirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmKullanicilar').submit();" })
                                         </td>
                                     </tr>
                                 </table>
@@ -72,7 +73,7 @@
                                                     <td>@Html.DropDownList("YetkiliBirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmKullanicilar').submit();" })</td>
                                                 </tr>
                                             </table>
-                                           
+
                                         </td>
                                     </tr>
                                 </table>
@@ -88,7 +89,7 @@
                                 </table>
                             </td>
                         </tr>
-                        <tr> 
+                        <tr>
                             <td>
                                 <table style="width:100%;table-layout:fixed;">
                                     <tr>
@@ -134,9 +135,9 @@
                                     {
                                         <li><span class="label label-primary label-form"><a style="width:54px;color:white;" href="@Url.Action("Kayit")"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
                                     }
-                                    <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
-                                    <li><span class="label label-success label-form">Aktif: <b>@Model.CountIngfos.Aktif</b></span></li>
-                                    <li><span class="label label-danger label-form">Pasif: <b>@Model.CountIngfos.Pasif</b></span></li>
+                                    <li><span class="label label-info label-form">Toplam: <b>@Model.RowCount</b></span></li>
+                                    <li><span class="label label-success label-form">Aktif: <b>@Model.AktifCount</b></span></li>
+                                    <li><span class="label label-danger label-form">Pasif: <b>@Model.PasifCount</b></span></li>
                                     <li><a href="javascript:void(0);" onclick="setTimeout(function () { window.location.href = '@Url.Action("Index")'; }, 600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                                 </ul>
                             </td>
@@ -168,6 +169,12 @@
                                                         </li>
 
                                                     }
+                                                    @if (kHesabaGecme)
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("SetLogin", new { item.UserKey })" target="_blank"><i class="fa fa-user fa-lg"></i>Kullanıcı Hesabına Geç</a>
+                                                        </li>
+                                                    }
                                                     <li>
                                                         <a href="javascript:void(0)" onclick="detayGor(@item.KullaniciID,'#kulPnl')"><i class="fa fa-user fa-lg"></i>Detay Göster</a>
                                                     </li>
@@ -182,7 +189,8 @@
                                                     {
                                                         <li>
                                                             <a href="@Url.Action("KullaniciBirimYetkileri", new { id = item.KullaniciID })"><i class="fa fa-home fa-lg"></i>Birim Yetkileri</a>
-                                                        </li> 
+                                                        </li>
+
                                                         <li>
                                                             <a href="@Url.Action("KullaniciHesapNoYetkileri", new { id = item.KullaniciID })"><i class="fa fa-list fa-lg"></i>Hesap No Yetkileri</a>
                                                         </li>
@@ -307,8 +315,8 @@
                 var SoruHtml = "<table style='color:maroon;table-layout:fixed;width:100%;'><tr><td width='30' style='padding-left:10px;'><i class='fa fa-info fa-2x'></i></td><td style='padding-right:10px;'>Seçilen Kullanıcıyı Silmek İstiyor Musunuz?</td></tr></table>";
                 var _panelM = $('#kulPnl');
                 _pRefresh(_panelM, false);
-                $.ajax({ 
-                    url: '@Url.Action("GetKullaniciDetay", "Ajax")', 
+                $.ajax({
+                    url: '@Url.Action("GetKullaniciDetay", "Ajax")',
                     data: { 'KullaniciID': id },
                     success: function (result) {
                         _pRefresh(_panelM, true);
@@ -320,13 +328,13 @@
                                     label: "Kullanıcıyı Sil",
                                     className: "btn-danger",
                                     callback: function () {
-                                        $.ajax({ 
-                                            url: '@Url.Action("Sil", "Kullanicilar")', 
+                                        $.ajax({
+                                            url: '@Url.Action("Sil", "Kullanicilar")',
                                             data: { id: id },
                                             success: function (result) {
                                                 toastr[result.success ? "success" : "error"](result.message, "Kullanıcı Silme İşlemi")
                                                 if (result.success) {
-                                                    $(sndr).closest("tr").remove(); 
+                                                    $(sndr).closest("tr").remove();
                                                 }
 
                                             },
@@ -353,6 +361,6 @@
                     }
                 });
             }, 120);
-        } 
+        }
     </script>
 }

@@ -6,19 +6,31 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using Database;
 using WebApp.Utilities.Extensions;
+using WebApp.Utilities.MessageBox;
 
 namespace WebApp.Utilities.Helpers.FileController
 {
     public class FileController : Controller
     {
-
-        public ActionResult SurecKanitDosyalariIndir(int vaSurecId)
+        public FileContentResult SurecKanitDosyalariZipFileContent(int vaSurecId, List<int> maddeTurIds)
         {
+            maddeTurIds = maddeTurIds ?? new List<int>();
+            var mMessage = new MmMessage
+            {
+                IsSuccess = false,
+                Title = "Veri kanıt dosyası indirme işlemi",
+                MessageType = Msgtype.Warning
+            };
+            if (!maddeTurIds.Any())
+            {
+                mMessage.Messages.Add("İndirme işlemi için en az 1 madde türü seçmeniz gerekmektedir.");
+                return null;
+            }
             using (var entities = new VysDBEntities())
             {
                 var vaSurec = entities.VASurecleris.First(f => f.VASurecID == vaSurecId);
 
-                var surecDosyalaris = vaSurec.VASurecleriMaddes.Where(p => p.IsAktif).SelectMany(s => s.VASurecleriMaddeEklenenDosyas)
+                var surecDosyalaris = vaSurec.VASurecleriMaddes.Where(p => p.IsAktif && maddeTurIds.Contains(p.MaddeTurID)).SelectMany(s => s.VASurecleriMaddeEklenenDosyas)
                        .ToList();
 
                 var documentGroups = surecDosyalaris.GroupBy(g => new { g.Birimler.BirimAdi })
@@ -30,15 +42,15 @@ namespace WebApp.Utilities.Helpers.FileController
                         {
                             CreateFolder = true,
                             FolderName = sm.Key.MaddeKod + "-" + sm.Key.MaddeAdi,
-                            Files = sm.Select(smd => new ZipFileDto { FileName = smd.DosyaAdi, FilePath = smd.DosyaYolu }).ToList()
-                        }).ToList()
+                            Files = sm.Select(smd => new ZipFileDto {   FilePath = smd.DosyaYolu }).ToList()
+                        }).Where(p => p.Files.Any()).ToList()
 
-                    }).ToList();
+                    }).Where(p => p.Files.Any()).ToList();
 
                 // Zip dosyasını oluştur
                 byte[] zipBytes = CreateZip(documentGroups);
                 var fileName = vaSurec.Yil + " yılı veri kanıt dosyaları " + vaSurec.BaslangicTarihi.ToFormatDate() + "-" + vaSurec.BitisTarihi.ToFormatDate() + ".zip";
-                // Zip dosyasını indirilebilir bir dosya olarak döndür
+                // Zip dosyasını indirilebilir bir dosya olarak döndür 
                 return File(zipBytes, "application/zip", fileName);
             }
         }
@@ -66,7 +78,7 @@ namespace WebApp.Utilities.Helpers.FileController
             {
                 item.FolderName = item.FolderName.RemoveInvalidFileNameChars();
                 currentFolderPath = Path.Combine(currentFolderPath, item.FolderName);
-                var folderEntry = archive.CreateEntry(currentFolderPath + "/");
+                archive.CreateEntry(currentFolderPath + "/");
                 foreach (var file in item.Files)
                 {
                     AddItemToZip(archive, file, currentFolderPath);
@@ -92,95 +104,11 @@ namespace WebApp.Utilities.Helpers.FileController
                 }
             }
         }
-        private void AddFolderToZip(ZipArchive archive, string folderPath, string parentFolderName)
-        {
-            // Klasör altındaki dosyaları ekler
-            foreach (string filePath in Directory.GetFiles(folderPath))
-            {
-                string entryName = parentFolderName + Path.GetFileName(filePath);
-                var entry = archive.CreateEntry(entryName);
-                using (var entryStream = entry.Open())
-                {
-                    using (var fileStream = new FileStream(filePath, FileMode.Open))
-                    {
-                        fileStream.CopyTo(entryStream);
-                    }
-                }
-            }
-
-            // Klasör altındaki alt klasörleri dolaşır ve her birini zip dosyasına ekler
-            foreach (string subFolderPath in Directory.GetDirectories(folderPath))
-            {
-                string folderName = parentFolderName + Path.GetFileName(subFolderPath) + "/";
-                AddFolderToZip(archive, subFolderPath, folderName);
-            }
-
-            var data = new List<ZipFileDto>();
-            data.AddRange(new List<ZipFileDto>
-            {
-                new ZipFileDto
-                {
-                    CreateFolder = true,
-                    FolderName = "Birim 1",
-                    Files = new List<ZipFileDto>
-                    {
-                        new ZipFileDto
-                        {
-                            CreateFolder = true,
-                            FolderName = "Madde1", Files = new List<ZipFileDto>
-                            {
-                                new ZipFileDto { FileName = "Dosya1", FilePath = "/dosyalar/dosya1.pdf" },
-                                new ZipFileDto { FileName = "Dosya2", FilePath = "/dosyalar/dosya2.pdf" }
-                            }
-                        },
-                        new ZipFileDto
-                        {
-                            CreateFolder = true,
-                            FolderName = "Madde2", Files = new List<ZipFileDto>
-                            {
-                                new ZipFileDto { FileName = "Dosya5", FilePath = "/dosyalar/dosya5.pdf" },
-                                new ZipFileDto { FileName = "Dosya6", FilePath = "/dosyalar/dosya6.pdf" }
-                            }
-                        }
-                    }
-
-                },
-                new ZipFileDto
-                {
-                    CreateFolder = true,
-                    FolderName = "Birim 2",
-                    Files = new List<ZipFileDto>
-                    {
-                        new ZipFileDto
-                        {
-                            CreateFolder = true,
-                            FolderName = "Madde10", Files = new List<ZipFileDto>
-                            {
-                                new ZipFileDto { FileName = "Dosya10", FilePath = "/dosyalar/dosya10.pdf" },
-                                new ZipFileDto { FileName = "Dosya20", FilePath = "/dosyalar/dosya20.pdf" }
-                            }
-                        },
-                        new ZipFileDto
-                        {
-                            CreateFolder = true,
-                            FolderName = "Madde20", Files = new List<ZipFileDto>
-                            {
-                                new ZipFileDto { FileName = "Dosya50", FilePath = "/dosyalar/dosya50.pdf" },
-                                new ZipFileDto { FileName = "Dosya60", FilePath = "/dosyalar/dosya60.pdf" }
-                            }
-                        }
-                    }
-
-                }
-
-            });
-        }
 
         public class ZipFileDto
         {
             public bool CreateFolder { get; set; }
-            public string FolderName { get; set; }
-            public string FileName { get; set; }
+            public string FolderName { get; set; } 
             public string FilePath { get; set; }
 
             public List<ZipFileDto> Files { get; set; } = new List<ZipFileDto>();

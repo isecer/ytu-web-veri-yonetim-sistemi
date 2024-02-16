@@ -34,9 +34,10 @@ namespace WebApp.Controllers
 
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).Select(s => new FrYetkiGruplari
             {
-                YetkiGrupID = s.YetkiGrupID,
+                YetkiGrupId = s.YetkiGrupID,
                 YetkiGrupAdi = s.YetkiGrupAdi,
-                YetkiSayisi = s.YetkiGrupRolleris.Count
+                YetkiSayisi = s.YetkiGrupRolleris.Count,
+                KullaniciSayisi = s.Kullanicilars.Count
             }).ToArray();
 
             return View(model);

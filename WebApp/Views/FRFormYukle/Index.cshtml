@@ -102,10 +102,10 @@
                     <h3 class="panel-title"><i class="fa fa-file-text-o fa-lg"></i> Formlar</h3>
                     <ul class="panel-controls">
 
-                        <li><span class="label label-info" title="Veri Girişi Tamamlanan Sayısı">Yüklenenmeyeler: <b>@Model.CountIngfos.Pasif</b></span></li>
-                        <li><span class="label label-success" title="Veri Girişi Tamamlanmayan Madde Say">Yüklenenler: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-info" title="Veri Girişi Tamamlanan Sayısı">Yüklenenmeyeler: <b>@Model.PasifCount</b></span></li>
+                        <li><span class="label label-success" title="Veri Girişi Tamamlanmayan Madde Say">Yüklenenler: <b>@Model.AktifCount</b></span></li>
 
-                        <li><span class="label label-primary" title="Toplam Madde Sayısı">Tümü: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-primary" title="Toplam Madde Sayısı">Tümü: <b>@Model.RowCount</b></span></li>
                         <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
                 </div>

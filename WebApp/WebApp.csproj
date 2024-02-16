@@ -251,7 +251,8 @@
     <Compile Include="Utilities\Helpers\ThreeDHelper.cs" />
     <Compile Include="Utilities\Helpers\UrlInfoHelper.cs" />
     <Compile Include="Utilities\Helpers\ViewRenderHelper.cs" />
-    <Compile Include="Utilities\MenuAndRoles\MenuVeRoller.cs" />
+    <Compile Include="Utilities\MenuAndRoles\MainMenus.cs" />
+    <Compile Include="Utilities\MenuAndRoles\RoleNames.cs" />
     <Compile Include="Utilities\MessageBox\MessageBox.cs" />
     <Compile Include="Utilities\Results\DataResult.cs" />
     <Compile Include="Utilities\Results\IDataResult.cs" />
@@ -1895,6 +1896,7 @@
     <Content Include="Views\Shared\_MenuPartial.cshtml" />
     <Content Include="Views\SurecIslemleri\ViewMaddeTurleri.cshtml" />
     <Content Include="Views\RprKurumRaporlari\Index.cshtml" />
+    <Content Include="Views\SurecIslemleri\ViewKanitDosyalariIndir.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -46,7 +46,7 @@ namespace WebApp.Business
                              join maddeturu in maddeTurleri on madde.MaddeTurID equals maddeturu.MaddeTurID
                              select new CheckObject<ChkListDataModel>
                              {
-                                 Value = new ChkListDataModel { ID = madde.MaddeID, Code = madde.MaddeKod, Caption = maddeturu.MaddeTurAdi + " > " + madde.MaddeAdi },
+                                 Value = new ChkListDataModel { ID = madde.MaddeID, Code = madde.MaddeKod, GroupKey = maddeturu.MaddeTurID.ToString(), Caption = maddeturu.MaddeTurAdi + " > " + madde.MaddeAdi },
                                  Checked = secilenler.Contains(madde.MaddeID)
                              }).OrderByDescending(o => o.Checked);
                 model.Data = dataR.ToList();

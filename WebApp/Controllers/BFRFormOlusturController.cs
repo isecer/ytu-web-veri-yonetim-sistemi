@@ -52,9 +52,10 @@ namespace WebApp.Controllers
             if (!model.FormAdi.IsNullOrWhiteSpace()) q = q.Where(p => p.FormAdi.Contains(model.FormAdi) || p.FormBirimleri.Any(a => a.BirimAdi.Contains(model.FormAdi)));
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             model.RowCount = q.Count();
-            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.FormAdi);
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+            model.AktifCount = q.Count(p => p.IsAktif);
 
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.FormAdi);
+           
 
 
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;

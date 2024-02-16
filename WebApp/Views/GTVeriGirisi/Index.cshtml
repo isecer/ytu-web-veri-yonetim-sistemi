@@ -140,7 +140,7 @@
                         {
                             <li><span class="label label-primary label-form"><a href="@Url.Action("Kayit",new {Model.GTDonemID })" style="color:white;"><i class="fa fa-plus fa-lg"></i> Yeni</a></span></li>
                         }
-                        <li><span class="label label-info label-form">Toplam: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-info label-form">Toplam: <b>@Model.RowCount</b></span></li>
                         <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                     </ul>
                 </div>

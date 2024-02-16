@@ -25,8 +25,8 @@ namespace WebApp.Controllers
         public ActionResult Index()
         {
 
-            var gtBirimId = UserIdentity.GetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIDName.GTBirimID);
-            var gtDonemId = UserIdentity.GetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIDName.DonemID);
+            var gtBirimId = UserIdentity.GetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIdName.GtBirimId);
+            var gtDonemId = UserIdentity.GetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIdName.DonemId);
 
             if (!db.GTDonemleris.Any(a => a.GTDonemID == gtDonemId)) gtDonemId = db.GTDonemleris.OrderByDescending(o => o.Yil).Select(s => s.GTDonemID).FirstOrDefault();
             return Index(new FmGTVeriGirisi { PageSize = 30, GTDonemID = gtDonemId, Expand = gtDonemId.HasValue, GTBirimID = gtBirimId });
@@ -35,8 +35,8 @@ namespace WebApp.Controllers
         public ActionResult Index(FmGTVeriGirisi model, bool export = false)
         {
 
-            var gtHesapKods = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapKodID, null).SelectMany(s => s.RefTableIDs.Select(s2 => s.TableId + "" + s2)).ToList();
-            var gtHesapNoIDs = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapNoID, null).SelectMany(s => s.RefTableIDs.Select(s2 => s.TableId + "" + s2)).ToList();
+            var gtHesapKods = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapKodId, null).SelectMany(s => s.RefTableIDs.Select(s2 => s.TableId + "" + s2)).ToList();
+            var gtHesapNoIDs = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapNoId, null).SelectMany(s => s.RefTableIDs.Select(s2 => s.TableId + "" + s2)).ToList();
             var nowDate = DateTime.Now.Date;
             var q = (from vg in db.GTVeriGirisis
                      join br in db.GTBirimlers on vg.GTBirimID equals br.GTBirimID
@@ -94,12 +94,8 @@ namespace WebApp.Controllers
             if (model.Aranan.IsNullOrWhiteSpace() == false) q = q.Where(p => p.HesapNo == model.Aranan || p.GTVerigirisiDetayList.Any(a => a.HesapKod == model.Aranan || a.VergiKimlikNo.Contains(model.Aranan) || a.AdSoyad.Contains(model.Aranan) || a.Aciklama.Contains(model.Aranan)));
 
 
-            model.RowCount = q.Count();
-            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(o => o.AktarimTarihi).ThenByDescending(t => t.IslemTarihi);
-            var indexModel = new MIndexBilgi() { Toplam = model.RowCount };
-
-
-
+            model.RowCount = q.Count(); 
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(o => o.AktarimTarihi).ThenByDescending(t => t.IslemTarihi); 
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;
             model.GTVeriGirisDurumlaris = db.GTVeriGirisDurumlaris.ToList();
             #region export
@@ -156,8 +152,8 @@ namespace WebApp.Controllers
             ViewBag.GTHesapKodID = new SelectList(UserBus.CmbYetkiliGtHesapKodKullanici(model.GTBirimID), "Value", "Caption", model.GTHesapKodID);
             ViewBag.GTVeriGirisDurumID = new SelectList(GtVeriGirisiBus.CmbGtVeriGirisDurumlari(), "Value", "Caption", model.GTHesapKodID);
 
-            UserIdentity.SetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIDName.GTBirimID, model.GTBirimID);
-            UserIdentity.SetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIDName.DonemID, model.GTDonemID);
+            UserIdentity.SetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIdName.GtBirimId, model.GTBirimID);
+            UserIdentity.SetPageSelectedTableId(RoleNames.GTVeriGirisi, RollTableIdName.DonemId, model.GTDonemID);
             return View(model);
         }
 
@@ -405,7 +401,7 @@ namespace WebApp.Controllers
         }
         public ActionResult GetHesapKodlari(int? gtBirimId, string term)
         {
-            var hesapKodIDs = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapKodID, gtBirimId ?? -1).SelectMany(s => s.RefTableIDs).ToList();
+            var hesapKodIDs = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapKodId, gtBirimId ?? -1).SelectMany(s => s.RefTableIDs).ToList();
             var hesapKods = (from s in db.GTHesapKodlaris.Where(p => p.GTBirimHesapKodlaris.Any(a => a.GTBirimID == (gtBirimId ?? -1) && hesapKodIDs.Contains(a.GTHesapKodID)))
                              orderby s.HesapKod
                              where (s.HesapKod + " " + s.HesapKodAdi).Contains(term)
@@ -449,7 +445,7 @@ namespace WebApp.Controllers
         }
         public ActionResult GetHesapNumaralari(string term, int? gtBirimId)
         {
-            var gtHesapNoIDs = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapNoID, gtBirimId ?? -1).SelectMany(s => s.RefTableIDs).ToList();
+            var gtHesapNoIDs = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapNoId, gtBirimId ?? -1).SelectMany(s => s.RefTableIDs).ToList();
 
 
             var gtHesapNumaralaris = (from s in db.GTHesapNumaralaris.Where(p => p.GTBirimHesapNumaralaris.Any(a => a.GTBirimID == (gtBirimId ?? -1) && gtHesapNoIDs.Contains(a.GTHesapNoID)) && (p.HesapNo.StartsWith(term) || p.HesapNoAdi.Contains(term)))
@@ -526,7 +522,7 @@ namespace WebApp.Controllers
             if (kayit != null)
             {
                 var gtDonemId = kayit.GTDonemID;
-                var birimYetkileri = UserIdentity.Current.TableRollId[RollTableIDName.GTBirimID];
+                var birimYetkileri = UserIdentity.Current.TableRollId[RollTableIdName.GtBirimId];
                 var mMessage = new MmMessage
                 {
                     Title = "Gelir Takip Veri Girişi Onayı İşlemi",
@@ -624,7 +620,7 @@ namespace WebApp.Controllers
                     Title = "Gelir Takip Veri Girişi Silme İşlemi",
                     MessageType = Msgtype.Warning
                 };
-                var gtHesapNoIDs = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapNoID, kayit.GTBirimID).SelectMany(s => s.RefTableIDs).ToList();
+                var gtHesapNoIDs = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapNoId, kayit.GTBirimID).SelectMany(s => s.RefTableIDs).ToList();
 
 
                 var kayitYetki = RoleNames.GTVeriGirisiKayitYetkisi.InRole();

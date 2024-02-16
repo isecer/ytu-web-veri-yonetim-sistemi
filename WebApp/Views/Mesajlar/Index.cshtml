@@ -84,9 +84,9 @@
                             <td><h3 class="panel-title"><i class="fa fa-envelope"></i> Gelen Mesaj Listesi</h3></td>
                             <td width="380px;">
                                 <ul class="panel-controls">
-                                    <li><span class="label label-info label-form">Toplam Konu: <b>@Model.CountIngfos.Toplam</b></span></li>
-                                    <li><span class="label label-success label-form">Kapalı Konu: <b>@Model.CountIngfos.Aktif</b></span></li>
-                                    <li><span class="label label-warning label-form">Açık Konu: <b>@Model.CountIngfos.Pasif</b></span></li>
+                                    <li><span class="label label-info label-form">Toplam Konu: <b>@Model.RowCount</b></span></li>
+                                    <li><span class="label label-success label-form">Kapalı Konu: <b>@Model.AktifCount</b></span></li>
+                                    <li><span class="label label-warning label-form">Açık Konu: <b>@Model.PasifCount</b></span></li>
                                     <li><a href="javascript:void(0);" onclick="setTimeout(function(){window.location.href='@Url.Action("Index")';},600)" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                                 </ul>
                             </td>

@@ -31,6 +31,7 @@ namespace Database
         public int IslemYapanID { get; set; }
         public string IslemYapanIP { get; set; }
         public System.DateTime IslemTarihi { get; set; }
+        public bool IsKanitDosyasiYuklemekZorunlu { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Maddeler> Maddelers { get; set; }

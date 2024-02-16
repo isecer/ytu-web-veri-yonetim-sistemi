@@ -58,12 +58,8 @@ namespace WebApp.Controllers
 
             }
             model.RowCount = q.Count();
-            var IndexModel = new MIndexBilgi();
-            IndexModel.Toplam = model.RowCount;
-            IndexModel.Aktif = q.Where(p => p.IsAktif).Count();
-            IndexModel.Pasif = model.RowCount - IndexModel.Aktif;
-            if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
-            else q = q.OrderByDescending(o => o.Tarih);
+            model.AktifCount = q.Count(p => p.IsAktif); 
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderByDescending(o => o.Tarih);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).Select(s => new FrDuyurular
             {
                 DuyuruID = s.DuyuruID,

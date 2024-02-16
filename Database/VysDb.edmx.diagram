@@ -46,7 +46,6 @@
         <EntityTypeShape EntityType="VysDBModel.KullaniciBirimleri" Width="1.5" PointX="7.5" PointY="55.375" />
         <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapKodlari" Width="1.5" PointX="5.25" PointY="44.125" />
         <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapNumaralari" Width="1.5" PointX="8.25" PointY="58.125" />
-        <EntityTypeShape EntityType="VysDBModel.Kullanicilar" Width="1.5" PointX="3" PointY="45.625" />
         <EntityTypeShape EntityType="VysDBModel.Maddeler" Width="1.5" PointX="8.25" PointY="23.625" />
         <EntityTypeShape EntityType="VysDBModel.MaddelerEslestirilenTurler" Width="1.5" PointX="13.5" PointY="29.125" />
         <EntityTypeShape EntityType="VysDBModel.MaddelerFormulEslesenMaddeler" Width="1.5" PointX="10.5" PointY="25.25" />
@@ -83,7 +82,6 @@
         <EntityTypeShape EntityType="VysDBModel.Vw_BirimlerTree" Width="1.5" PointX="7.75" PointY="6.375" />
         <EntityTypeShape EntityType="VysDBModel.Vw_MaddelerTree" Width="1.5" PointX="4.75" PointY="9.375" />
         <EntityTypeShape EntityType="VysDBModel.Vw_MaddeVeriGirisDurum" Width="1.5" PointX="9.75" PointY="6.375" />
-        <AssociationConnector Association="VysDBModel.FK_Ayarlar_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerAy_Aylar" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerForm_BFrDonemleri" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerForm_BFrFormlar" />
@@ -93,25 +91,20 @@
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_BFRFormlar" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Birimler" />
-        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_BFRFormlar_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_BFRFormlarBirim_BFRFormlar" />
         <AssociationConnector Association="VysDBModel.FK_BFRFormlarBirim_Birimler" />
-        <AssociationConnector Association="VysDBModel.FK_Birimler_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_Birimler_UstBirimler" />
         <AssociationConnector Association="VysDBModel.FK_BirimMaddeleri_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_FRFormlarBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Birimler" />
-        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenAciklama_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenDosya_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_BirimMaddeleri_Maddeler" />
         <AssociationConnector Association="VysDBModel.FK_DuyuruEkleri_Duyurular" />
-        <AssociationConnector Association="VysDBModel.FK_Duyurular_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerAy_Faaliyetler" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerKaynak_Faaliyetler" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerMadde_Faaliyetler" />
@@ -123,13 +116,9 @@
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_FrDonemlerForm" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_FrFormlar" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_FrFormlar" />
-        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_FRFormlar_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_FRFormlarBirim_FRFormlar" />
         <AssociationConnector Association="VysDBModel.FK_GonderilenMailEkleri_GonderilenMailler" />
         <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_GonderilenMailler" />
-        <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Mesajlar" />
         <AssociationConnector Association="VysDBModel.FK_GTBirimHesapKodlari_GTBirimler" />
         <AssociationConnector Association="VysDBModel.FK_GTBirimHesapKodlari_GTHesapKodlari" />
@@ -138,7 +127,6 @@
         <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTBirimler" />
         <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_GTBirimler" />
         <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_GTBirimler" />
-        <AssociationConnector Association="VysDBModel.FK_GTDonemleri_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTDonemleri" />
         <AssociationConnector Association="VysDBModel.FK_GTHesapKodlariGelirNitelikleri_GTHesapKodlari" />
         <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTHesapKodlari" />
@@ -148,17 +136,7 @@
         <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_GTHesapNumaralari" />
         <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTVergiKimlikNumaralari" />
         <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTVeriGirisDurumlari" />
-        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTVeriGirisi" />
-        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GelenMesajlar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Unvanlar" />
-        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_YetkiGruplari" />
-        <AssociationConnector Association="VysDBModel.FK_MesajKategorileri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_SistemBilgilendirme_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_MaddeTurleri" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_MaddeYilSonuDegerHesaplamaTipleri" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_UstMaddeler" />
@@ -198,8 +176,30 @@
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeVeriGirisDonemleri_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_YetkiGrupRolleri_YetkiGruplari" />
-        <AssociationConnector Association="VysDBModel.KullaniciRolleri" />
         <AssociationConnector Association="VysDBModel.MenuRollleri" />
+        <EntityTypeShape EntityType="VysDBModel.Kullanicilar" Width="1.5" PointX="15.5" PointY="53.125" />
+        <AssociationConnector Association="VysDBModel.FK_Ayarlar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_BFRFormlar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_Birimler_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Birimler" />
+        <AssociationConnector Association="VysDBModel.FK_Duyurular_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_FRFormlar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GTDonemleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GelenMesajlar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Unvanlar" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_YetkiGruplari" />
+        <AssociationConnector Association="VysDBModel.FK_MesajKategorileri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_SistemBilgilendirme_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.KullaniciRolleri" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

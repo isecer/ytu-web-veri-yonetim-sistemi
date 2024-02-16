@@ -39,6 +39,7 @@ namespace Database
         }
     
         public int KullaniciID { get; set; }
+        public System.Guid UserKey { get; set; }
         public int YetkiGrupID { get; set; }
         public string Ad { get; set; }
         public string Soyad { get; set; }

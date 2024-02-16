@@ -20,6 +20,14 @@ namespace WebApp.Business
             return dct;
 
         }
+        public static IEnumerable<ComboModelInt> CmbMaddeTurleri(bool bosSecimVar = true, string bosSecimAdi = "", bool? isAktif = null)
+        {
+            var dct = CmbMaddeTurleri(false, isAktif).ToList();
+            if (bosSecimVar)
+                dct.Insert(0, new ComboModelInt { Caption = bosSecimAdi }); 
+            return dct;
+
+        }
         public static ChkListModel GetMaddeTurleri(List<int> selectedMaddeTurIds = null)
         {
             selectedMaddeTurIds = selectedMaddeTurIds ?? new List<int>();

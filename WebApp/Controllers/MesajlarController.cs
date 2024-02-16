@@ -60,12 +60,7 @@ namespace WebApp.Controllers
 
             }
             model.RowCount = q.Count();
-            var indexModel = new MIndexBilgi
-            {
-                Toplam = model.RowCount,
-                Aktif = q.Count(p => p.IsAktif)
-            };
-            indexModel.Pasif = indexModel.Toplam - indexModel.Aktif;
+            model.AktifCount = q.Count(p => p.IsAktif); 
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.IsAktif).ThenByDescending(t => t.Tarih);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).Select(s => new FrMesajlar
             {

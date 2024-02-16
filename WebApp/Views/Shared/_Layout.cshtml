@@ -213,7 +213,9 @@
                 <!-- TOGGLE NAVIGATION -->
 
                 @if (UserIdentity.Current.IsAuthenticated)
-                {
+                {   
+                    var prevUserKey = UserIdentity.Current.Informations.FirstOrDefault(p => p.Key == "PrevUserKey");
+
                     <!-- PROFILE -->
                     <li class="dropdown user pull-right" style="padding-top: 0px; padding-bottom: 0px;">
                         <a style="padding-bottom: 0px;" href="javascript:void(0)" class="dropdown-toggle" data-close-others="true">
@@ -224,6 +226,10 @@
                         </a>
                         <ul class="xn-drop-left animated zoomIn" style="z-index:997;">
                             <li><a href="javascript:void(0)" onclick="detayGor(@UserIdentity.Current.Id)"><i class="fa fa-user"></i>Detay Göster</a></li>
+                            @if (prevUserKey.Key != null)
+                            {
+                                <li><a href="@Url.Action("SetLogin","Kullanicilar",new { UserIdentity.Current.UserKey,key=prevUserKey.Value })"><i class="fa fa-user"></i> Önceki Hesaba Geç</a></li>
+                            } 
                             @if (UserIdentity.Current.IsActiveDirectoryUser == false)
                             {
                                 <li><a href="javascript:void(0);" onclick="yeniDialogBB(null, 'Şifre Değiştir', '@(Url.Action("ParolaSifirla", "Account", new { KullaniciID = UserIdentity.Current.Id }))', 430, '@ModalSizeClass.Basic')"><span class="fa fa-lock"></span>Şifreyi değiştir</a></li>
@@ -1536,30 +1542,50 @@
             var TableID = "#Filter_Table_" + gID;
             var TableColumn = ".Filter_Col_" + gID;
             var FilterInfo = "#FilterInfo_" + gID;
-
+            var GroupFilterSelect = $(TableID).parents('table').find('.GroupFilterSelect').first();
+            var GroupFilterSelectVal = GroupFilterSelect.val();
+            if (GroupFilterSelectVal == undefined) GroupFilterSelectVal = "0";
+            var GroupFilterRowKey = "group_" + GroupFilterSelectVal;
             if (_val == null || _val.trim() == "") {
                 $(TableID).find('.MainRow').each(function (inx, filtrx) {
-                    $(filtrx).removeClass('hide');
-                    if ($(filtrx).next().hasClass('MainRow2')) {
-                        if ($(filtrx).find('span').first().hasClass('fa-angle-down')) {
-                            $(filtrx).next().removeClass('hide');
-                        }
-                        else {
-                            $(filtrx).next().addClass('hide');
+
+                    if (GroupFilterSelectVal != "0") {
+                        if (!$(filtrx).hasClass(GroupFilterRowKey)) $(filtrx).addClass('hide');
+                        else $(filtrx).removeClass('hide');
+
+                    }
+                    else { 
+                        $(filtrx).removeClass('hide'); 
+                        if ($(filtrx).next().hasClass('MainRow2')) {
+                            if ($(filtrx).find('span').first().hasClass('fa-angle-down')) {
+                                $(filtrx).next().removeClass('hide');
+                            }
+                            else {
+                                $(filtrx).next().addClass('hide');
+                            }
                         }
                     }
                 });
-                $(FilterInfo).html("");
+                if (GroupFilterSelectVal != "0") {
+                    var toplam = $(TableID).find('.MainRow').length;
+                    var Gizli = $(TableID).find('.MainRow.hide').length;
+                    var gosterilen = toplam - Gizli;
+                    $(FilterInfo).html("<span class='label label-info label-form'>[Aranan:  %<span style='color:maroon;'>" + _val + "</span>%] [Bulunan: <span style='color:maroon;'>" + gosterilen + "</span>]</span>");
+                }
+                else  $(FilterInfo).html("");
             }
             else {
-                var toplam = $(TableID).find('.MainRow').length;
                 $(TableID).find('.MainRow').each(function (inx, filtrx) {
                     var show = false;
+
                     $(filtrx).find(TableColumn).each(function (inx2, filtrx2) {
                         var gVal = $(filtrx2).text().trim().replace(/İ/g, 'i').replace(/I/g, 'ı').toLowerCase();
                         var AShow = gVal.indexOf(_val) > -1;
                         if (AShow) show = true;
-                    });
+                    }); 
+                    if (GroupFilterSelectVal != "0" && show) {
+                        if (!$(filtrx).hasClass(GroupFilterRowKey)) show = false;
+                    }
                     if (show) {
                         $(filtrx).removeClass('hide');
                         if ($(filtrx).next().hasClass('MainRow2')) {
@@ -1578,6 +1604,7 @@
                         }
                     }
                 });
+                var toplam = $(TableID).find('.MainRow').length;
                 var Gizli = $(TableID).find('.MainRow.hide').length;
                 var gosterilen = toplam - Gizli;
                 $(FilterInfo).html("<span class='label label-info label-form'>[Aranan:  %<span style='color:maroon;'>" + _val + "</span>%] [Bulunan: <span style='color:maroon;'>" + gosterilen + "</span>]</span>");

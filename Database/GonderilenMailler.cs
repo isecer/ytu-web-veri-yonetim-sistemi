@@ -38,7 +38,7 @@ namespace Database
         public virtual ICollection<GonderilenMailEkleri> GonderilenMailEkleris { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GonderilenMailKullanicilar> GonderilenMailKullanicilars { get; set; }
-        public virtual Kullanicilar Kullanicilar { get; set; }
         public virtual Mesajlar Mesajlar { get; set; }
+        public virtual Kullanicilar Kullanicilar { get; set; }
     }
 }

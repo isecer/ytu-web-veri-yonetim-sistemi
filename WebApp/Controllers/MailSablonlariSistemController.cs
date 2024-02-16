@@ -53,10 +53,8 @@ namespace WebApp.Controllers
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif);
 
             model.RowCount = q.Count();
-            var IndexModel = new MIndexBilgi();
-            IndexModel.Toplam = model.RowCount;
-            if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
-            else q = q.OrderBy(t => t.SablonTipAdi);
+            model.AktifCount = q.Count(p => p.IsAktif); 
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(t => t.SablonTipAdi);
             model.Data = q.Skip(model.StartRowIndex).Take(model.PageSize).ToList();
 
             ViewBag.MailSablonTipID = new SelectList(MailIslemleriBus.CmbMailSablonTipleri(true), "Value", "Caption", model.MailSablonTipID);

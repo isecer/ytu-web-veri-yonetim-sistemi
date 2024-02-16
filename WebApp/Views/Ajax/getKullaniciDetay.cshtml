@@ -7,6 +7,7 @@
     Layout = null;
     var resimVar = (bool)ViewBag.ResimVar;
     var kYetki = RoleNames.KullaniciKayit.InRole();
+    var kHesabaGecme = RoleNames.KullaniciHesabinaGecmeYetkisi.InRole() && UserIdentity.Current.Id!=Model.KullaniciID;
 
     var roller = (URoles)ViewBag.KRoller;
 
@@ -67,7 +68,13 @@
                                             <tr>
                                                 <td>Kullanıcı Adı</td>
                                                 <td>:</td>
-                                                <td>@Model.KullaniciAdi</td>
+                                                <td>
+                                                    @Model.KullaniciAdi
+                                                    @if (kHesabaGecme)
+                                                    {
+                                                        <a href="@Url.Action("SetLogin","Kullanicilar", new { Model.UserKey })" target="_blank"><i class="fa fa-arrow-circle-o-left"></i> Hesaba Geç</a>
+                                                    }
+                                                </td>
                                             </tr>
 
                                             <tr>
@@ -83,17 +90,17 @@
                                             <tr>
                                                 <td>Birim Yetkisi</td>
                                                 <td>:</td>
-                                                <td>@Model.TableRollID[RollTableIDName.BirimID].Count</td>
-                                            </tr>  
+                                                <td>@Model.TableRollId[RollTableIdName.BirimId].Count</td>
+                                            </tr>
                                             <tr>
                                                 <td>Hesap No Yetkisi</td>
                                                 <td>:</td>
-                                                <td>@Model.SelectedTableRoll.Where(p => p.RoleName == RollTableIDName.GTHesapNoID).Sum(s => s.RefTableIDs.Count)</td>
+                                                <td>@Model.SelectedTableRoll.Where(p => p.RoleName == RollTableIdName.GtHesapNoId).Sum(s => s.RefTableIDs.Count)</td>
                                             </tr>
                                             <tr>
                                                 <td>Hesap Kodu Yetkisi</td>
                                                 <td>:</td>
-                                                <td>@Model.SelectedTableRoll.Where(p => p.RoleName == RollTableIDName.GTHesapKodID).Sum(s => s.RefTableIDs.Count)</td>
+                                                <td>@Model.SelectedTableRoll.Where(p => p.RoleName == RollTableIdName.GtHesapKodId).Sum(s => s.RefTableIDs.Count)</td>
                                             </tr>
                                             <tr>
                                                 <td>Oluşturma Tarihi</td>
@@ -219,7 +226,6 @@
                                         _pRefresh(_panel, false);
                                         $('#GetImageUploadForm').ajaxForm({
                                             success: function (result) {
-                                                debugger
                                                 if (result.mMessage.IsSuccess) {
                                                     toastr["success"](result.mMessage.Title, "Resim Kaydetme İşlemi");
                                                     var src =  result.ResimAdi + "?time=" + new Date();

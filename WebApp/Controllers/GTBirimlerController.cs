@@ -44,9 +44,8 @@ namespace WebApp.Controllers
                      }).AsQueryable();
 
             model.RowCount = q.Count();
-            if (!model.Sort.IsNullOrWhiteSpace()) q = q.OrderBy(model.Sort);
-            else q = q.OrderBy(o => o.BirimAdi);
-            var IndexModel = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Where(p => !p.IsAktif).Count() };
+            model.AktifCount = q.Count(p => p.IsAktif);
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.BirimAdi); 
 
 
 

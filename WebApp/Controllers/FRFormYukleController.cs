@@ -25,8 +25,8 @@ namespace WebApp.Controllers
         // GET: FRFormYukle
         public ActionResult Index()
         {
-            var birimId = UserIdentity.GetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIDName.BirimID);
-            var frDonemId = UserIdentity.GetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIDName.DonemID);
+            var birimId = UserIdentity.GetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIdName.BirimId);
+            var frDonemId = UserIdentity.GetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIdName.DonemId);
 
             if (!db.FRDonemleris.Any(a => a.FRDonemID == frDonemId)) frDonemId = db.FRDonemleris.OrderByDescending(o => o.Yil).Select(s => s.FRDonemID).FirstOrDefault();
             return Index(new FmFrFormYukle { PageSize = 30, FrDonemId = frDonemId, Expand = frDonemId.HasValue, BirimId = birimId });
@@ -35,10 +35,10 @@ namespace WebApp.Controllers
         public ActionResult Index(FmFrFormYukle model)
         {
             model.FrDonemId = model.FrDonemId ?? 0;
-            var birimYetkileri = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
+            var birimYetkileri = UserIdentity.Current.TableRollId[RollTableIdName.BirimId];
 
-            UserIdentity.SetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIDName.BirimID, model.BirimId);
-            UserIdentity.SetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIDName.DonemID, model.FrDonemId);
+            UserIdentity.SetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIdName.BirimId, model.BirimId);
+            UserIdentity.SetPageSelectedTableId(RoleNames.FRFormYukle, RollTableIdName.DonemId, model.FrDonemId);
 
             var surecBilgi = FrDonemlerBus.GetFrDonemKontrol(model.FrDonemId.Value);
             model.SurecBilgi = surecBilgi;
@@ -69,7 +69,7 @@ namespace WebApp.Controllers
             if (model.FormYuklemeDurumId.HasValue) q = q.Where(p => p.FormYuklendi == model.FormYuklemeDurumId.Value);
 
             model.RowCount = q.Count();
-            var indexModel = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(c => !c.FormYuklendi), Aktif = q.Count(c => c.FormYuklendi) };
+            model.AktifCount = q.Count(p => p.FormYuklendi);
 
 
             q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.DosyaAdi);
@@ -123,7 +123,7 @@ namespace WebApp.Controllers
             {
                 mMessage.Messages.Add(frDonem.DonemYilAdi + " Aktif değildir veri yükleme işlemi yapılamaz!");
             }
-            else if (!UserIdentity.Current.TableRollId[RollTableIDName.BirimID].Contains(birimId))
+            else if (!UserIdentity.Current.TableRollId[RollTableIdName.BirimId].Contains(birimId))
             {
                 mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim için yetkili değilsiniz.");
             }
@@ -224,14 +224,14 @@ namespace WebApp.Controllers
         }
         public ActionResult GetDetail(int frDonemId, int birimId, int frFormId)
         {
-            var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
-            var mdl = new FRFaaliyetDetayModel
+            var birimIDs = UserIdentity.Current.TableRollId[RollTableIdName.BirimId];
+            var mdl = new FrFaaliyetDetayModel
             {
-                FRDonemID = frDonemId,
-                BirimID = birimId,
-                FRFormID = frFormId
+                FrDonemId = frDonemId,
+                BirimId = birimId,
+                FrFormId = frFormId
             };
-            mdl.BirimBilgi = db.Vw_BirimlerTree.First(p => p.BirimID == mdl.BirimID);
+            mdl.BirimBilgi = db.Vw_BirimlerTree.First(p => p.BirimID == mdl.BirimId);
             mdl.FrFaaliyetler = (from s in db.FRDonemleris.Where(p => p.FRDonemID == frDonemId)
                                  join df in db.FRDonemlerForms.Where(p => p.FRDonemlerFormBirims.Any(a => birimIDs.Contains(a.BirimID) && a.BirimID == birimId)) on s.FRDonemID equals df.FRDonemID
                                  join fr in db.FRFormlars on df.FRFormID equals fr.FRFormID
@@ -264,7 +264,7 @@ namespace WebApp.Controllers
                 UserIdentity.Current.IsAuthenticated
             }, "application/json", JsonRequestBehavior.AllowGet);
         }
-        public ActionResult DetaySablon(FRFaaliyetDetayModel model)
+        public ActionResult DetaySablon(FrFaaliyetDetayModel model)
         {
             return View(model);
         }
@@ -284,7 +284,7 @@ namespace WebApp.Controllers
                 var frDonemId = kayit.FRDonemlerForm.FRDonemID;
 
                 pModel.FRFormID = frFormId;
-                var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
+                var birimIDs = UserIdentity.Current.TableRollId[RollTableIdName.BirimId];
                 var mMessage = new MmMessage
                 {
                     Title = "Faaliyet Raporu Form Dosyası Silme İşlemi",

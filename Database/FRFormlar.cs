@@ -39,8 +39,8 @@ namespace Database
         public virtual ICollection<FRDonemlerFormBirim> FRDonemlerFormBirims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FRDonemlerFormGirisleri> FRDonemlerFormGirisleris { get; set; }
-        public virtual Kullanicilar Kullanicilar { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FRFormlarBirim> FRFormlarBirims { get; set; }
+        public virtual Kullanicilar Kullanicilar { get; set; }
     }
 }

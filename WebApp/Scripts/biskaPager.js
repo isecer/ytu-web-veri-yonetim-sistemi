@@ -1,8 +1,7 @@
 ﻿
 $(function () {
     $('.pgrIlk').click(function () {
-        $('#PageIndex').val(1);
-        debugger
+        $('#PageIndex').val(1); 
         frmSubmit();
 
     });

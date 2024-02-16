@@ -30,8 +30,7 @@ namespace BiskaUtil
         public bool? IsActiveDirectoryImpersonateWorking { get; set; }
         public string ImagePath { get; set; }
         public Dictionary<string, List<int>> TableRollId { get; set; }
-        public List<SelectedTableRoll> SelectedTableRoll { get; set; }
-
+        public List<SelectedTableRoll> SelectedTableRoll { get; set; } 
         private Dictionary<string, object> informations = new Dictionary<string, object>();
         public Dictionary<string, object> Informations
         {

@@ -24,7 +24,7 @@ namespace WebApp.Business
             if (bosSecimVar) dct.Add(new ComboModelInt());
             using (var db = new VysDBEntities())
             {
-                var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.BirimID];
+                var birimIDs = UserIdentity.Current.TableRollId[RollTableIdName.BirimId];
                 var data = db.Vw_BirimlerTree.Where(p => p.IsMaddeEklenebilir && birimIDs.Contains(p.BirimID)).OrderBy(o => o.BirimTreeAdi).ToList();
                 foreach (var item in data)
                 {
@@ -41,7 +41,7 @@ namespace WebApp.Business
             using (var db = new VysDBEntities())
             {
 
-                var birimIDs = UserIdentity.Current.TableRollId[RollTableIDName.GTBirimID];
+                var birimIDs = UserIdentity.Current.TableRollId[RollTableIdName.GtBirimId];
                 var data = db.GTBirimlers.ToList().Where(p => birimIDs.Contains(p.GTBirimID)).OrderBy(o => o.BirimAdi).ToList();
                 foreach (var item in data)
                 {
@@ -58,7 +58,7 @@ namespace WebApp.Business
             if (bosSecimVar) dct.Add(new ComboModelInt());
             using (var db = new VysDBEntities())
             {
-                var gtHesapKodIDs = UserIdentity.GetSelectedTableIDs(RollTableIDName.GTHesapKodID, gtBirimId).SelectMany(s => s.RefTableIDs).ToList();
+                var gtHesapKodIDs = UserIdentity.GetSelectedTableIDs(RollTableIdName.GtHesapKodId, gtBirimId).SelectMany(s => s.RefTableIDs).ToList();
                 var data = db.GTHesapKodlaris.Where(p2 => gtHesapKodIDs.Contains(p2.GTHesapKodID)).OrderBy(o => o.HesapKodAdi).ToList();
                 foreach (var item in data)
                 {
@@ -84,15 +84,16 @@ namespace WebApp.Business
             var ui = new UserIdentity(userName)
             {
                 YetkiGrupId = kull.YetkiGrupID,
-                Id = kull.KullaniciID
-            };
+                Id = kull.KullaniciID,
+                UserKey = kull.UserKey,
+            };  
             ui.Roles.AddRange(roller.TumRoller.Select(s => s.RolAdi).ToArray());
             ui.AdSoyad = kull.Ad + " " + kull.Soyad;
             ui.Description = kull.Aciklama;
             ui.EMail = kull.EMail;
             ui.IsAdmin = kull.IsAdmin;
             ui.BirimId = kull.BirimID;
-            ui.TableRollId = kull.TableRollID;
+            ui.TableRollId = kull.TableRollId;
             ui.SelectedTableRoll = kull.SelectedTableRoll;
             ui.HasToChahgePassword = kull.SifresiniDegistirsin;
             ui.IsActiveDirectoryImpersonateWorking = false;
@@ -137,6 +138,7 @@ namespace WebApp.Business
                                    select new FrKullanicilar
                                    {
                                        KullaniciID = s.KullaniciID,
+                                       UserKey = s.UserKey,
                                        YetkiGrupID = s.YetkiGrupID,
                                        YetkiGrupAdi = ktl.YetkiGrupAdi,
                                        Ad = s.Ad,
@@ -182,12 +184,12 @@ namespace WebApp.Business
 
                     if (frKullanici.YetkiGrupID == 2) //admin ise
                     {
-                        frKullanici.TableRollID.Add(RollTableIDName.BirimID, db.Birimlers.Where(p => p.IsMaddeEklenebilir).Select(s => s.BirimID).ToList());
+                        frKullanici.TableRollId.Add(RollTableIdName.BirimId, db.Birimlers.Where(p => p.IsMaddeEklenebilir).Select(s => s.BirimID).ToList());
 
                     }
                     else
                     {
-                        frKullanici.TableRollID.Add(RollTableIDName.BirimID, frKullanici.KullaniciBirimleris.Select(s => s.BirimID).ToList());
+                        frKullanici.TableRollId.Add(RollTableIdName.BirimId, frKullanici.KullaniciBirimleris.Select(s => s.BirimID).ToList());
                     }
 
 
@@ -199,9 +201,9 @@ namespace WebApp.Business
                         var surec = db.VASurecleris.OrderByDescending(o => o.BaslangicTarihi).FirstOrDefault();
                         if (surec != null) vaSurecId = surec.VASurecID;
                     }
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.DonemID, RoleName = RoleNames.VeriGirisi, SelectedId = vaSurecId });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.DonemId, RoleName = RoleNames.VeriGirisi, SelectedId = vaSurecId });
 
-                    var kullaniciBirimIDs = frKullanici.TableRollID[RollTableIDName.BirimID];
+                    var kullaniciBirimIDs = frKullanici.TableRollId[RollTableIdName.BirimId];
                     var vgBirimId = (from s in db.VASurecleriMaddeBirims.Where(p => kullaniciBirimIDs.Contains(p.BirimID) && p.VASurecleriMadde.IsAktif)
                                      join b in db.Vw_BirimlerTree on s.BirimID equals b.BirimID
                                      select new
@@ -209,21 +211,21 @@ namespace WebApp.Business
                                          b.BirimID,
                                          b.BirimTreeAdi
                                      }).OrderBy(o => o.BirimTreeAdi).Select(s => s.BirimID).FirstOrDefault();
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.BirimID, RoleName = RoleNames.VeriGirisi, SelectedId = vgBirimId });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.BirimId, RoleName = RoleNames.VeriGirisi, SelectedId = vgBirimId });
 
 
                     // Gelir Takip 
 
                     var kullaniciGtHesapNoIDs = frKullanici.KullaniciGTHesapNumaralaris.GroupBy(g => new { g.GTBirimID }).Select(s => new SelectedTableRoll
                     {
-                        RoleName = RollTableIDName.GTHesapNoID,
+                        RoleName = RollTableIdName.GtHesapNoId,
                         TableId = s.Key.GTBirimID,
                         RefTableIDs = s.Select(s2 => s2.GTHesapNoID).ToList()
                     }).ToList();
                     frKullanici.SelectedTableRoll.AddRange(kullaniciGtHesapNoIDs);
                     var kullaniciGtHesapKodIDs = frKullanici.KullaniciGTHesapKodlaris.GroupBy(g => new { g.GTBirimID }).Select(s => new SelectedTableRoll
                     {
-                        RoleName = RollTableIDName.GTHesapKodID,
+                        RoleName = RollTableIdName.GtHesapKodId,
                         TableId = s.Key.GTBirimID,
                         RefTableIDs = s.Select(s2 => s2.GTHesapKodID).ToList()
                     }).ToList();
@@ -231,36 +233,36 @@ namespace WebApp.Business
 
                     var gtBirimIDs = kullaniciGtHesapNoIDs.Select(s => s.TableId).ToList();
                     gtBirimIDs.AddRange(kullaniciGtHesapKodIDs.Select(s => s.TableId));
-                    frKullanici.TableRollID.Add(RollTableIDName.GTBirimID, gtBirimIDs);
+                    frKullanici.TableRollId.Add(RollTableIdName.GtBirimId, gtBirimIDs);
 
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.GTBirimID, RoleName = RoleNames.GTVeriGirisi, SelectedId = gtBirimIDs.FirstOrDefault() });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.GtBirimId, RoleName = RoleNames.GTVeriGirisi, SelectedId = gtBirimIDs.FirstOrDefault() });
                     var gtDonemId = GtDonemlerBus.GetAktifGtDonemId();
                     if (gtDonemId.HasValue == false)
                     {
                         var donem = db.GTDonemleris.OrderByDescending(o => o.BaslangicTarihi).FirstOrDefault();
                         if (donem != null) gtDonemId = donem.GTDonemID;
                     }
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.DonemID, RoleName = RoleNames.GTVeriGirisi, SelectedId = gtDonemId });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.DonemId, RoleName = RoleNames.GTVeriGirisi, SelectedId = gtDonemId });
 
                     // Faaliyet Rapor
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.BirimID, RoleName = RoleNames.FRFormYukle, SelectedId = kullaniciBirimIDs.FirstOrDefault() });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.BirimId, RoleName = RoleNames.FRFormYukle, SelectedId = kullaniciBirimIDs.FirstOrDefault() });
                     var frDonemId = FrDonemlerBus.GetAktifFrDonemId();
                     if (frDonemId.HasValue == false)
                     {
                         var donem = db.FRDonemleris.OrderByDescending(o => o.BaslangicTarihi).FirstOrDefault();
                         if (donem != null) frDonemId = donem.FRDonemID;
                     }
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.DonemID, RoleName = RoleNames.FRFormYukle, SelectedId = frDonemId });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.DonemId, RoleName = RoleNames.FRFormYukle, SelectedId = frDonemId });
 
                     // Bütçe Hazırlık Rapor
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.BirimID, RoleName = RoleNames.BFRFormYukle, SelectedId = kullaniciBirimIDs.FirstOrDefault() });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.BirimId, RoleName = RoleNames.BFRFormYukle, SelectedId = kullaniciBirimIDs.FirstOrDefault() });
                     var bfrDonemId = BfrDonemlerBus.GetAktifBfrDonemId();
                     if (bfrDonemId.HasValue == false)
                     {
                         var donem = db.BFRDonemleris.OrderByDescending(o => o.BaslangicTarihi).FirstOrDefault();
                         if (donem != null) bfrDonemId = donem.BFRDonemID;
                     }
-                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIDName.DonemID, RoleName = RoleNames.BFRFormYukle, SelectedId = bfrDonemId });
+                    frKullanici.SelectedTableRoll.Add(new SelectedTableRoll { TableIdName = RollTableIdName.DonemId, RoleName = RoleNames.BFRFormYukle, SelectedId = bfrDonemId });
 
 
                 }

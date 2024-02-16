@@ -68,7 +68,7 @@
                                                                 @if (kayitYetki && (item.AktifSurec || UserIdentity.Current.IsAdmin))
                                                                 {
                                                                     <li>
-                                                                        <a href="javascript:void(0)" onclick="GetKanitDosyalari(@item.VASurecID)"><i class="fa fa-file-archive-o fa-lg"></i>Kanıt Dosyalarını İndir</a>
+                                                                        <a href="javascript:void(0)" onclick="KanitDosyalariIndirDialog(@item.VASurecID)"><i class="fa fa-file-archive-o fa-lg"></i>Kanıt Dosyalarını İndir</a>
                                                                     </li>
                                                                     <li role="presentation" class="dropdown-header">Kopyalama</li>
                                                                     <li>
@@ -168,10 +168,10 @@
     function SubData(id) {
         var _panel = $('#pnglDB_' + id);
         var tID = "1";
-        var sDurumID = "";
+        var sDurumID = ""; 
         if ($('#selectedTb_' + id).length > 0) {
             var tID = $('#selectedTb_' + id).val();
-            if (tID == 1)
+            if (tID == 2)
                 sDurumID = $('#selectedBirimDurumID_' + id).val();
             else sDurumID = $('#selectedMaddeDurumID_' + id).val();
         }
@@ -194,8 +194,7 @@
     }
 
 
-    function setselectedBirimDurumID(val, _VASurecID) {
-
+    function setselectedBirimDurumID(val, _VASurecID) {  
         $('#selectedBirimDurumID_' + _VASurecID).val(val);
     }
     function setselectedMaddeDurumID(val, _VASurecID) {
@@ -219,12 +218,7 @@
             SubData(bsvID, false, null);
         }
     }
-    function GetKanitDosyalari(vaSurecId) {
-        toastr["success"]("Kanıt dosyaları indirilmeye başlandı. Bu işlem dosyaların büyüklüğüne göre uzun sürebilir. İşlem yapılırken bekleyiniz.", "Kanıt Dosyası İndirme İşlemi");
 
-        window.location.href = '@Url.Action("KanitDosyalariniIndir", "SurecIslemleri")?vaSurecId=' + vaSurecId; 
-       
-    }
     function GetBirimMaddeleriView(VASurecID, BirimID, RwID) {
         var _panel = $('#pnl-' + RwID).first();
         _pRefresh(_panel, false);
@@ -277,12 +271,79 @@
             }
         });
     }
-    function VeriKopyalaDialog(id) {
+       function KanitDosyalariIndirDialog(vaSurecId) {
+       toastr["success"]("Kanıt dosyaları indirilmeye başlandı. Bu işlem dosyaların büyüklüğüne göre uzun sürebilir. İşlem yapılırken bekleyiniz.", "Kanıt Dosyası İndirme İşlemi");
+
+
+
+   }
+    function KanitDosyalariIndirDialog(vaSurecId) {
+      $.ajax({
+          url: '@Url.Action("ViewKanitDosyalariIndir", "SurecIslemleri")',
+          type: 'POST',
+          cache: false,
+          data: { 'vaSurecId': vaSurecId },
+          success: function (result) {
+                  var btbxxFS = bootbox.dialog({
+                      message: result,
+                      title: "<i class='fa fa-file-archive-o fa-lg'></i> Kanıt Dosyaları İndirme İşlemi",
+                      buttons: {
+                          success: {
+                              label: 'İndirmeye Başla',
+                              className: "btn-primary btnIndirmeyeBasla",
+                              callback: function (event) {
+                                  var indirmeBtn = $(btbxxFS).find('.btnIndirmeyeBasla').first();
+                                  $(indirmeBtn).html("İndiriliyor...");
+                                  var pnlx = $(btbxxFS).find('.modal-dialog').first();
+                                  _pRefresh(pnlx, false);
+                                  $('#KanitDosyalariniIndirForm').ajaxForm({
+                                      success: function (result) { 
+                                          GetMsg(result.Message);
+                                          if (result.Success) { 
+                                              var url = '@Url.Action("GetDosyalariniIndir")';
+                                              url += '?vaSurecId=' + vaSurecId;
+                                              result.maddeTurId.forEach(function (id) {
+                                                  url += '&maddeTurId=' + id;
+                                              }); 
+                                              window.location.href = url;
+                                              var _clsBtn = $('.modal-header').find('button').first();
+                                              $(_clsBtn).click();
+                                              
+                                          }
+                                      },
+                                      complete: function (cmp) {
+                                          $(indirmeBtn).html("İndirmeye Başla");
+                                          _pRefresh(pnlx, true);
+                                      }
+
+                                  });
+                                  $('#KanitDosyalariniIndirForm').submit();
+
+                                  return false;
+                              }
+                          },
+                          danger: {
+                              label: 'Kapat',
+                              className: "btn-success",
+                              callback: function () {
+                              }
+                          }
+                      }
+                  });
+
+          },
+          error: function (err) {
+              alert(err.responseText);
+          }
+      });
+
+  }
+    function VeriKopyalaDialog(vaSurecId) {
         $.ajax({
             url: '@Url.Action("VeriKopyalamaIslemi", "SurecIslemleri")',
             type: 'POST',
             cache: false,
-            data: { 'id': id },
+            data: { vaSurecId },
             success: function (result) {
                     var btbxxFS = bootbox.dialog({
                         message: result,
@@ -298,7 +359,7 @@
                                         success: function (result) {
                                             toastr[result.IsSuccess?"success":"warning"](result.Messages[0], result.Title);
                                             if (result.IsSuccess) {
-                                                SubData(id);
+                                                SubData(vaSurecId);
                                                 var _clsBtn = $('.modal-header').find('button').first();
                                                 $(_clsBtn).click();
                                             }

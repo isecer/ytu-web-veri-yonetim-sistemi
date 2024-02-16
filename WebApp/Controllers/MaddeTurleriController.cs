@@ -46,8 +46,8 @@ namespace WebApp.Controllers
             if (model.IsPlanlananDegerOlacakGelecekYil.HasValue) q = q.Where(p => p.IsPlanlananDegerOlacakGelecekYil == model.IsPlanlananDegerOlacakGelecekYil);
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif);
             model.RowCount = q.Count();
-            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.MaddeTurAdi);
-            model.CountIngfos = new MIndexBilgi() { Toplam = model.RowCount, Pasif = q.Count(p => !p.IsAktif), Aktif = q.Count(p => p.IsAktif) };
+            model.AktifCount = q.Count(p => p.IsAktif);
+            q = !model.Sort.IsNullOrWhiteSpace() ? q.OrderBy(model.Sort) : q.OrderBy(o => o.MaddeTurAdi); 
 
 
             model.Data = q.Skip(model.PagingStartRowIndex).Take(model.PageSize).ToList(); ;

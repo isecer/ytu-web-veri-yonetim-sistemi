@@ -1,5 +1,5 @@
-﻿@using WebApp.Business
-@using WebApp.Models
+﻿@using Database
+@using WebApp.Business
 @using WebApp.Utilities.Extensions
 @using WebApp.Utilities.MenuAndRoles
 @model WebApp.Utilities.Dtos.FmVeriGiris
@@ -7,6 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var kayitYetkisi = RoleNames.VeriGirisiKayitYetkisi.InRole();
     var onayYetkisi = RoleNames.VeriGirisiOnayYetkisi.InRole();
+    var birimData = (Birimler[])ViewBag.BirimData;
 }
 
 
@@ -62,7 +63,16 @@
                                 <table style="width:100%;table-layout:fixed;">
                                     <tr>
                                         <td width="120">Birim</td>
-                                        <td>@Html.DropDownList("BirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                        <td>
+                                            @* @Html.DropDownList("BirimID", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })*@
+                                            <select class="form-control" id="BirimID" name="BirimID" onchange="$('#frmVeriGirisi').submit();" style="padding:0px;">
+                                                <option value=""></option>
+                                                @foreach (var birim in birimData)
+                                                {
+                                                    <option value="@birim.BirimID" style="color:@(birim.UstBirimID.HasValue ? "black" : "gray");" @(birim.UstBirimID.HasValue ? "" : "disabled") @((Model.BirimId == birim.BirimID).ToSelected())>@birim.BirimAdi</option>
+                                                }
+                                            </select>
+                                        </td>
                                     </tr>
                                 </table>
 
@@ -71,7 +81,10 @@
                                 <table style="width:100%;table-layout:fixed;">
                                     <tr>
                                         <td width="120">Veri Onay Durum</td>
-                                        <td>@Html.DropDownList("VeriGirisiOnaylandi", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })</td>
+                                        <td>
+                                            @Html.DropDownList("VeriGirisiOnaylandi", null, new { @class = "form-control", style = "padding:0px;", onchange = "$('#frmVeriGirisi').submit();" })
+
+                                        </td>
                                     </tr>
                                 </table>
                             </td>
@@ -121,10 +134,10 @@
                     <h3 class="panel-title"><i class="fa fa-file-text-o fa-lg"></i> Maddeler</h3>
                     <ul class="panel-controls">
 
-                        <li><span class="label label-info" title="Veri Girişi Tamamlanan Sayısı"><i class="fa fa-calendar"></i> VG Tamamlanmayanan: <b>@Model.CountIngfos.Pasif</b></span></li>
-                        <li><span class="label label-success" title="Veri Girişi Tamamlanmayan Madde Say"><i class="fa fa-calendar-check-o"></i> VG Tamamlanan: <b>@Model.CountIngfos.Aktif</b></span></li>
+                        <li><span class="label label-info" title="Veri Girişi Tamamlanan Sayısı"><i class="fa fa-calendar"></i> VG Tamamlanmayanan: <b>@Model.PasifCount</b></span></li>
+                        <li><span class="label label-success" title="Veri Girişi Tamamlanmayan Madde Say"><i class="fa fa-calendar-check-o"></i> VG Tamamlanan: <b>@Model.AktifCount</b></span></li>
 
-                        <li><span class="label label-primary" title="Toplam Madde Sayısı"><i class="fa fa-calendar-o"></i> T.M.S: <b>@Model.CountIngfos.Toplam</b></span></li>
+                        <li><span class="label label-primary" title="Toplam Madde Sayısı"><i class="fa fa-calendar-o"></i> T.M.S: <b>@Model.RowCount</b></span></li>
                     </ul>
                 </div>
                 <div class="panel-body">
@@ -161,6 +174,7 @@
                                             </table>
                                         </td>
                                         <td style="font-size:8pt;">
+                                            <b>@item.BirimAdi</b><br />
                                             <b>@item.MaddeTurAdi</b><br />
                                             <b>[@item.MaddeKod]</b> -@item.MaddeAdi
                                         </td>
@@ -171,7 +185,7 @@
 
                                     <tr class="hide cls-ana-@rwId">
                                         <td colspan="3" style="padding-left:75px;">
-                                            <div class="panel" style="margin: 0px; padding: 0px;" id="pnl_@rwId"> 
+                                            <div class="panel" style="margin: 0px; padding: 0px;" id="pnl_@rwId">
                                                 <div class="panel-body" style="margin: 0px; padding: 0px;" id="content_@rwId">
 
                                                 </div>
@@ -219,7 +233,7 @@
     function GetDetail(vaSurecId, birimId, maddeId) {
         var RwID = vaSurecId + '_' + birimId + '_' + maddeId;
         var _panel = $('#pnl_' + RwID);
-        _pRefresh(_panel, false); 
+        _pRefresh(_panel, false);
             $.ajax({
                 url: '@Url.Action("GetDetail", "VeriGirisi")',
                 data: { vaSurecId, birimId, maddeId },
@@ -401,7 +415,7 @@
                 birimId,
                 maddeId,
                 vaCokluVeriDonemId,
-                girilenDeger, 
+                girilenDeger,
             };
             $.ajax({
                 url: '@Url.Action("VgPost", "VeriGirisi")',
@@ -410,7 +424,7 @@
                 cache: false,
                 dataType: "json",
                 data: dataModel,
-                success: function (result) { 
+                success: function (result) {
                     if (result.ShowKanitDosyaEkle) {
                         GetKanitDosyalari(vaSurecId, birimId, maddeId, vaCokluVeriDonemId);
                         setTimeout(function () {
@@ -418,8 +432,9 @@
                         }, 10);
                     }
                     else {
-                        if (result.Message.Messages.length > 0) GetMsg(result.Message);
-                    } 
+                        if (!result.Message.IsSuccess) GetMsg(result.Message);
+                        else toastr[result.Message.IsSuccess ? "success" : "info"](result.Message.Messages[0], result.Message.Title);
+                    }
                     GetDetail(vaSurecId, birimId, maddeId);
                     _pRefresh(_panel, true);
                 },
@@ -439,7 +454,7 @@
         function VeriGirisOnay(sndr, vaSurecID, birimId, maddeId,vaCokluVeriDonemId) {
             var RwID = vaSurecID + '_' + birimId + '_' + maddeId;
             var _panel = $('#pnl_' + RwID);
-            _pRefresh(_panel, false); 
+            _pRefresh(_panel, false);
             var veriGirisiOnaylandi = $(sndr).prop('checked');
             $.ajax({
                 url: '@Url.Action("VgOnay", "VeriGirisi")',

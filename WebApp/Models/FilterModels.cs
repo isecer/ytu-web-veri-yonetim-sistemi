@@ -58,63 +58,31 @@ namespace WebApp.Models
         public string MaddeTurAdi { get; set; }
         public int ToplamMaddeCount { get; set; }
     }
-    public class FmVeriBilgisi : PagerOption
-    {
-        public int? BirimID { get; set; }
-
-        public List<int> VeriYillari { get; set; }
-        public IEnumerable<FrVeriBilgisi> Data { get; set; }
-    }
-    public class FrVeriBilgisi
-    {
-        public int MaddeID { get; set; }
-        public string MaddeKod { get; set; }
-        public string MaddeAdi { get; set; }
-        public List<VASurecleriMadde> Veriler { get; set; }
-    }
 
 
-
-
-
-    public class FRFaaliyetDetayModel
+    public class FrFaaliyetDetayModel
     {
         public Vw_BirimlerTree BirimBilgi { get; set; }
         public FrFrFormYukle FrFaaliyetler { get; set; }
-        public int FRDonemID { get; set; }
-        public int BirimID { get; set; }
-        public int FRFormID { get; set; }
+        public int FrDonemId { get; set; }
+        public int BirimId { get; set; }
+        public int FrFormId { get; set; }
     }
-    public class FRFaaliyetDetayModelBF
+    public class FrFaaliyetDetayModelBf
     {
         public Vw_BirimlerTree BirimBilgi { get; set; }
         public FrBfrFormYukle BFrFaaliyetler { get; set; }
-        public int BFRDonemID { get; set; }
-        public int BirimID { get; set; }
-        public int BFRFormID { get; set; }
+        public int BfrDonemId { get; set; }
+        public int BirimId { get; set; }
+        public int BfrFormId { get; set; }
     }
 
 
-    public class KmVeriGiris : VASurecleriMadde
-    {
-        public decimal? PlanlananDeger { get; set; }
-        public decimal? PlanlananDegerGelecekYil { get; set; }
-        public decimal? HesaplananSonucDegeri { get; set; }
-        public string YilSonuDegerHesaplamaAdi { get; set; }
-        public int GirilecekVeriSayisi { get; set; }
-        public int GirilenVeriSayisi { get; set; }
-        public int DosyaCount { get; set; }
-        public bool VeriGirisiOnaylandi { get; set; }
-        public string VeriGirisiOnaylayan { get; set; }
-        public DateTime? OnayIslemTarihi { get; set; }
-        public VASurecleriMaddeBirim MaddeBirim { get; set; }
-        public string Aciklama { get; set; }
-    }
     public class VgModel
     {
-        public int VASurecID { get; set; }
-        public int BirimID { get; set; }
-        public int MaddeID { get; set; }
+        public int VaSurecId { get; set; }
+        public int BirimId { get; set; }
+        public int MaddeId { get; set; }
         public int? VaCokluVeriDonemId { get; set; }
         public bool? IsVeriVar { get; set; }
         public bool VeriGirisiOnaylandi { get; set; }
@@ -122,8 +90,8 @@ namespace WebApp.Models
     }
     public class KmSurecIslemleri : VASurecleri
     {
-        public DateTime? BaslangicTarihi { get; set; }
-        public DateTime? BitisTarihi { get; set; }
+        public new DateTime? BaslangicTarihi { get; set; }
+        public new DateTime? BitisTarihi { get; set; }
         public bool BirimleriKopyala { get; set; }
         public bool MaddeleriKopyala { get; set; }
         public List<int> MaddeTurIds { get; set; } = new List<int>();
@@ -131,14 +99,11 @@ namespace WebApp.Models
 
     public class FmKullanicilar : PagerOption
     {
-
-        public int KullaniciID { get; set; }
-
-        public int? BirimID { get; set; }
-        public int? YetkiliBirimID { get; set; }
-        public int? UnvanID { get; set; }
+        public int? BirimId { get; set; }
+        public int? YetkiliBirimId { get; set; }
+        public int? UnvanId { get; set; }
         public bool? IsAktif { get; set; }
-        public int? YetkiGrupID { get; set; }
+        public int? YetkiGrupId { get; set; }
         public int? Cinsiyet { get; set; }
         public string KullaniciAdi { get; set; }
         public string AdSoyad { get; set; }
@@ -147,20 +112,16 @@ namespace WebApp.Models
         public bool? IsActiveDirectoryUser { get; set; }
         public bool? IsAdmin { get; set; }
         public string Aciklama { get; set; }
-        public IEnumerable<FrKullanicilar> Data { get; set; }
-        public FmKullanicilar()
-        {
-            Data = new FrKullanicilar[0];
-        }
+        public IEnumerable<FrKullanicilar> Data { get; set; } = Array.Empty<FrKullanicilar>();
     }
-    public class RollTableIDName
+    public abstract class RollTableIdName
     {
-        public static string BirimID => "BirimID";
-        public static string DonemID => "DonemID";
-        public static string MaddeTurID => "MaddeTurID";
-        public static string GTBirimID => "GTBirimID";
-        public static string GTHesapKodID => "GTHesapKodID";
-        public static string GTHesapNoID => "GTHesapNoID";
+        public static string BirimId => "BirimID";
+        public static string DonemId => "DonemID";
+        public static string MaddeTurId => "MaddeTurID";
+        public static string GtBirimId => "GTBirimID";
+        public static string GtHesapKodId => "GTHesapKodID";
+        public static string GtHesapNoId => "GTHesapNoID";
     }
 
     public class FrKullanicilar : Kullanicilar
@@ -172,32 +133,23 @@ namespace WebApp.Models
         public string BirimAdi { get; set; }
         public string BirimTreeAdi { get; set; }
 
-        public Dictionary<string, List<int>> TableRollID { get; set; }
-        public List<SelectedTableRoll> SelectedTableRoll { get; set; }
-
-
-        public FrKullanicilar()
-        {
-            TableRollID = new Dictionary<string, List<int>>();
-            SelectedTableRoll = new List<SelectedTableRoll>();
-        }
-
+        public Dictionary<string, List<int>> TableRollId { get; set; } = new Dictionary<string, List<int>>();
+        public List<SelectedTableRoll> SelectedTableRoll { get; set; } = new List<SelectedTableRoll>();
     }
 
 
     public class FmYetkiGruplari : PagerOption
     {
-        public int YetkiGrupID { get; set; }
+        public int YetkiGrupId { get; set; }
         public string YetkiGrupAdi { get; set; }
         public IEnumerable<FrYetkiGruplari> Data { get; set; }
     }
     public class FrYetkiGruplari
     {
-        public int YetkiGrupID { get; set; }
-        public string YetkiGrupAdi { get; set; }
-        public string EnstituKod { get; set; }
-        public string EnstituAdi { get; set; }
+        public int YetkiGrupId { get; set; }
+        public string YetkiGrupAdi { get; set; } 
         public int YetkiSayisi { get; set; }
+        public int KullaniciSayisi { get; set; }
     }
 
     public class FmUnvanlar : PagerOption
@@ -250,9 +202,9 @@ namespace WebApp.Models
         public string MaddeKod { get; set; }
         public string MaddeAdi { get; set; }
         public int? OgretimCount { get; set; }
-        public int? VeriGirisSekliID { get; set; }
-        public int? MaddeYilSonuDegerHesaplamaTipID { get; set; }
-        public int? MaddeTurID { get; set; }
+        public int? VeriGirisSekliId { get; set; }
+        public int? MaddeYilSonuDegerHesaplamaTipId { get; set; }
+        public int? MaddeTurId { get; set; }
         public bool? IsAktif { get; set; }
         public bool? IsCokluVeriGiris { get; set; }
         public bool? IsDosyaYuklensin { get; set; }
@@ -511,7 +463,6 @@ namespace WebApp.Models
         public string InputName { get; set; }
         public int ScrollMaxHeight { get; set; }
         public bool ShowIsDosyaYuklensin { get; set; }
-        public IEnumerable<CheckObject<ChkListDataModel>> Data { get; set; }
         public bool AllDataChecked
         {
             get
@@ -521,6 +472,8 @@ namespace WebApp.Models
 
             }
         }
+        public IEnumerable<CheckObject<ChkListDataModel>> Data { get; set; }
+        public IEnumerable<ComboModelInt> GroupFilterData { get; set; } = new List<ComboModelInt>();
         public ChkListModel(string inputName = "")
         {
             this.ScrollMaxHeight = 135;
@@ -532,10 +485,13 @@ namespace WebApp.Models
     {
         public int ID { get; set; }
         public string Code { get; set; }
+        public string GroupKey { get; set; }
         public string Caption { get; set; }
         public string Detail { get; set; }
         public bool IsDosyaYuklensin { get; set; }
     }
+
+    
     public class RaporSendPdfModel
     {
         public MemoryStream RaporMemoryStream { get; set; }
