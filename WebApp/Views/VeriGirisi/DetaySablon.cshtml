@@ -267,7 +267,7 @@
             <tr>
                 <td style="font-weight:bold;border-bottom:1px solid;"><i class="fa fa-comments-o fa-lg"></i> Veri Girişi Açıklamaları (@Model.AciklamaCount)</td>
                 <td style="border-bottom:1px solid;text-align:right;">
-                    @if (kayitYetki && Model.SurecIsAktif)
+                    @if (kayitYetki && Model.SurecIsAktif && vgElle)
                     {
                         <span style="cursor:pointer;font-size:9pt;" onclick="GetAciklamalar(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,'')"><i class="fa fa-plus fa-lg"></i> Açıklama Ekle</span>
                     }

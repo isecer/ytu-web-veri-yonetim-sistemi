@@ -386,7 +386,7 @@ namespace WebApp.Business
                 else
                 {
                     SurecMaddeGuncellemeleri(vaSurecId, maddeTurIds);
-                    SurecEslesenMaddeUpdate(vaSurecId);
+                    SurecMaddeFormulEslesenMaddeUpdate(vaSurecId);
                     SurecMaddeTuruUpdate(vaSurecId);
                     mMessage.IsSuccess = true;
                     mMessage.Messages.Add("Süreç maddeleri güncellendi.");
@@ -447,7 +447,7 @@ namespace WebApp.Business
                         surecMadde.IslemTarihi = DateTime.Now;
                         surecMadde.IslemYapanID = UserIdentity.Current.Id;
                         surecMadde.IslemYapanIP = UserIdentity.Ip;
-
+ 
 
                         bulkDeleteVaSurecleriMaddeBirims.AddRange(surecMadde.VASurecleriMaddeBirims.Where(p => itemAktarilacakMadde.BirimMaddeleris.All(a => a.BirimID != p.BirimID)).ToList());
                         bulkDeleteVaSurecleriMaddeVeriGirisDonemleris.AddRange(surecMadde.VASurecleriMaddeVeriGirisDonemleris.Where(p => itemAktarilacakMadde.MaddelerVeriGirisDonemleris.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList());
@@ -610,7 +610,7 @@ namespace WebApp.Business
             }
 
         }
-        private static void SurecEslesenMaddeUpdate(int vaSurecId)
+        private static void SurecMaddeFormulEslesenMaddeUpdate(int vaSurecId)
         {
             using (var entities = new VysDBEntities())
             {

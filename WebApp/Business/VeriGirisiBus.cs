@@ -1292,6 +1292,11 @@ namespace WebApp.Business
                 {
                     mMessage.Messages.Add("İşlem yapmaya çalıştığınız birim yetkiniz dahilinde değildir.");
                 }
+                else if (db.VASurecleriMaddeTurs.Any(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID && !p.IsVeriGirisiAcik))
+                {
+                    mMessage.Messages.Add($"{vaSurecMadde.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
+
+                }
                 else if (
                           (girilecekVeriCnt == birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(c => c.BirimID == birimId && c.VeriGirisiOnaylandi)
                             ||
@@ -1308,11 +1313,7 @@ namespace WebApp.Business
                 {
                     mMessage.Messages.Add("Açıklama bilgisi 2048 karakterden daha uzun olamaz.");
                 }
-                if (db.VASurecleriMaddeTurs.Any(p => p.VASurecID == vaSurecId && p.MaddeTurID == birimMadde.VASurecleriMadde.MaddeTurID && !p.IsVeriGirisiAcik))
-                {
-                    mMessage.Messages.Add($"{vaSurecMadde.MaddeTurleri.MaddeTurAdi} madde türüne ait maddeler için veri giriş işlemleri kapalıdır. Detaylı bilgi için sistem yöneticisi ile iletişime geçiniz.");
-
-                }
+              
 
                 if (mMessage.Messages.Count == 0)
                 {

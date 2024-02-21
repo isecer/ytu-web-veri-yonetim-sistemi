@@ -282,7 +282,7 @@ namespace WebApp.Controllers
                 kModel.IslemTarihi = DateTime.Now;
                 kModel.IslemYapanID = UserIdentity.Current.Id;
                 kModel.IslemYapanIP = UserIdentity.Ip;
-                Maddeler table;
+                Maddeler madde;
                 if (kModel.VeriGirisSekliID != VeriGirisSekli.FormulleHesaplanacak)
                 {
                     kModel.HesaplamaFormulu = null;
@@ -294,28 +294,28 @@ namespace WebApp.Controllers
                 }
                 if (kModel.MaddeID <= 0)
                 {
-                    table = _entities.Maddelers.Add(kModel);
+                    madde = _entities.Maddelers.Add(kModel);
                 }
                 else
                 {
-                    table = _entities.Maddelers.First(p => p.MaddeID == kModel.MaddeID);
-                    table.UstMaddeID = kModel.UstMaddeID;
-                    table.MaddeKod = kModel.MaddeKod;
-                    table.VeriGirisSekliID = kModel.VeriGirisSekliID;
-                    table.MaddeYilSonuDegerHesaplamaTipID = kModel.MaddeYilSonuDegerHesaplamaTipID;
-                    table.VeriTipID = kModel.VeriTipID;
-                    table.MaddeTurID = kModel.MaddeTurID;
-                    table.MaddeAdi = kModel.MaddeAdi;
-                    table.Aciklama = kModel.Aciklama;
-                    table.HesaplamaFormulu = kModel.HesaplamaFormulu;
-                    table.IsAktif = kModel.IsAktif;
-                    table.IslemTarihi = kModel.IslemTarihi;
-                    table.IslemYapanID = kModel.IslemYapanID;
-                    table.IslemYapanIP = kModel.IslemYapanIP;
+                    madde = _entities.Maddelers.First(p => p.MaddeID == kModel.MaddeID);
+                    madde.UstMaddeID = kModel.UstMaddeID;
+                    madde.MaddeKod = kModel.MaddeKod;
+                    madde.VeriGirisSekliID = kModel.VeriGirisSekliID;
+                    madde.MaddeYilSonuDegerHesaplamaTipID = kModel.MaddeYilSonuDegerHesaplamaTipID;
+                    madde.VeriTipID = kModel.VeriTipID;
+                    madde.MaddeTurID = kModel.MaddeTurID;
+                    madde.MaddeAdi = kModel.MaddeAdi;
+                    madde.Aciklama = kModel.Aciklama;
+                    madde.HesaplamaFormulu = kModel.HesaplamaFormulu;
+                    madde.IsAktif = kModel.IsAktif;
+                    madde.IslemTarihi = kModel.IslemTarihi;
+                    madde.IslemYapanID = kModel.IslemYapanID;
+                    madde.IslemYapanIP = kModel.IslemYapanIP;
                 }
 
-                #region BirimlerAylarSet
-                if (table.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok)
+                #region BirimlerSet
+                if (madde.VeriGirisSekliID != VeriGirisSekli.VeriGirisiYok)
                 {
 
 
@@ -326,14 +326,14 @@ namespace WebApp.Controllers
                     _entities.BirimMaddeleris.RemoveRange(silinenler);
                     var eklenecekler = birimId.Where(p => varolanlar.Select(s => s.BirimID).All(a => a != p)).ToList();
                     foreach (var item in eklenecekler)
-                        table.BirimMaddeleris.Add(new BirimMaddeleri { BirimID = item });
+                        madde.BirimMaddeleris.Add(new BirimMaddeleri { BirimID = item });
 
 
-                    _entities.MaddelerFormulEslesenMaddelers.RemoveRange(table.MaddelerFormulEslesenMaddelers);
-                    if (table.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak)
+                    _entities.MaddelerFormulEslesenMaddelers.RemoveRange(madde.MaddelerFormulEslesenMaddelers);
+                    if (madde.VeriGirisSekliID == VeriGirisSekli.FormulleHesaplanacak)
                         foreach (var item in maddelers)
                         {
-                            table.MaddelerFormulEslesenMaddelers.Add(new MaddelerFormulEslesenMaddeler { EslesenMaddeKod = item.MaddeKod, EslesenMaddeID = item.MaddeID });
+                            madde.MaddelerFormulEslesenMaddelers.Add(new MaddelerFormulEslesenMaddeler { EslesenMaddeKod = item.MaddeKod, EslesenMaddeID = item.MaddeID });
                         }
 
                 }
@@ -342,22 +342,9 @@ namespace WebApp.Controllers
                 #region AylarSet
 
 
-                var maddeAylari = _entities.MaddelerVeriGirisDonemleris.Where(p => p.MaddeID == kModel.MaddeID).ToList();
-                var maVarolanlar = maddeAylari.Where(p => p.MaddeID == kModel.MaddeID && vaCokluVeriDonems.Any(a => a.VACokluVeriDonemID == p.VACokluVeriDonemID)).ToList();
-
-                foreach (var maVarolan in maVarolanlar)
-                {
-                    var secilen = maddeAylari.First(f => f.VACokluVeriDonemID == maVarolan.VACokluVeriDonemID);
-                    maVarolan.IsDosyaYuklensin = secilen.IsDosyaYuklensin;
-                }
-
-                var maSilinenler = maddeAylari.Where(p => p.MaddeID == kModel.MaddeID && vaCokluVeriDonems.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList();
-                _entities.MaddelerVeriGirisDonemleris.RemoveRange(maSilinenler);
-                var maEklenecekler = vaCokluVeriDonems.Where(p => maVarolanlar.Select(s => s.VACokluVeriDonemID).All(a => a != p.VACokluVeriDonemID)).ToList();
-
-                foreach (var item in maEklenecekler)
-                    table.MaddelerVeriGirisDonemleris.Add(item);
-
+                _entities.MaddelerVeriGirisDonemleris.RemoveRange(madde.MaddelerVeriGirisDonemleris);
+                madde.MaddelerVeriGirisDonemleris = vaCokluVeriDonems;
+               
 
                 #endregion
                 _entities.SaveChanges();

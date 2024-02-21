@@ -107,16 +107,25 @@ namespace WebApp.Business
             var model = new ChkListModel();
             using (var db = new VysDBEntities())
             {
+                var vaCokluVeriDonemleris = db.VACokluVeriDonemleris.OrderBy(o => o.VACokluVeriDonemID).ToList();
 
                 if (secilenler == null && maddeId > 0)
                 {
                     var data = db.Maddelers.FirstOrDefault(p => p.MaddeID == maddeId);
                     secilenler = data.MaddelerVeriGirisDonemleris.ToList();
+                    model.Data = (from dnm in vaCokluVeriDonemleris
+                                  join sc in secilenler on dnm.VACokluVeriDonemID equals sc.VACokluVeriDonemID into defSec
+                                  from scDef in defSec.DefaultIfEmpty()
 
+                                  select new CheckObject<ChkListDataModel>
+                                  {
+                                      Value = new ChkListDataModel { ID = dnm.VACokluVeriDonemID, Caption = dnm.CokluVeriDonemAdi, IsDosyaYuklensin = scDef?.IsDosyaYuklensin ?? dnm.IsDosyaYuklensin },
+                                      Checked = secilenler.Any(a => a.VACokluVeriDonemID == dnm.VACokluVeriDonemID)
+                                  }).OrderBy(o => o.Value.ID); ;
+                    return model;
                 }
                 if (secilenler == null) secilenler = new List<MaddelerVeriGirisDonemleri>();
-                var aylars = db.VACokluVeriDonemleris.OrderBy(o => o.VACokluVeriDonemID).ToList();
-                var dataR = aylars.Select(s => new CheckObject<ChkListDataModel>
+                var dataR = vaCokluVeriDonemleris.Select(s => new CheckObject<ChkListDataModel>
                 {
                     Value = new ChkListDataModel { ID = s.VACokluVeriDonemID, Caption = s.CokluVeriDonemAdi, IsDosyaYuklensin = s.IsDosyaYuklensin },
                     Checked = secilenler.Any(a => a.VACokluVeriDonemID == s.VACokluVeriDonemID)

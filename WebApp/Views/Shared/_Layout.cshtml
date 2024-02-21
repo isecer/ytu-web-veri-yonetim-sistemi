@@ -1643,12 +1643,16 @@
             checkedInfo(TableID);
         }
         function IsDosyaYuklensinChange(gID, rwID) {
+            debugger
             var TableID = "#Filter_Table_" + gID;
             var $IsDosyaYuklensinSelect = $(TableID).find('.tr_' + rwID).find('select[name="IsDosyaYuklensins"]');
             if ($IsDosyaYuklensinSelect.length > 0) {
                 var isCheckedVal = $IsDosyaYuklensinSelect.val();
                 $('#chk_' + rwID).val(rwID + "_" + isCheckedVal);
             }
+            var $IsDosyaYuklensinSelectx = $(TableID).find('.tr_' + rwID).find('select[name="IsDosyaYuklensins"]');
+            var newVal = $IsDosyaYuklensinSelectx.val();
+            var newRowVal=$('#chk_' + rwID).val();
         }
         function checkedInfo(TableID) {
             var Rows = $(TableID).find('tr.MainRow').length;
