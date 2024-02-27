@@ -1,21 +1,30 @@
 ﻿using Database;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using WebApp.Business;
 using WebApp.Models;
+using WebApp.Utilities.Enums;
 using WebApp.Utilities.Extensions;
 
 namespace WebApp
 {
     public class MvcApplication : HttpApplication
     {
-        public static void Log(string log)
+        private static void Log(string log)
         {
-            System.IO.File.AppendAllText(@"C:\inetpub\wwwroot\VysWeb\Log\log.txt", log + "\r\n");
+            // Mevcut uygulama dizinini alın
+            string appRootPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Log dosyasının tam yolunu oluşturun
+            string logFilePath = Path.Combine(appRootPath, "log.txt");
+
+            // Log mesajını dosyaya ekleyin
+            File.AppendAllText(logFilePath, log + "\r\n");
         }
 
 
@@ -26,35 +35,34 @@ namespace WebApp
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BiskaUtil.Membership.OnRequireUserIdentity += Membership_OnRequireUserIdentity;
             BiskaUtil.SystemInformation.OnEvent += SystemInformation_OnEvent;
-            RollerBus.UpdateRoles();
-            MenulerBus.UpdateMenus();
+            //RollerBus.UpdateRoles();
+            //MenulerBus.UpdateMenus();
             OnlineUsers.users = new List<OnlineUser>();
         }
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            var exception = Server.GetLastError();
-            if (exception == null && Context.AllErrors != null && Context.AllErrors.Length > 0)
-            {
-                exception = Context.AllErrors[0];
-            }
 
-            Response.Clear();
+            var exception = Server.GetLastError();
+            //  Management.SistemBilgisiKaydet("Application_Error: " + exception.ToExceptionMessage(), exception.ToExceptionStackTrace(), BilgiTipi.Hata);
+
             var routeData = new RouteData();
+
             if (exception == null)
             {
-
                 routeData.Values.Add("controller", "Home");
                 routeData.Values.Add("action", "Index");
             }
             else //It's an Http Exception, Let's handle it.
             {
+                Log(DateTime.Now + " : " + exception.ToExceptionMessage() + "\r\n" + exception.ToExceptionStackTrace());
+
                 var errCode = HttpContext.Current.Response.StatusCode;
                 IController errorController;
-                if (errCode == HttpDurumKod.NotFound || errCode == HttpDurumKod.Unauthorized)
+                if (errCode == HttpDurumKodEnum.NotFound || errCode == HttpDurumKodEnum.Unauthorized)
                 {
                     var url = HttpContext.Current.Request.Url;
-                    routeData.Values.Add("error", url);
+                    routeData.Values.Add("url", url);
                     routeData.Values.Add("ErrC", errCode);
                     errorController = new Controllers.AppEventController();
                     routeData.Values.Add("controller", "AppEvent");
@@ -69,7 +77,7 @@ namespace WebApp
                     //routeData.Values.Add("action", "Index");
                     errorController = new Controllers.AppEventController();
                     var url = HttpContext.Current.Request.Url;
-                    routeData.Values.Add("error", url);
+                    routeData.Values.Add("url", url);
                     routeData.Values.Add("ErrC", errCode);
                     routeData.Values.Add("controller", "AppEvent");
                     routeData.Values.Add("action", "Error");
@@ -79,9 +87,9 @@ namespace WebApp
                     Server.ClearError();
                     errorController.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
                 }
-
             }
         }
+
         protected void Application_EndRequest(Object sender, EventArgs e)
         {
         }

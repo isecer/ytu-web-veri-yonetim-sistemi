@@ -1,9 +1,8 @@
-﻿using BiskaUtil;
-using Database;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
-using WebApp.Models;
-using WebApp.Utilities.Extensions;
 
 namespace WebApp.Controllers
 {
@@ -12,30 +11,17 @@ namespace WebApp.Controllers
     {
         //
         // GET: /PageNotFound/
-        public ActionResult PageNotFound(string error, int ErrC)
+        public ActionResult PageNotFound(string aspxerrorpath, int? errC = null)
         {
-            ViewBag.SayfaAdi = error;
-            ViewBag.ErrC = ErrC;
+            ViewBag.SayfaAdi = aspxerrorpath;
+            ViewBag.ErrC = errC;
             return View();
         }
 
-        public ActionResult Error(string url, int ErrC, Exception exception)
+        public ActionResult Error(string url, int errC, Exception exception)
         {
             ViewBag.SayfaAdi = url;
-            ViewBag.ErrC = ErrC;
-            using (var db = new VysDBEntities())
-            {
-                db.SistemBilgilendirmes.Add(new SistemBilgilendirme
-                {
-                    BilgiTipi = BilgiTipi.Hata,
-                    Message = exception.ToExceptionMessage(),
-                    IslemYapanID = (UserIdentity.Current.IsAuthenticated ? UserIdentity.Current.Id : (int?)null),
-                    IslemYapanIP = UserIdentity.Ip,
-                    IslemTarihi = DateTime.Now,
-                    StackTrace = exception.ToExceptionStackTrace()
-                });
-                db.SaveChanges();
-            }
+            ViewBag.ErrC = errC;
             return View(exception);
         }
     }

@@ -243,7 +243,7 @@
                                         {
                                             if (item.VeriGirisiOnaylandi != null)
                                             {
-                                                <span>@Html.Raw((isOnaylandi ? "Onaylandı" : "Onay Bekleniyor"))</span>
+                                                <span title="@(isSurecYetkisi && isOnaylandi ?"Veri Onayı Yapan: "+item.OnayYapanAdSoyad:"")">@Html.Raw((isOnaylandi ? "Onaylandı" : "Onay Bekleniyor"))</span>
                                             }
                                             else
                                             {

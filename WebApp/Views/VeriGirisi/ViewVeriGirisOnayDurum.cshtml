@@ -12,12 +12,9 @@
 
     @if (isCokluVeri)
     {
-        var hesaplamaOnAd = (Model.MaddeYilSonuDegerHesaplamaTipID == 2 ? Model.GirilecekVeriSayisi + " Dönemin Kümülatif Toplamı" : Model.MaddeYilSonuDegerHesaplamaTipID == 1 ? Model.GirilecekVeriSayisi + " Dönemin Ortalaması" : "Son Dönem Verisi");
-        <tr>
-            <td width="@styleWidthVg"></td>
-            <td width="@styleWidthVg"></td>
-            <td width="@styleWidthVo" style="font-size: 7pt; padding-left: 3px;"></td>
-            <td style="font-size: 7pt;" title="Hesaplama Şekli">@hesaplamaOnAd</td>
+        var hesaplamaOnAd = Model.HesaplamaFormulu.IsNullOrWhiteSpace() ? (Model.MaddeYilSonuDegerHesaplamaTipID == 2 ? Model.GirilecekVeriSayisi + " Dönemin Kümülatif Toplamı" : Model.MaddeYilSonuDegerHesaplamaTipID == 1 ? Model.GirilecekVeriSayisi + " Dönemin Ortalaması" : "Son Dönem Verisi") : "Formül: " + Model.HesaplamaFormulu.ToUpper();
+        <tr> 
+            <td colspan="4" style="font-size: 7pt;" title="Hesaplama Şekli">@hesaplamaOnAd</td>
         </tr>
     }
 

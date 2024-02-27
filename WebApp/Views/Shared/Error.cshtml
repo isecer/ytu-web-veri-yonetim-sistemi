@@ -5,14 +5,14 @@
 @model System.Web.Mvc.HandleErrorInfo
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-
+     
     using (var db = new VysDBEntities())
     {
         db.SistemBilgilendirmes.Add(new SistemBilgilendirme
         {
             BilgiTipi = BilgiTipi.Hata,
             Message = Model.Exception.ToExceptionMessage(),
-            IslemYapanID = (UserIdentity.Current.IsAuthenticated ? UserIdentity.Current.Id : (int?)null),
+            IslemYapanID = UserIdentity.Current.IsAuthenticated ? UserIdentity.Current.Id : null,
             IslemYapanIP = UserIdentity.Ip,
             IslemTarihi = DateTime.Now,
             StackTrace = Model.Exception.ToExceptionStackTrace()

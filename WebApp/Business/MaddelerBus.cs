@@ -121,7 +121,7 @@ namespace WebApp.Business
                                   {
                                       Value = new ChkListDataModel { ID = dnm.VACokluVeriDonemID, Caption = dnm.CokluVeriDonemAdi, IsDosyaYuklensin = scDef?.IsDosyaYuklensin ?? dnm.IsDosyaYuklensin },
                                       Checked = secilenler.Any(a => a.VACokluVeriDonemID == dnm.VACokluVeriDonemID)
-                                  }).OrderBy(o => o.Value.ID); ;
+                                  }).OrderBy(o => o.Value.ID);
                     return model;
                 }
                 if (secilenler == null) secilenler = new List<MaddelerVeriGirisDonemleri>();

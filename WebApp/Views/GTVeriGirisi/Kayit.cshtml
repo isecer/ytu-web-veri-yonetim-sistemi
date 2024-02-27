@@ -1,4 +1,4 @@
-﻿@using Database 
+﻿@using Database
 @using WebApp.Utilities.Extensions
 @using WebApp.Utilities.MessageBox
 @model GTVeriGirisi
@@ -50,124 +50,116 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-2 col-xs-2 control-label">Detaylar</label>
-                                <div class="col-md-10 col-xs-10">
+                                <div class="panel panel-info" style="margin: 0px; padding: 0px;">
+                                    <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
+                                        <h3 class="panel-title" style="font-size:9pt;">İlgili Detaylar</h3>
+                                        <ul class="panel-controls">
+                                            <li>
+                                                <span class="label label-primary" style="cursor:pointer;" title="" onclick="YeniDetayEkle()"><i class="fa fa-plus fa-lg"></i>Satır Ekle</span>
+                                            </li>
+                                            <li>
+                                                <span class="label label-info" style="cursor:pointer;" title="" onclick="YeniVknEkle()"><i class="fa fa-plus fa-lg"></i>VKN Ekle</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="panel-body" style="margin: 0px; padding: 0px;">
+                                        <table class="table table-hover" style="width:100%;table-layout:fixed;margin:0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th width="240">Hesap Kodu</th>
+                                                    <th width="200">Gelir Niteliği</th>
+                                                    <th width="90">Tutar</th>
+                                                    <th width="270">Vergi Kimlik No</th>
+                                                    <th>Açıklama</th> 
+                                                    <th width="25" style="font-size:8pt;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="VeriGirisDetay">
 
-                                    <div class="panel panel-info" style="margin: 0px; padding: 0px;">
-                                        <div class="panel-heading padding-0" style="padding:0px;margin:0px;">
-                                            <h3 class="panel-title" style="font-size:9pt;">İlgili Detaylar</h3>
-                                            <ul class="panel-controls">
-                                                <li>
-                                                    <span class="label label-primary" style="cursor:pointer;" title="" onclick="YeniDetayEkle()"><i class="fa fa-plus fa-lg"></i>Satır Ekle</span>
-                                                </li>
-                                                <li>
-                                                    <span class="label label-info" style="cursor:pointer;" title="" onclick="YeniVknEkle()"><i class="fa fa-plus fa-lg"></i>VKN Ekle</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="panel-body" style="margin: 0px; padding: 0px;">
-                                            <table class="table table-hover" style="width:100%;table-layout:fixed;margin:0px;">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="240">Hesap Kodu</th>
-                                                        <th width="280">Gelir Niteliği</th>
-                                                        <th width="90">Tutar</th>
-                                                        <th width="280">Vergi Kimlik No</th>
-                                                        <th>Açıklama</th>
-                                                        <th>Dosya (PDF)</th>
-                                                        <th width="25" style="font-size:8pt;"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="VeriGirisDetay">
-
-                                                    @if (Model.GTVerigirisiDetays.Any())
-                                                    {
-                                                        int inx = 0;
-                                                        foreach (var item in Model.GTVerigirisiDetays)
-                                                        {
-                                                            inx++;
-                                                            <tr>
-                                                                <td>
-                                                                    <input type="text" class="hide" name="GTVeriGirisDetayIDs" value="@item.GTVeriGirisDetayID" />
-                                                                    <input type="text" name="GTHesapKodIDs" value="" style="width: 100%;" />
-                                                                    @if (item.GTHesapKodID > 0)
-                                                                    {
-                                                                        <span class="hide GTHesapKodID">@item.GTHesapKodID</span>
-                                                                        <span class="hide HesapKodAdi">@item.GTHesapKodlari.HesapKod / @item.GTHesapKodlari.HesapKodAdi</span>
-                                                                    }
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" name="GTHesapKodlariGelirNiteligiIDs" style="width: 100%;" />
-                                                                    @if (item.GTHesapKodlariGelirNiteligiID > 0)
-                                                                    {
-                                                                        <span class="hide GTHesapKodlariGelirNiteligiID">@item.GTHesapKodlariGelirNiteligiID</span>
-                                                                        <span class="hide GelirNiteligiAdi">@item.GTHesapKodlariGelirNitelikleri.GelirNiteligiAdi</span>
-                                                                    }
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" class="form-control" maxlength="18" name="Tutars" onchange="PriceFormat(this);" style="text-align:right;" value="@(item.Tutar<=0?"":item.Tutar.ToString())" />
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" name="GTVergiKimlikNoIDs" value="" style="width: 100%;" />
-
-                                                                    @if (item.GTVergiKimlikNoID > 0)
-                                                                    {
-                                                                        <span class="hide GTVergiKimlikNoID">@item.GTVergiKimlikNoID</span>
-                                                                        <span class="hide AdSoyad">@item.GTVergiKimlikNumaralari.VergiKimlikNo / @item.GTVergiKimlikNumaralari.AdSoyad</span>
-                                                                    }
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" class="form-control" maxlength="256" name="Aciklamas" value="@item.Aciklama" />
-                                                                </td>
-                                                                <td style="text-align:center;">
-                                                                    <a href="javascript:void(0)" onclick="$(this).parents('tr').first().remove()"><i class="fa fa-trash-o fa-lg" title="Sil"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
-                                                    else
+                                                @if (Model.GTVerigirisiDetays.Any())
+                                                {
+                                                    foreach (var item in Model.GTVerigirisiDetays)
                                                     {
                                                         <tr>
                                                             <td>
-                                                                <input type="text" class="hide" name="GTVeriGirisDetayIDs" value="0" />
-                                                                <input type="text" name="GTHesapKodIDs" style="width: 100%;" />
-                                                                <span class="hide GTHesapKodIDs"></span>
-                                                                <span class="hide HesapKodAdi"></span>
+                                                                <input type="text" class="hide" name="GTVeriGirisDetayIDs" value="@item.GTVeriGirisDetayID" />
+                                                                <input type="text" name="GTHesapKodIDs" value="" style="width: 100%;" />
+                                                                @if (item.GTHesapKodID > 0)
+                                                                {
+                                                                    <span class="hide GTHesapKodID">@item.GTHesapKodID</span>
+                                                                    <span class="hide HesapKodAdi">@item.GTHesapKodlari.HesapKod / @item.GTHesapKodlari.HesapKodAdi</span>
+                                                                }
                                                             </td>
                                                             <td>
                                                                 <input type="text" name="GTHesapKodlariGelirNiteligiIDs" style="width: 100%;" />
+                                                                @if (item.GTHesapKodlariGelirNiteligiID > 0)
+                                                                {
+                                                                    <span class="hide GTHesapKodlariGelirNiteligiID">@item.GTHesapKodlariGelirNiteligiID</span>
+                                                                    <span class="hide GelirNiteligiAdi">@item.GTHesapKodlariGelirNitelikleri.GelirNiteligiAdi</span>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" maxlength="18" name="Tutars" onchange="PriceFormat(this);" style="text-align:right;" value="@(item.Tutar<=0?"":item.Tutar.ToString())" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="GTVergiKimlikNoIDs" value="" style="width: 100%;" />
 
+                                                                @if (item.GTVergiKimlikNoID > 0)
+                                                                {
+                                                                    <span class="hide GTVergiKimlikNoID">@item.GTVergiKimlikNoID</span>
+                                                                    <span class="hide AdSoyad">@item.GTVergiKimlikNumaralari.VergiKimlikNo / @item.GTVergiKimlikNumaralari.AdSoyad</span>
+                                                                }
                                                             </td>
                                                             <td>
-                                                                <input type="text" class="form-control" style="text-align:right;" onchange="PriceFormat(this);" maxlength="18" name="Tutars" />
+                                                                <input type="text" class="form-control" maxlength="256" name="Aciklamas" value="@item.Aciklama" />
                                                             </td>
-                                                            <td>
-                                                                <input type="text" name="GTVergiKimlikNoIDs" style="width: 100%;" />
-                                                                <span class="hide GTVergiKimlikNoID"></span>
-                                                                <span class="hide AdSoyad"></span>
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" class="form-control" maxlength="256" name="Aciklamas" />
-                                                            </td>
-                                                            @*<td>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon" style="background-color:green;"><span class="fa fa-file-pdf-o fa-lg"></span></span>
-                                                                    <input type="text" class="form-control" style="color:black;cursor:default;" value="Dosya Seçilmedi" disabled="disabled"> 
-                                                                    <input class="hide" type="file" accept="application/pdf" name="BelgeDosyasi" id="Belge_@Model.GTVeriGirisiID" onchange="ChangeFile(this,'@Model.GTVeriGirisiID');" />
-                                                                    <span class="input-group-addon" style="background-color:green;cursor:pointer;" title="Form Şablonunu İndir" onclick="window.location.href='/FRFormSablonlari/2022MaliYlFaaliyetRaporuTablolarBLGLEM_254D.xlsx';"><span class="fa fa-cloud-download fa-lg"></span></span>
-
-                                                                </div>
-                                                            </td>*@
                                                             <td style="text-align:center;">
                                                                 <a href="javascript:void(0)" onclick="$(this).parents('tr').first().remove()"><i class="fa fa-trash-o fa-lg" title="Sil"></i></a>
                                                             </td>
                                                         </tr>
                                                     }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" class="hide" name="GTVeriGirisDetayIDs" value="0" />
+                                                            <input type="text" name="GTHesapKodIDs" style="width: 100%;" />
+                                                            <span class="hide GTHesapKodIDs"></span>
+                                                            <span class="hide HesapKodAdi"></span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="GTHesapKodlariGelirNiteligiIDs" style="width: 100%;" />
 
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" style="text-align:right;" onchange="PriceFormat(this);" maxlength="18" name="Tutars" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" name="GTVergiKimlikNoIDs" style="width: 100%;" />
+                                                            <span class="hide GTVergiKimlikNoID"></span>
+                                                            <span class="hide AdSoyad"></span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" maxlength="256" name="Aciklamas" />
+                                                        </td>
+                                                        @*<td>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon" style="background-color:green;"><span class="fa fa-file-pdf-o fa-lg"></span></span>
+                                                                    <input type="text" class="form-control" style="color:black;cursor:default;" value="Dosya Seçilmedi" disabled="disabled">
+                                                                    <input class="hide" type="file" accept="application/pdf" name="BelgeDosyasi" id="Belge_@Model.GTVeriGirisiID" onchange="ChangeFile(this,'@Model.GTVeriGirisiID');" />
+                                                                    <span class="input-group-addon" style="background-color:green;cursor:pointer;" title="Form Şablonunu İndir" onclick="window.location.href='/FRFormSablonlari/2022MaliYlFaaliyetRaporuTablolarBLGLEM_254D.xlsx';"><span class="fa fa-cloud-download fa-lg"></span></span>
+
+                                                                </div>
+                                                            </td>*@
+                                                        <td style="text-align:center;">
+                                                            <a href="javascript:void(0)" onclick="$(this).parents('tr').first().remove()"><i class="fa fa-trash-o fa-lg" title="Sil"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
@@ -230,13 +222,13 @@
                 success: {
                     label: "Kaydet",
                     className: "btn-primary",
-                    callback: function () { 
+                    callback: function () {
                         var _VergiKimlikNo = $('#_VergiKimlikNo').val();
                         var _AdSoyad = $('#_AdSoyad').val();
                         $.ajax({
                             url: '@Url.Action("VknEkle", "GTVeriGirisi")',
                             data: { 'VergiKimlikNo': _VergiKimlikNo, 'AdSoyad': _AdSoyad },
-                            success: function (result) { 
+                            success: function (result) {
                                 toastr[result.success ? "success" : "error"](result.message, "Vergi Kimlik Numarası Ekleme İşlemi")
                                 if (result.success)
                                     $(bbx).find('.bootbox-close-button').first().click();
@@ -245,7 +237,7 @@
                             error: function (err) {
                                 alert(err.responseText);
                             }
-                           
+
                         });
                         return false;
                     }
@@ -494,9 +486,9 @@
 @if (Model.GTHesapNoID > 0)
 {
     <script>
-        setTimeout(function () { 
+        setTimeout(function () {
             var id =@Model.GTHesapNoID;
-            var HesapNo = '@Html.Raw(Model.GTHesapNumaralari.HesapNo+" / "+Model.GTHesapNumaralari.HesapNoAdi)'; 
+            var HesapNo = '@Html.Raw(Model.GTHesapNumaralari.HesapNo+" / "+Model.GTHesapNumaralari.HesapNoAdi)';
             $('#GTHesapNoID').select2('data', [{ "id": id, "text": HesapNo  }]);
         }, 120)
 

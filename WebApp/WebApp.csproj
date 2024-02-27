@@ -226,6 +226,7 @@
     <Compile Include="Utilities\ApplicationTasks\MailTaskRunner.cs" />
     <Compile Include="Utilities\Dtos\ComboModels.cs" />
     <Compile Include="Utilities\Dtos\VeriGirisDto.cs" />
+    <Compile Include="Utilities\Enums\HttpDurumKodEnum.cs" />
     <Compile Include="Utilities\Extensions\ExceptionExtension.cs" />
     <Compile Include="Utilities\Extensions\FileExtension.cs" />
     <Compile Include="Utilities\Extensions\IconExtension.cs" />
