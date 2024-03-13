@@ -73,7 +73,7 @@ namespace WebApp.Controllers
             if (model.MaddeYilSonuDegerHesaplamaTipId.HasValue) q = q.Where(p => p.MaddeYilSonuDegerHesaplamaTipID == model.MaddeYilSonuDegerHesaplamaTipId.Value);
             if (model.IsAktif.HasValue) q = q.Where(p => p.IsAktif == model.IsAktif.Value);
             if (model.IsDosyaYuklensin.HasValue) q = q.Where(p => p.MaddelerVeriGirisDonemleris.Any(a => a.IsDosyaYuklensin == model.IsDosyaYuklensin));
-            if (!model.Aranan.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeKod.ToLower() == model.Aranan.ToLower().Trim() || p.MaddeTreeAdi.ToLower().Contains(model.MaddeAdi.ToLower()));
+            if (!model.Aranan.IsNullOrWhiteSpace()) q = q.Where(p => p.MaddeKod.ToLower() == model.Aranan.ToLower().Trim() || p.MaddeTreeAdi.ToLower().Contains(model.Aranan.ToLower()));
 
             model.RowCount = q.Count();
             model.AktifCount = q.Count(p => p.IsAktif);
