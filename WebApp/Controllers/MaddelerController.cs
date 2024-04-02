@@ -267,16 +267,12 @@ namespace WebApp.Controllers
                     {
                         mmMessage.Messages.Add("Veri girişi yapılacak maddeler için en az 1 Birim seçilmesi gerekmektedir.");
                     }
+                    if (tVaCokluVeriDonemIDs.Count == 0)
+                    {
+                        mmMessage.Messages.Add("Çoklu veri girişi seçeneği evet seçilir ise en az 1 Veri Girilecek Veri Dönemi bilgisi seçilmesi gerekmektedir.");
+                    }
                 }
-            }
-            if (mmMessage.Messages.Count == 0)
-            {
-
-                if (vaCokluVeriDonemIDs.Count == 0)
-                {
-                    mmMessage.Messages.Add("Çoklu veri girişi seçeneği evet seçilir ise en az 1 Veri Girilecek Veri Dönemi bilgisi seçilmesi gerekmektedir.");
-                }
-            }
+            } 
             if (mmMessage.Messages.Count == 0)
             {
                 kModel.IslemTarihi = DateTime.Now;

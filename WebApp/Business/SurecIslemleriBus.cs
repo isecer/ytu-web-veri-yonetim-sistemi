@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using EntityFramework.BulkExtensions;
 using WebApp.Models;
 using WebApp.Utilities.Extensions;
 using WebApp.Utilities.Helpers;
@@ -447,7 +448,7 @@ namespace WebApp.Business
                         surecMadde.IslemTarihi = DateTime.Now;
                         surecMadde.IslemYapanID = UserIdentity.Current.Id;
                         surecMadde.IslemYapanIP = UserIdentity.Ip;
- 
+
 
                         bulkDeleteVaSurecleriMaddeBirims.AddRange(surecMadde.VASurecleriMaddeBirims.Where(p => itemAktarilacakMadde.BirimMaddeleris.All(a => a.BirimID != p.BirimID)).ToList());
                         bulkDeleteVaSurecleriMaddeVeriGirisDonemleris.AddRange(surecMadde.VASurecleriMaddeVeriGirisDonemleris.Where(p => itemAktarilacakMadde.MaddelerVeriGirisDonemleris.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList());
@@ -526,7 +527,7 @@ namespace WebApp.Business
                 {
 
                     //Süreç madde eklemeleri ve güncellemeleri
-                    entities.BulkMerge(bulkMergeVaSurecMaddes);
+                    entities.BulkInsertOrUpdate(bulkMergeVaSurecMaddes);
 
                     var insertedMaddeIds = bulkMergeVaSurecMaddes.Select(s => s.MaddeID).ToList();
                     var insertedMaddes = entities.VASurecleriMaddes.Where(p => p.VASurecID == vaSurecId && insertedMaddeIds.Contains(p.MaddeID))
@@ -539,8 +540,8 @@ namespace WebApp.Business
                         itemInsertVaSurecMadde.VASurecleriMaddeBirims.ForEach(f => f.VASurecleriMaddeID = vasMadde.VASurecleriMaddeID);
                     }
                     //Süreç madde birimleri ve dönemleri eklemeleri ve güncellemeleri
-                    entities.BulkMerge(bulkMergeVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeVeriGirisDonemleris));
-                    entities.BulkMerge(bulkMergeVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeBirims));
+                    entities.BulkInsertOrUpdate(bulkMergeVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeVeriGirisDonemleris));
+                    entities.BulkInsertOrUpdate(bulkMergeVaSurecMaddes.SelectMany(s => s.VASurecleriMaddeBirims));
 
 
                 }
@@ -603,7 +604,7 @@ namespace WebApp.Business
                                                    IslemYapanID = surecMaddeTurDef?.IslemYapanID ?? UserIdentity.Current.Id
 
                                                }).ToList();
-                entities.BulkMerge(bulkMergeSurecMaddeTurs);
+                entities.BulkInsertOrUpdate(bulkMergeSurecMaddeTurs);
                 var buldkDeleteSurecMaddeTurs = surecMaddeTurs.Where(p => !surecMaddeTurIds.Contains(p.MaddeTurID)).ToList();
                 if (buldkDeleteSurecMaddeTurs.Any())
                     entities.BulkDelete(buldkDeleteSurecMaddeTurs);
