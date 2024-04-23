@@ -5,6 +5,7 @@
 @using WebApp.Utilities.Helpers
 @using WebApp.Utilities.MenuAndRoles
 @using WebApp.Utilities.MessageBox
+@using WebApp.Utilities.SystemSetting
 @{
     var urlInfo = Request.Url.ToUrlInfo();
 
@@ -211,7 +212,23 @@
             <!-- START X-NAVIGATION VERTICAL -->
             <ul class="x-navigation x-navigation-horizontal x-navigation-panel">
                 <!-- TOGGLE NAVIGATION -->
+                <li class="xn-icon-button">
+                    <a href="javascript:void(0);" class="x-navigation-minimize"><span class="fa fa-dedent"></span></a>
 
+                </li>
+                <li style="height: 50px; display: flex; flex-direction: column; justify-content: center;">
+                    
+                    @if (HttpContext.Current != null && HttpContext.Current.Server != null && UserIdentity.Current.IsAdmin)
+                    { 
+                        string serverName = HttpContext.Current.Server.MachineName;
+                        if (serverName.Contains("IRFANYTUPC") )
+                        { 
+                            <div style="color: #B64645; font-size: 7.5pt;">ConnStr: <span style="color: #ffd559;">(@GlobalSistemSetting.ConnectionInfo())</span></div>
+
+                        }
+                    } 
+
+                </li>
                 @if (UserIdentity.Current.IsAuthenticated)
                 {   
                     var prevUserKey = UserIdentity.Current.Informations.FirstOrDefault(p => p.Key == "PrevUserKey");

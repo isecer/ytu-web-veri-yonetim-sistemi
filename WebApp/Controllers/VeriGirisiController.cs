@@ -30,7 +30,7 @@ namespace WebApp.Controllers
 
             if (!maddeTurId.HasValue && !RoleNames.SurecIslemleri.InRole()) maddeTurId = -1;
 
-            return Index(new FmVeriGiris { PageSize = 15, VaSurecId = vaSurecId, Expand = vaSurecId.HasValue, BirimId = birimId, MaddeTurId = maddeTurId });
+            return Index(new FmVeriGiris { PageSize = 20, VaSurecId = vaSurecId, Expand = vaSurecId.HasValue, BirimId = birimId, MaddeTurId = maddeTurId });
         }
 
         [HttpPost]

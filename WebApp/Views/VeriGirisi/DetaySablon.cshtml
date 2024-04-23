@@ -119,7 +119,7 @@
                                             <div class="col-md-6"style="margin:0px;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" style="border-color: transparent; background-color: transparent; color: black; ">@(Model.SurecYil) Yılı Planlanan Hedef</span>
-                                                    @if (isPlanlananVeriGirisiAcik && Model.IsAktifYilPlanlananVeriGirisiAcik)
+                                                    @if (isPlanlananVeriGirisiAcik && Model.SurecAktifYilPlanlananVeriGirisiAcik)
                                                     {
                                                         <input type="text" class="form-control buYilPlanlananDeger_@(Model.VASurecID + "_" + Model.BirimID + "_" + Model.MaddeID)" style="font-weight:bold;text-align:right;" name="GirilenDeger" onkeydown="if(event.key.toLowerCase() == 'enter') { PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,true); }" value="@(Model.VeriGirisi.PlanlananDeger.HasValue ? $"{Model.VeriGirisi.PlanlananDeger:0.###}" : "")" />
                                                         <span class="input-group-addon" style="cursor:pointer;" onclick="PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,true)" title="Kaydet"><i class="fa fa-save fa-lg"></i></span>
@@ -140,7 +140,7 @@
                                             <div class="col-md-6"style="margin:0px;">
                                                 <div class="input-group">
                                                     <span class="input-group-addon" style="border-color: transparent; background-color: transparent; color: black;">@(Model.SurecYil+1) Yılı Planlanan Hedef</span>
-                                                    @if (isPlanlananVeriGirisiAcik && Model.IsGelecekYilPlanlananVeriGirisiAcik)
+                                                    @if (isPlanlananVeriGirisiAcik && Model.SurecGelecekYilPlanlananVeriGirisiAcik)
                                                     {
                                                         <input type="text" class="form-control gelecekYilPlanlananDeger_@(Model.VASurecID + "_" + Model.BirimID + "_" + Model.MaddeID)" style="font-weight:bold;text-align:right;" name="GirilenDeger" onkeydown="if(event.key.toLowerCase() == 'enter') { PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,false); }" value="@(Model.VeriGirisi.PlanlananDegerGelecekYil.HasValue ? $"{Model.VeriGirisi.PlanlananDegerGelecekYil:0.###}" : "")" />
                                                         <span class="input-group-addon" style="cursor:pointer;" onclick="PlanlananDegerKayit(@Model.VASurecID,@Model.BirimID,@Model.MaddeID,false)" title="Kaydet"><i class="fa fa-save fa-lg"></i></span>

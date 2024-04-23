@@ -548,7 +548,7 @@ namespace WebApp.Business
                 if (bulkDeleteVaSurecMaddes.Any())
                 {
                     //Süreç madde silme işlemleri
-                    if (bulkDeleteVaSurecMaddes.Any(a => a.VASurecleriMaddeGirilenDegers.Any() || a.VASurecleriMaddeEklenenAciklamas.Any() || a.VASurecleriMaddeEklenenDosyas.Any()))
+                    if (bulkDeleteVaSurecMaddes.Any(a => a.VASurecleriMaddeBirims.Any() || a.VASurecleriMaddeGirilenDegers.Any() || a.VASurecleriMaddeEklenenAciklamas.Any() || a.VASurecleriMaddeEklenenDosyas.Any()))
                     {
                         foreach (var silinecekVaSurecleriMadde in bulkDeleteVaSurecMaddes)
                         {
@@ -557,6 +557,8 @@ namespace WebApp.Business
                             silinecekVaSurecleriMadde.IslemYapanID = UserIdentity.Current.Id;
                             silinecekVaSurecleriMadde.IslemYapanIP = UserIdentity.Ip;
                         }
+
+                        entities.BulkUpdate(bulkDeleteVaSurecMaddes);
                     }
                     else
                     {
@@ -631,6 +633,8 @@ namespace WebApp.Business
                 var formulMaddeleri = surecMaddeleri.Where(p => p.isFormulVar).ToList();
                 var maddeIds = formulMaddeleri.Select(s => s.MaddeID).Distinct().ToList();
                 var maddeler = entities.Maddelers.Where(p => maddeIds.Contains(p.MaddeID)).ToList();
+                var bulkDeleteVaSurecMaddes = new List<VASurecleriMadde>();
+
                 foreach (var itemFormulMadde in formulMaddeleri)
                 {
                     var madde = maddeler.First(f => f.MaddeID == itemFormulMadde.MaddeID);
@@ -646,18 +650,26 @@ namespace WebApp.Business
                             VASurecleriMaddeID = itemFormulMadde.VASurecleriMaddeID,
                             EslesenVASurecleriMaddeID = surecMaddeleri.Where(p => p.MaddeID == s.EslesenMaddeID).Select(se => se.VASurecleriMaddeID).First()
 
-                        });
+                        }).ToList();
                         entities.VASurecleriMaddeFormulEslesenMaddes.AddRange(vaSurecleriMaddeFormulEslesen);
                     }
                     else
                     {
-                        entities.VASurecleriMaddes.Remove(surecMaddeleri.First(p => p.MaddeID == madde.MaddeID).SurecMadde);
+
+                        var silinecekMadde = surecMaddeleri.First(p => p.MaddeID == madde.MaddeID).SurecMadde;
+                        silinecekMadde.IsAktif = false;
+                        silinecekMadde.IslemTarihi = DateTime.Now;
+                        silinecekMadde.IslemYapanID = UserIdentity.Current.Id;
+                        silinecekMadde.IslemYapanIP = UserIdentity.Ip;
+                        bulkDeleteVaSurecMaddes.Add(silinecekMadde);
                     }
 
 
                 }
+
+                if (bulkDeleteVaSurecMaddes.Any()) entities.BulkUpdate(bulkDeleteVaSurecMaddes);
                 var formulMaddesiOlmayanlar = entities.VASurecleriMaddes
-                    .Where(p => p.VASurecID == vaSurecId && (p.HesaplamaFormulu == null || p.HesaplamaFormulu == "")).ToList();
+                    .Where(p => p.VASurecID == vaSurecId && (p.HesaplamaFormulu == null || p.HesaplamaFormulu == "")).Where(p => p.VASurecleriMaddeFormulEslesenMaddes.Any()).ToList();
                 foreach (var item in formulMaddesiOlmayanlar)
                 {
                     entities.VASurecleriMaddeFormulEslesenMaddes.RemoveRange(item.VASurecleriMaddeFormulEslesenMaddes);

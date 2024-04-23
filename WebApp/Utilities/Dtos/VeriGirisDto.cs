@@ -54,8 +54,8 @@ namespace WebApp.Utilities.Dtos
         public int VASurecID { get; set; }
         public int BirimID { get; set; }
         public int MaddeID { get; set; }
-        public bool IsAktifYilPlanlananVeriGirisiAcik { get; set; }
-        public bool IsGelecekYilPlanlananVeriGirisiAcik { get; set; }
+        public bool SurecAktifYilPlanlananVeriGirisiAcik { get; set; }
+        public bool SurecGelecekYilPlanlananVeriGirisiAcik { get; set; }
         public bool VeriGirisiOnaylandi { get; set; }
 
         public int AciklamaCount { get; set; }

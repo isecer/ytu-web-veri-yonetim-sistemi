@@ -136,8 +136,7 @@ namespace WebApp.Utilities.Helpers.Hesaplama
                         {
                             formul = formul.Replace("@" + itemHesaplananMadde.MaddeKod,
                                 itemHesaplananMadde.PlanlananHedef.Value.ToString());
-                        }
-
+                        } 
                         try
                         {
                             surecMaddeHesaplanan.PlanlananHedef = (decimal?)formul.EvaluateExpression();

@@ -140,7 +140,7 @@ namespace WebApp.Business
                 var vaSurecBirimIds = data.Select(s => s.BirimID).Distinct().ToList();
                 var vaSurecMaddeIds = data.Select(s => s.VASurecleriMaddeID).Distinct().ToList();
                 var vaSurecMaddeTur = db.VASurecleriMaddeTurs.Where(p => p.VASurecID == model.VaSurecId);
-                var datavm = db.VASurecleriMaddes.Where(p => vaSurecMaddeIds.Contains(p.VASurecleriMaddeID) && p.VASurecleriMaddeBirims.Any(a => vaSurecBirimIds.Contains(a.BirimID))).ToList();
+                var datavm = db.VASurecleriMaddes.Where(p => vaSurecMaddeIds.Contains(p.VASurecleriMaddeID)  && p.VASurecleriMaddeBirims.Any(a => vaSurecBirimIds.Contains(a.BirimID))).ToList();
                 var q = (from s in data
                          join vm in datavm on s.VASurecleriMaddeID equals vm.VASurecleriMaddeID
                          join vmt in vaSurecMaddeTur on vm.MaddeTurID equals vmt.MaddeTurID
@@ -236,8 +236,8 @@ namespace WebApp.Business
                     VASurecID = vaSurecId,
                     BirimID = birimId,
                     MaddeID = maddeId,
-                    IsAktifYilPlanlananVeriGirisiAcik = vaSurecKontrol.IsAktifYilPlanlananVeriGirisiAcik,
-                    IsGelecekYilPlanlananVeriGirisiAcik = vaSurecKontrol.IsGelecekYilPlanlananVeriGirisiAcik,
+                    SurecAktifYilPlanlananVeriGirisiAcik = vaSurecKontrol.IsAktifYilPlanlananVeriGirisiAcik,
+                    SurecGelecekYilPlanlananVeriGirisiAcik = vaSurecKontrol.IsGelecekYilPlanlananVeriGirisiAcik,
                     BaslangicTarihi = vaSurecKontrol.BaslangicTarihi,
                     BitisTarihi = vaSurecKontrol.BitisTarihi,
                     SurecIsAktif = vaSurecKontrol.AktifSurec,
