@@ -275,7 +275,7 @@ namespace WebApp.Business
                                       HesaplamaFormulu = maddeVeriGirisDurum.HesaplamaFormulu,
                                       VeriGirisSekliID = maddeVeriGirisDurum.VeriGirisSekliID,
                                       MaddeYilSonuDegerHesaplamaTipID = maddeVeriGirisDurum.MaddeYilSonuDegerHesaplamaTipID,
-                                      HesaplananSonucDegeri = (maddeVeriGirisDurum.HesaplananSonucDegeri ?? 0),
+                                      HesaplananSonucDegeri = maddeVeriGirisDurum.HesaplananSonucDegeri,
                                       MaddeVeriGirisDurumId = maddeVeriGirisDurum.OnaylananVeriSayisi > 0 && maddeVeriGirisDurum.GirilecekVeriSayisi == maddeVeriGirisDurum.OnaylananVeriSayisi ? 1 : 0,
                                       VASurecleriMaddeID = maddeVeriGirisDurum.VASurecleriMaddeID,
                                       Aciklama = maddeVeriGirisDurum.Aciklama,

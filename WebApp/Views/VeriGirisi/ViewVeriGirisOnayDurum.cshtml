@@ -34,7 +34,7 @@
 
         <td width="@styleWidthVo" style="font-size: 7pt; padding-left: 3px;" title="Madde Yıl Sonu Hesaplanan Değer Sonucu">Sonuç =></td>
         <td style="font-size: 9pt;font-weight:bold;" title="Madde Yıl Sonu Hesaplanan Değer Sonucu">
-            @(Model.VeriGirisiOnaylandi? Model.HesaplananSonucDegeri.ToNumberFormat(Model.PlanlananDeger) :"------")
+            @(Model.VeriGirisiOnaylandi  ? Model.HesaplananSonucDegeri.ToNumberFormat(Model.PlanlananDeger) :"------")
         </td>
     </tr>
 </table>
