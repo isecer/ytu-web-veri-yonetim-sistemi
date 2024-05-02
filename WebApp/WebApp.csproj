@@ -1886,7 +1886,6 @@
     <Content Include="Views\VeriGirisi\DetaySablon.cshtml" />
     <Content Include="Views\VeriGirisi\Index.cshtml" />
     <Content Include="Views\VeriGirisi\ViewAciklamaEkle.cshtml" />
-    <Content Include="Views\VeriGirisi\ViewAciklamaEklenenler.cshtml" />
     <Content Include="Views\VeriGirisi\ViewKanitDosyasiEkle.cshtml" />
     <Content Include="Views\VeriGirisi\ViewKanitDosyasiEklenenler.cshtml" />
     <Content Include="Views\VeriGirisi\ViewVeriGirisOnayDurum.cshtml" />

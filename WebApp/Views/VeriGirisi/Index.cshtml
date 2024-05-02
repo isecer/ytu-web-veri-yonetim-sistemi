@@ -445,7 +445,49 @@
             });
         }
 
+        function AciklamaSilmeOnay(sndr, vaSurecleriMaddeEklenenAciklamaId, vaSurecID, birimID, maddeID) {
+            var _AyAdi = $("#tdAAyAdi_" + vaSurecleriMaddeEklenenAciklamaId).html();
+            var _Aciklama = $("#tdAAciklama_" + vaSurecleriMaddeEklenenAciklamaId).html();
+            var SoruHtml = "<table style='color:maroon;table-layout:fixed;width:100%;'><tr><td width='30' style='padding-left:10px;'><i class='fa fa-info fa-2x'></i></td><td style='padding-right:10px;'>'" + _AyAdi + "' : '" + _Aciklama + "' açıklamasını silmek istiyor musunuz?</td></tr></table>";
+            bootbox.dialog({
+                message: SoruHtml,
+                title: "Açıklama Silme İşlemi",
+                buttons: {
+                    success: {
+                        label: "Açıklamayı Sil",
+                        className: "btn-danger",
+                        callback: function () { 
+                            AciklamaSil(sndr, vaSurecleriMaddeEklenenAciklamaId, vaSurecID, birimID, maddeID);
+                        }
+                    },
+                    danger: {
+                        label: "Vazgeç",
+                        className: "btn-success",
+                        callback: function () {
+                        }
+                    }
+                }
+            });
+        }
+        function AciklamaSil(sndr, vaSurecleriMaddeEklenenAciklamaId, vaSurecID, birimID, maddeID) {
+            $.ajax({
+                url: '@Url.Action("VgAciklamaSil", "VeriGirisi")',
+                data: {  vaSurecleriMaddeEklenenAciklamaId },
+                success: function (result) {
+                    toastr[result.success ? "success" : "error"](result.message, "Açıklama Silme İşlemi")
+                    debugger
+                    if (result.success) {
+                        
+                        $(sndr).closest("tr").remove();
+                        GetDetail(vaSurecID, birimID, maddeID);
+                    }
 
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        }
     </script>
 }
 @if (onayYetkisi)

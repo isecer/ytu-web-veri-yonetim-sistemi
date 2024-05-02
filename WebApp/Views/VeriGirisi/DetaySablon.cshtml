@@ -303,7 +303,7 @@
                                             <td>
                                                 @if (kayitYetki && Model.SurecIsAktif)
                                                 {
-                                                    <a href="javascript:void(0)" onclick="AciklamaSilmeOnay(this,@item.VASurecleriMaddeEklenenAciklamaID)"><i class="fa fa-trash-o fa-lg" title="Açıklamayı Sil"></i></a>
+                                                    <a href="javascript:void(0)" onclick="AciklamaSilmeOnay(this,@item.VASurecleriMaddeEklenenAciklamaID,@Model.VASurecID,@Model.BirimID,@Model.MaddeID)"><i class="fa fa-trash-o fa-lg" title="Açıklamayı Sil"></i></a>
                                                 }
                                             </td>
                                         </tr>

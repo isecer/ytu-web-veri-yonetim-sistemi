@@ -1365,7 +1365,7 @@ namespace WebApp.Business
             }
         }
 
-        public static IResult VeriAciklamasiSil(int id)
+        public static IResult VeriAciklamasiSil(int vaSurecleriMaddeEklenenAciklamaId)
         {
             using (var db = new VysDBEntities())
             {
@@ -1375,7 +1375,7 @@ namespace WebApp.Business
                     MessageType = Msgtype.Warning
                 };
 
-                var kayit = db.VASurecleriMaddeEklenenAciklamas.FirstOrDefault(p => p.VASurecleriMaddeEklenenAciklamaID == id);
+                var kayit = db.VASurecleriMaddeEklenenAciklamas.FirstOrDefault(p => p.VASurecleriMaddeEklenenAciklamaID == vaSurecleriMaddeEklenenAciklamaId);
                 if (kayit != null)
                 {
                     var maddeId = kayit.VASurecleriMadde.MaddeID;

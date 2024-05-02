@@ -162,9 +162,9 @@ namespace WebApp.Controllers
             var result = VeriGirisiBus.VeriAciklamasiKayit(vaSurecleriMaddeEklenenAciklamaId, vaSurecId, birimId, maddeId, vaCokluVeriDonemId, aciklama);
             return result.Message.ToJsonResult();
         }
-        public ActionResult VgAciklamaSil(int id)
+        public ActionResult VgAciklamaSil(int vaSurecleriMaddeEklenenAciklamaId)
         {
-            var result = VeriGirisiBus.VeriAciklamasiSil(id);
+            var result = VeriGirisiBus.VeriAciklamasiSil(vaSurecleriMaddeEklenenAciklamaId);
             return new
             {
                 success = result.Success,
