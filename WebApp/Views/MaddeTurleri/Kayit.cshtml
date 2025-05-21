@@ -1,12 +1,17 @@
 ﻿@using Database
+@using WebApp.Business
 @using WebApp.Utilities.Extensions
+@using WebApp.Utilities.Helpers
 @using WebApp.Utilities.MessageBox
 @model MaddeTurleri
 @{
     var mmMessage = ViewBag.MmMessage as MmMessage;
     Layout = "~/Views/Shared/_Layout.cshtml";
-
-
+    var secilenlerDonem = (List<MaddeTurleriVeriGirisDonemleri>)ViewBag.SecilenlerDonem;
+    var donemData = MaddelerBus.GetMaddeTuruVeriGirisDonemleri(Model.MaddeTurID, secilenlerDonem);
+    donemData.InputName = "VaCokluVeriDonemIDs";
+    donemData.PanelTitle = "Madde Türü İçin Veri Giriş Dönemleri Seçiniz";
+    donemData.ShowIsDosyaYuklensin = true;
 
 }
 <div class="row">
@@ -44,8 +49,23 @@
                                         <input type="checkbox" value="true" name="IsPlanlananDegerOlacakGelecekYil" class="toggle" @Model.IsPlanlananDegerOlacakGelecekYil.ToChecked() />
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
 
+                            <div class="form-group">
+                                <label class="col-md-4 col-xs-4 control-label">Süreç maddeleri güncellenirken veri giriş dönemleri madde türünden kopyalansın</label>
+                                <div class="col-md-8 col-xs-8">
+                                    <div class="make-switch" data-on-label="Evet" data-off-label="Hayır" data-on="success" data-off="danger">
+                                        <input type="checkbox" value="true" name="IsVeriGirisDonemleriMaddeTurundenKopyalansin" class="toggle" @Model.IsVeriGirisDonemleriMaddeTurundenKopyalansin.ToChecked() onchange="if ($(this).prop('checked')) { $('.maddeAylari').removeClass('hide'); } else {  $('.maddeAylari').addClass('hide');}" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group maddeAylari @(Model.IsVeriGirisDonemleriMaddeTurundenKopyalansin?"":"hide")">
+                                <label class="col-md-2 col-xs-2 control-label"></label>
+                                <div class="col-md-10 col-xs-10">
+                                    @donemData.ToRenderPartialViewHtml("Ajax", "GetChkList")
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label class="col-md-4 col-xs-4 control-label">Durum</label>
                                 <div class="col-md-8 col-xs-8">

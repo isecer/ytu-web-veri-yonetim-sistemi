@@ -19,6 +19,7 @@ namespace Database
         {
             this.Maddelers = new HashSet<Maddeler>();
             this.MaddelerEslestirilenTurlers = new HashSet<MaddelerEslestirilenTurler>();
+            this.MaddeTurleriVeriGirisDonemleris = new HashSet<MaddeTurleriVeriGirisDonemleri>();
             this.VASurecleriMaddes = new HashSet<VASurecleriMadde>();
             this.VASurecleriMaddeTurs = new HashSet<VASurecleriMaddeTur>();
         }
@@ -26,17 +27,20 @@ namespace Database
         public int MaddeTurID { get; set; }
         public bool IsPlanlananDegerOlacak { get; set; }
         public bool IsPlanlananDegerOlacakGelecekYil { get; set; }
+        public bool IsKanitDosyasiYuklemekZorunlu { get; set; }
+        public bool IsVeriGirisDonemleriMaddeTurundenKopyalansin { get; set; }
         public string MaddeTurAdi { get; set; }
         public bool IsAktif { get; set; }
         public int IslemYapanID { get; set; }
         public string IslemYapanIP { get; set; }
         public System.DateTime IslemTarihi { get; set; }
-        public bool IsKanitDosyasiYuklemekZorunlu { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Maddeler> Maddelers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MaddelerEslestirilenTurler> MaddelerEslestirilenTurlers { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MaddeTurleriVeriGirisDonemleri> MaddeTurleriVeriGirisDonemleris { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMadde> VASurecleriMaddes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

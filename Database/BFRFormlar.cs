@@ -39,8 +39,8 @@ namespace Database
         public virtual ICollection<BFRDonemlerFormBirim> BFRDonemlerFormBirims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BFRDonemlerFormGirisleri> BFRDonemlerFormGirisleris { get; set; }
+        public virtual Kullanicilar Kullanicilar { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BFRFormlarBirim> BFRFormlarBirims { get; set; }
-        public virtual Kullanicilar Kullanicilar { get; set; }
     }
 }

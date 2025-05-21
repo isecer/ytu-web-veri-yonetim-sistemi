@@ -101,7 +101,38 @@ namespace WebApp.Business
             return dct;
 
         }
+        public static ChkListModel GetMaddeTuruVeriGirisDonemleri(int? maddeTurId, List<MaddeTurleriVeriGirisDonemleri> secilenler = null)
+        {
+            var model = new ChkListModel();
+            using (var db = new VysDBEntities())
+            {
+                var vaCokluVeriDonemleris = db.VACokluVeriDonemleris.OrderBy(o => o.VACokluVeriDonemID).ToList();
 
+                if (secilenler == null && maddeTurId > 0)
+                {
+                    var data = db.MaddeTurleris.FirstOrDefault(p => p.MaddeTurID == maddeTurId);
+                    secilenler = data.MaddeTurleriVeriGirisDonemleris.ToList();
+                    model.Data = (from dnm in vaCokluVeriDonemleris
+                        join sc in secilenler on dnm.VACokluVeriDonemID equals sc.VACokluVeriDonemID into defSec
+                        from scDef in defSec.DefaultIfEmpty()
+
+                        select new CheckObject<ChkListDataModel>
+                        {
+                            Value = new ChkListDataModel { ID = dnm.VACokluVeriDonemID, Caption = dnm.CokluVeriDonemAdi, IsDosyaYuklensin = scDef?.IsDosyaYuklensin ?? dnm.IsDosyaYuklensin },
+                            Checked = secilenler.Any(a => a.VACokluVeriDonemID == dnm.VACokluVeriDonemID)
+                        }).OrderBy(o => o.Value.ID);
+                    return model;
+                }
+                if (secilenler == null) secilenler = new List<MaddeTurleriVeriGirisDonemleri>();
+                var dataR = vaCokluVeriDonemleris.Select(s => new CheckObject<ChkListDataModel>
+                {
+                    Value = new ChkListDataModel { ID = s.VACokluVeriDonemID, Caption = s.CokluVeriDonemAdi, IsDosyaYuklensin = s.IsDosyaYuklensin },
+                    Checked = secilenler.Any(a => a.VACokluVeriDonemID == s.VACokluVeriDonemID)
+                }).OrderBy(o => o.Value.ID);
+                model.Data = dataR;
+                return model;
+            }
+        }
         public static ChkListModel GetMaddeVeriGirisDonemleri(int? maddeId, List<MaddelerVeriGirisDonemleri> secilenler = null)
         {
             var model = new ChkListModel();

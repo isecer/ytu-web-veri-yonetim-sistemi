@@ -25,12 +25,12 @@ namespace Database
         public int Yil { get; set; }
         public System.DateTime BaslangicTarihi { get; set; }
         public System.DateTime BitisTarihi { get; set; }
-        public bool IsAktifYilPlanlananVeriGirisiAcik { get; set; }
-        public bool IsGelecekYilPlanlananVeriGirisiAcik { get; set; }
         public bool IsAktif { get; set; }
         public System.DateTime IslemTarihi { get; set; }
         public int IslemYapanID { get; set; }
         public string IslemYapanIP { get; set; }
+        public bool IsAktifYilPlanlananVeriGirisiAcik { get; set; }
+        public bool IsGelecekYilPlanlananVeriGirisiAcik { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMadde> VASurecleriMaddes { get; set; }

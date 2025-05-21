@@ -928,13 +928,13 @@ namespace WebApp.Business
                 {
                     var madde = birimMadde.VASurecleriMadde;
                     var maddeAyCount = madde.VASurecleriMaddeVeriGirisDonemleris.Count;
-                    var girilenOnayCount = birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p => p.VASurecleriMadde.MaddeID == maddeId && p.VeriGirisiOnaylandi) + (maddeAyCount == 0 ? 0 : 1);
+                    var girilenOnayCount = birimMadde.VASurecleriMadde.VASurecleriMaddeGirilenDegers.Count(p =>p.BirimID==birimId && p.VASurecleriMadde.MaddeID == maddeId && p.VeriGirisiOnaylandi) + (maddeAyCount == 0 ? 0 : 1);
 
                     if (girilenOnayCount == maddeAyCount)
                     {
                         // IsSonOnayYapildi = GirilenOnayCount == MaddeAyCount;
-                        if (madde.IsPlanlananDegerOlacak)
-                            if (!birimMadde.PlanlananDeger.HasValue) { mMessage.Messages.Add("Maddeye ait " + (surec.Yil) + " yılı planlanan değer bilgisi girilmedi."); }
+                        //if (madde.IsPlanlananDegerOlacak)
+                        //    if (!birimMadde.PlanlananDeger.HasValue) { mMessage.Messages.Add("Maddeye ait " + (surec.Yil) + " yılı planlanan değer bilgisi girilmedi."); }
 
                         if (madde.IsPlanlananDegerOlacakGelecekYil)
                             if (!birimMadde.PlanlananDegerGelecekYil.HasValue) { mMessage.Messages.Add("Maddeye ait " + (surec.Yil + 1) + " yılı planlanan değer bilgisi girilmedi."); }

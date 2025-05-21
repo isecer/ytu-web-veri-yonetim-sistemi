@@ -433,6 +433,21 @@ namespace WebApp.Business
 
                 foreach (var itemAktarilacakMadde in aktarilacakMaddelers)
                 {
+
+                    var itemAktarilacakMaddeVeriGirisDonemleri = itemAktarilacakMadde.MaddelerVeriGirisDonemleris;
+
+                    if (itemAktarilacakMadde.MaddeTurleri.IsVeriGirisDonemleriMaddeTurundenKopyalansin)
+                    {
+                        itemAktarilacakMaddeVeriGirisDonemleri = itemAktarilacakMadde.MaddeTurleri
+                            .MaddeTurleriVeriGirisDonemleris.Select(s => new MaddelerVeriGirisDonemleri
+                            {
+                                MaddeID = itemAktarilacakMadde.MaddeID,
+                                VACokluVeriDonemID = s.VACokluVeriDonemID,
+                                IsDosyaYuklensin = s.IsDosyaYuklensin,
+                            }).ToList();
+                    }
+
+
                     var surecMadde = vaSurecleriMaddelers.FirstOrDefault(f => f.MaddeID == itemAktarilacakMadde.MaddeID);
                     if (surecMadde != null)
                     {
@@ -451,7 +466,7 @@ namespace WebApp.Business
 
 
                         bulkDeleteVaSurecleriMaddeBirims.AddRange(surecMadde.VASurecleriMaddeBirims.Where(p => itemAktarilacakMadde.BirimMaddeleris.All(a => a.BirimID != p.BirimID)).ToList());
-                        bulkDeleteVaSurecleriMaddeVeriGirisDonemleris.AddRange(surecMadde.VASurecleriMaddeVeriGirisDonemleris.Where(p => itemAktarilacakMadde.MaddelerVeriGirisDonemleris.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList());
+                        bulkDeleteVaSurecleriMaddeVeriGirisDonemleris.AddRange(surecMadde.VASurecleriMaddeVeriGirisDonemleris.Where(p => itemAktarilacakMaddeVeriGirisDonemleri.All(a => a.VACokluVeriDonemID != p.VACokluVeriDonemID)).ToList());
 
                         surecMadde.VASurecleriMaddeBirims = (from aktarilacakMaddeBirim in itemAktarilacakMadde.BirimMaddeleris
                                                              join surecMaddeBirim in surecMadde.VASurecleriMaddeBirims on new { aktarilacakMaddeBirim.BirimID, aktarilacakMaddeBirim.MaddeID } equals new { surecMaddeBirim.BirimID, surecMadde.MaddeID } into defSmb
@@ -469,7 +484,9 @@ namespace WebApp.Business
                                                                  IslemYapanID = surecMaddeBirimDef?.IslemYapanID ?? UserIdentity.Current.Id,
                                                                  IslemYapanIP = surecMaddeBirimDef?.IslemYapanIP ?? UserIdentity.Ip
                                                              }).ToList();
-                        surecMadde.VASurecleriMaddeVeriGirisDonemleris = (from aktarilacakMaddeDonem in itemAktarilacakMadde.MaddelerVeriGirisDonemleris
+
+
+                        surecMadde.VASurecleriMaddeVeriGirisDonemleris = (from aktarilacakMaddeDonem in itemAktarilacakMaddeVeriGirisDonemleri
                                                                           join surecMaddeDonem in surecMadde.VASurecleriMaddeVeriGirisDonemleris on new { aktarilacakMaddeDonem.VACokluVeriDonemID, aktarilacakMaddeDonem.MaddeID } equals new { surecMaddeDonem.VACokluVeriDonemID, surecMadde.MaddeID } into defSmb
                                                                           from surecMaddeDonemDef in defSmb.DefaultIfEmpty()
                                                                           select new VASurecleriMaddeVeriGirisDonemleri
@@ -503,7 +520,7 @@ namespace WebApp.Business
                             IslemTarihi = DateTime.Now,
                             IslemYapanID = UserIdentity.Current.Id,
                             IslemYapanIP = UserIdentity.Ip,
-                            VASurecleriMaddeVeriGirisDonemleris = itemAktarilacakMadde.MaddelerVeriGirisDonemleris.Select(s => new VASurecleriMaddeVeriGirisDonemleri { VACokluVeriDonemID = s.VACokluVeriDonemID, IsDosyaYuklensin = s.IsDosyaYuklensin }).ToList(),
+                            VASurecleriMaddeVeriGirisDonemleris = itemAktarilacakMaddeVeriGirisDonemleri.Select(s => new VASurecleriMaddeVeriGirisDonemleri { VACokluVeriDonemID = s.VACokluVeriDonemID, IsDosyaYuklensin = s.IsDosyaYuklensin }).ToList(),
                             VASurecleriMaddeBirims = (from aktarilacakMaddeBirim in itemAktarilacakMadde.BirimMaddeleris
                                                       join oncekiSurecHedef in oncekiDonemGirilenHedefler on new { aktarilacakMaddeBirim.BirimID, aktarilacakMaddeBirim.MaddeID } equals new { oncekiSurecHedef.BirimID, oncekiSurecHedef.MaddeID } into defOsh
                                                       from oncekiSurecHedefDef in defOsh.DefaultIfEmpty()

@@ -17,8 +17,8 @@ namespace Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public YetkiGruplari()
         {
-            this.YetkiGrupRolleris = new HashSet<YetkiGrupRolleri>();
             this.Kullanicilars = new HashSet<Kullanicilar>();
+            this.YetkiGrupRolleris = new HashSet<YetkiGrupRolleri>();
         }
     
         public int YetkiGrupID { get; set; }
@@ -28,8 +28,8 @@ namespace Database
         public string IslemYapanIP { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<YetkiGrupRolleri> YetkiGrupRolleris { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Kullanicilar> Kullanicilars { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<YetkiGrupRolleri> YetkiGrupRolleris { get; set; }
     }
 }

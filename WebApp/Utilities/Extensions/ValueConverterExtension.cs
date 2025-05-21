@@ -324,7 +324,7 @@ namespace WebApp.Utilities.Extensions
 
         public static string ToKullaniciResim(this string resimAdi)
         {
-            var rsm = resimAdi.IsNullOrWhiteSpace() ? ("/" + SistemAyar.KullaniciDefaultResim) : ("/" + SistemAyar.KullaniciResimYolu + "/" + resimAdi);
+            var rsm = resimAdi.IsNullOrWhiteSpace() ? ("/" + SistemAyar.KullaniciDefaultResim.GetAyar()) : ("/" + SistemAyar.KullaniciResimYolu.GetAyar() + "/" + resimAdi);
             return rsm;
         }
 

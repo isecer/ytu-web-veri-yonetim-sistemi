@@ -18,8 +18,8 @@ namespace Database
         public Roller()
         {
             this.YetkiGrupRolleris = new HashSet<YetkiGrupRolleri>();
-            this.Menulers = new HashSet<Menuler>();
             this.Kullanicilars = new HashSet<Kullanicilar>();
+            this.Menulers = new HashSet<Menuler>();
         }
     
         public int RolID { get; set; }
@@ -31,8 +31,8 @@ namespace Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<YetkiGrupRolleri> YetkiGrupRolleris { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Menuler> Menulers { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Kullanicilar> Kullanicilars { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Menuler> Menulers { get; set; }
     }
 }

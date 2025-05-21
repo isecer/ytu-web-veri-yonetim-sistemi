@@ -5,83 +5,86 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="48690e4b59284c48bb2fbac1b5e73e42" Name="Diagram1">
-        <EntityTypeShape EntityType="VysDBModel.Ayarlar" Width="1.5" PointX="5.25" PointY="37.625" />
+        <EntityTypeShape EntityType="VysDBModel.Ayarlar" Width="1.5" PointX="5.25" PointY="65.375" />
         <EntityTypeShape EntityType="VysDBModel.Aylar" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerForm" Width="1.5" PointX="7.5" PointY="92.75" />
-        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerFormBirim" Width="1.5" PointX="12.75" PointY="73.75" />
-        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerFormGirisleri" Width="1.5" PointX="7.5" PointY="71.125" />
-        <EntityTypeShape EntityType="VysDBModel.BFRDonemleri" Width="1.5" PointX="5.25" PointY="97" />
-        <EntityTypeShape EntityType="VysDBModel.BFRFormlar" Width="1.5" PointX="5.25" PointY="92.5" />
-        <EntityTypeShape EntityType="VysDBModel.BFRFormlarBirim" Width="1.5" PointX="10.5" PointY="74" />
-        <EntityTypeShape EntityType="VysDBModel.Birimler" Width="1.5" PointX="5.25" PointY="47.625" />
-        <EntityTypeShape EntityType="VysDBModel.BirimMaddeleri" Width="1.5" PointX="10.5" PointY="45.875" />
-        <EntityTypeShape EntityType="VysDBModel.DuyuruEkleri" Width="1.5" PointX="7.5" PointY="88.875" />
-        <EntityTypeShape EntityType="VysDBModel.Duyurular" Width="1.5" PointX="5.25" PointY="88" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerForm" Width="1.5" PointX="10.5" PointY="48.625" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerFormBirim" Width="1.5" PointX="15.75" PointY="66.25" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemlerFormGirisleri" Width="1.5" PointX="12.75" PointY="67.25" />
+        <EntityTypeShape EntityType="VysDBModel.BFRDonemleri" Width="1.5" PointX="8.25" PointY="56.75" />
+        <EntityTypeShape EntityType="VysDBModel.BFRFormlar" Width="1.5" PointX="5.25" PointY="48.25" />
+        <EntityTypeShape EntityType="VysDBModel.BFRFormlarBirim" Width="1.5" PointX="7.5" PointY="69.375" />
+        <EntityTypeShape EntityType="VysDBModel.Birimler" Width="1.5" PointX="5.25" PointY="86.125" />
+        <EntityTypeShape EntityType="VysDBModel.BirimMaddeleri" Width="1.5" PointX="7.5" PointY="94.375" />
+        <EntityTypeShape EntityType="VysDBModel.DuyuruEkleri" Width="1.5" PointX="7.5" PointY="74.5" />
+        <EntityTypeShape EntityType="VysDBModel.Duyurular" Width="1.5" PointX="5.25" PointY="73.75" />
         <EntityTypeShape EntityType="VysDBModel.Faaliyetler" Width="1.5" PointX="0.75" PointY="4" />
-        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerAy" Width="1.5" PointX="3" PointY="1.5" />
-        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerKaynak" Width="1.5" PointX="3" PointY="4.5" />
-        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerMadde" Width="1.5" PointX="10.5" PointY="16" />
-        <EntityTypeShape EntityType="VysDBModel.FRDonemlerForm" Width="1.5" PointX="7.5" PointY="80.125" />
-        <EntityTypeShape EntityType="VysDBModel.FRDonemlerFormBirim" Width="1.5" PointX="7.5" PointY="67.5" />
-        <EntityTypeShape EntityType="VysDBModel.FRDonemlerFormGirisleri" Width="1.5" PointX="7.5" PointY="62.875" />
-        <EntityTypeShape EntityType="VysDBModel.FRDonemleri" Width="1.5" PointX="5.25" PointY="76.375" />
-        <EntityTypeShape EntityType="VysDBModel.FRFormlar" Width="1.5" PointX="5.25" PointY="79.875" />
-        <EntityTypeShape EntityType="VysDBModel.FRFormlarBirim" Width="1.5" PointX="10.5" PointY="64.625" />
-        <EntityTypeShape EntityType="VysDBModel.GonderilenMailEkleri" Width="1.5" PointX="15" PointY="45.125" />
-        <EntityTypeShape EntityType="VysDBModel.GonderilenMailKullanicilar" Width="1.5" PointX="16" PointY="48.5" />
-        <EntityTypeShape EntityType="VysDBModel.GonderilenMailler" Width="1.5" PointX="12.75" PointY="44" />
-        <EntityTypeShape EntityType="VysDBModel.GTBirimHesapKodlari" Width="1.5" PointX="11.25" PointY="31.25" />
-        <EntityTypeShape EntityType="VysDBModel.GTBirimHesapNumaralari" Width="1.5" PointX="13.25" PointY="53.25" />
-        <EntityTypeShape EntityType="VysDBModel.GTBirimler" Width="1.5" PointX="3" PointY="36.625" />
-        <EntityTypeShape EntityType="VysDBModel.GTDonemleri" Width="1.5" PointX="5.25" PointY="84.375" />
-        <EntityTypeShape EntityType="VysDBModel.GTHesapKodlari" Width="1.5" PointX="3" PointY="40.75" />
-        <EntityTypeShape EntityType="VysDBModel.GTHesapKodlariGelirNitelikleri" Width="1.5" PointX="10.5" PointY="60.75" />
-        <EntityTypeShape EntityType="VysDBModel.GTHesapNumaralari" Width="1.5" PointX="6" PointY="58.875" />
-        <EntityTypeShape EntityType="VysDBModel.GTVergiKimlikNumaralari" Width="1.5" PointX="10.5" PointY="77.5" />
-        <EntityTypeShape EntityType="VysDBModel.GTVeriGirisDurumlari" Width="1.5" PointX="8.25" PointY="75.5" />
-        <EntityTypeShape EntityType="VysDBModel.GTVeriGirisi" Width="1.5" PointX="10.5" PointY="68.125" />
-        <EntityTypeShape EntityType="VysDBModel.GTVerigirisiDetay" Width="1.5" PointX="12.75" PointY="57.125" />
+        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerAy" Width="1.5" PointX="3" PointY="4.5" />
+        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerKaynak" Width="1.5" PointX="3" PointY="1.5" />
+        <EntityTypeShape EntityType="VysDBModel.FaaliyetlerMadde" Width="1.5" PointX="13.25" PointY="50.25" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemlerForm" Width="1.5" PointX="7.5" PointY="82" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemlerFormBirim" Width="1.5" PointX="9.75" PointY="85.875" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemlerFormGirisleri" Width="1.5" PointX="9.75" PointY="64.25" />
+        <EntityTypeShape EntityType="VysDBModel.FRDonemleri" Width="1.5" PointX="5.25" PointY="70.125" />
+        <EntityTypeShape EntityType="VysDBModel.FRFormlar" Width="1.5" PointX="5.25" PointY="81.625" />
+        <EntityTypeShape EntityType="VysDBModel.FRFormlarBirim" Width="1.5" PointX="7.5" PointY="86.125" />
+        <EntityTypeShape EntityType="VysDBModel.GonderilenMailEkleri" Width="1.5" PointX="10.5" PointY="45.375" />
+        <EntityTypeShape EntityType="VysDBModel.GonderilenMailKullanicilar" Width="1.5" PointX="8.25" PointY="50.25" />
+        <EntityTypeShape EntityType="VysDBModel.GonderilenMailler" Width="1.5" PointX="8.25" PointY="45.375" />
+        <EntityTypeShape EntityType="VysDBModel.GTBirimHesapKodlari" Width="1.5" PointX="11.25" PointY="36.25" />
+        <EntityTypeShape EntityType="VysDBModel.GTBirimHesapNumaralari" Width="1.5" PointX="11.25" PointY="39.25" />
+        <EntityTypeShape EntityType="VysDBModel.GTBirimler" Width="1.5" PointX="6" PointY="33.625" />
+        <EntityTypeShape EntityType="VysDBModel.GTDonemleri" Width="1.5" PointX="5.25" PointY="93.25" />
+        <EntityTypeShape EntityType="VysDBModel.GTHesapKodlari" Width="1.5" PointX="6" PointY="37.75" />
+        <EntityTypeShape EntityType="VysDBModel.GTHesapKodlariGelirNitelikleri" Width="1.5" PointX="10.5" PointY="57.625" />
+        <EntityTypeShape EntityType="VysDBModel.GTHesapNumaralari" Width="1.5" PointX="9" PointY="37.875" />
+        <EntityTypeShape EntityType="VysDBModel.GTVergiKimlikNumaralari" Width="1.5" PointX="10.5" PointY="78.375" />
+        <EntityTypeShape EntityType="VysDBModel.GTVeriGirisDurumlari" Width="1.5" PointX="8.25" PointY="35" />
+        <EntityTypeShape EntityType="VysDBModel.GTVeriGirisi" Width="1.5" PointX="10.5" PointY="72.625" />
+        <EntityTypeShape EntityType="VysDBModel.GTVerigirisiDetay" Width="1.5" PointX="12.75" PointY="59.375" />
         <EntityTypeShape EntityType="VysDBModel.Gunler" Width="1.5" PointX="5.75" PointY="6.375" />
-        <EntityTypeShape EntityType="VysDBModel.Kaynaklar" Width="1.5" PointX="0.75" PointY="8.25" />
-        <EntityTypeShape EntityType="VysDBModel.KullaniciBirimleri" Width="1.5" PointX="7.5" PointY="55.375" />
-        <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapKodlari" Width="1.5" PointX="5.25" PointY="44.125" />
-        <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapNumaralari" Width="1.5" PointX="8.25" PointY="58.125" />
-        <EntityTypeShape EntityType="VysDBModel.Maddeler" Width="1.5" PointX="8.25" PointY="23.625" />
-        <EntityTypeShape EntityType="VysDBModel.MaddelerEslestirilenTurler" Width="1.5" PointX="13.5" PointY="29.125" />
-        <EntityTypeShape EntityType="VysDBModel.MaddelerFormulEslesenMaddeler" Width="1.5" PointX="10.5" PointY="25.25" />
-        <EntityTypeShape EntityType="VysDBModel.MaddelerVeriGirisDonemleri" Width="1.5" PointX="10.5" PointY="28.375" />
-        <EntityTypeShape EntityType="VysDBModel.MaddeTurleri" Width="1.5" PointX="6" PointY="29.25" />
-        <EntityTypeShape EntityType="VysDBModel.MaddeYilSonuDegerHesaplamaTipleri" Width="1.5" PointX="6" PointY="23.875" />
+        <EntityTypeShape EntityType="VysDBModel.Kaynaklar" Width="1.5" PointX="0.75" PointY="8.875" />
+        <EntityTypeShape EntityType="VysDBModel.KullaniciBirimleri" Width="1.5" PointX="10.5" PointY="69" />
+        <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapKodlari" Width="1.5" PointX="8.25" PointY="53.125" />
+        <EntityTypeShape EntityType="VysDBModel.KullaniciGTHesapNumaralari" Width="1.5" PointX="11.25" PointY="53.125" />
+        <EntityTypeShape EntityType="VysDBModel.Kullanicilar" Width="1.5" PointX="3" PointY="45.5" />
+        <EntityTypeShape EntityType="VysDBModel.Maddeler" Width="1.5" PointX="8" PointY="100.125" />
+        <EntityTypeShape EntityType="VysDBModel.MaddelerEslestirilenTurler" Width="1.5" PointX="13.25" PointY="107.75" />
+        <EntityTypeShape EntityType="VysDBModel.MaddelerFormulEslesenMaddeler" Width="1.5" PointX="10.25" PointY="109.625" />
+        <EntityTypeShape EntityType="VysDBModel.MaddelerVeriGirisDonemleri" Width="1.5" PointX="10.5" PointY="94.125" />
+        <EntityTypeShape EntityType="VysDBModel.MaddeTurleri" Width="1.5" PointX="5.75" PointY="105.375" />
+        <EntityTypeShape EntityType="VysDBModel.MaddeTurleriVeriGirisDonemleri" Width="1.5" PointX="10.5" PointY="97.5" />
+        <EntityTypeShape EntityType="VysDBModel.MaddeYilSonuDegerHesaplamaTipleri" Width="1.5" PointX="5.75" PointY="102.75" />
         <EntityTypeShape EntityType="VysDBModel.MailSablonlari" Width="1.5" PointX="8" PointY="1.625" />
         <EntityTypeShape EntityType="VysDBModel.MailSablonlariEkleri" Width="1.5" PointX="10.25" PointY="2.25" />
         <EntityTypeShape EntityType="VysDBModel.MailSablonTipleri" Width="1.5" PointX="5.75" PointY="2.25" />
-        <EntityTypeShape EntityType="VysDBModel.Menuler" Width="1.5" PointX="3" PointY="58.75" />
-        <EntityTypeShape EntityType="VysDBModel.MesajEkleri" Width="1.5" PointX="9.75" PointY="42.625" />
-        <EntityTypeShape EntityType="VysDBModel.MesajKategorileri" Width="1.5" PointX="5.25" PointY="34.125" />
-        <EntityTypeShape EntityType="VysDBModel.Mesajlar" Width="1.5" PointX="7.5" PointY="43" />
-        <EntityTypeShape EntityType="VysDBModel.RaporTipleri" Width="1.5" PointX="11.25" PointY="21.625" />
-        <EntityTypeShape EntityType="VysDBModel.RaporTipleriSecilenMaddeler" Width="1.5" PointX="13.5" PointY="25.875" />
-        <EntityTypeShape EntityType="VysDBModel.Roller" Width="1.5" PointX="5.25" PointY="55.125" />
-        <EntityTypeShape EntityType="VysDBModel.SistemBilgilendirme" Width="1.5" PointX="5.25" PointY="72.125" />
+        <EntityTypeShape EntityType="VysDBModel.Menuler" Width="1.5" PointX="3" PointY="40.75" />
+        <EntityTypeShape EntityType="VysDBModel.MesajEkleri" Width="1.5" PointX="9.75" PointY="61.25" />
+        <EntityTypeShape EntityType="VysDBModel.MesajKategorileri" Width="1.5" PointX="5.25" PointY="78.125" />
+        <EntityTypeShape EntityType="VysDBModel.Mesajlar" Width="1.5" PointX="7.5" PointY="60.5" />
+        <EntityTypeShape EntityType="VysDBModel.RaporTipleri" Width="1.5" PointX="11" PointY="113" />
+        <EntityTypeShape EntityType="VysDBModel.RaporTipleriSecilenMaddeler" Width="1.5" PointX="13.25" PointY="101.25" />
+        <EntityTypeShape EntityType="VysDBModel.Roller" Width="1.5" PointX="5.25" PointY="44.125" />
+        <EntityTypeShape EntityType="VysDBModel.SistemBilgilendirme" Width="1.5" PointX="5.25" PointY="55.875" />
         <EntityTypeShape EntityType="VysDBModel.Unvanlar" Width="1.5" PointX="0.75" PointY="46.125" />
-        <EntityTypeShape EntityType="VysDBModel.VACokluVeriDonemleri" Width="1.5" PointX="8.25" PointY="32.625" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleri" Width="1.5" PointX="9" PointY="36.25" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMadde" Width="1.5" PointX="11.25" PointY="34.625" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeBirim" Width="1.5" PointX="13.5" PointY="49.375" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeEklenenAciklama" Width="1.5" PointX="10.5" PointY="49.25" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeEklenenDosya" Width="1.5" PointX="10.5" PointY="53.25" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeFormulEslesenMadde" Width="1.5" PointX="13.5" PointY="38.875" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeGirilenDeger" Width="1.5" PointX="7.5" PointY="49.875" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeTur" Width="1.5" PointX="14.25" PointY="32" />
-        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeVeriGirisDonemleri" Width="1.5" PointX="13.5" PointY="35.75" />
-        <EntityTypeShape EntityType="VysDBModel.VeriGirisSekilleri" Width="1.5" PointX="6" PointY="26.625" />
-        <EntityTypeShape EntityType="VysDBModel.VeriTipleri" Width="1.5" PointX="6" PointY="21.125" />
+        <EntityTypeShape EntityType="VysDBModel.VACokluVeriDonemleri" Width="1.5" PointX="8.25" PointY="78" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleri" Width="1.5" PointX="8" PointY="110.125" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMadde" Width="1.5" PointX="10.25" PointY="102.125" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeBirim" Width="1.5" PointX="12.5" PointY="85.875" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeEklenenAciklama" Width="1.5" PointX="10.5" PointY="89.75" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeEklenenDosya" Width="1.5" PointX="7.5" PointY="89.625" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeFormulEslesenMadde" Width="1.5" PointX="12.5" PointY="104.375" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeGirilenDeger" Width="1.5" PointX="13.5" PointY="90.25" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeTur" Width="1.5" PointX="13.25" PointY="111" />
+        <EntityTypeShape EntityType="VysDBModel.VASurecleriMaddeVeriGirisDonemleri" Width="1.5" PointX="13.5" PointY="95.125" />
+        <EntityTypeShape EntityType="VysDBModel.VeriGirisSekilleri" Width="1.5" PointX="5.75" PointY="97.25" />
+        <EntityTypeShape EntityType="VysDBModel.VeriTipleri" Width="1.5" PointX="5.75" PointY="100" />
         <EntityTypeShape EntityType="VysDBModel.YetkiGruplari" Width="1.5" PointX="0.75" PointY="50.125" />
-        <EntityTypeShape EntityType="VysDBModel.YetkiGrupRolleri" Width="1.5" PointX="10.5" PointY="57.875" />
+        <EntityTypeShape EntityType="VysDBModel.YetkiGrupRolleri" Width="1.5" PointX="7.5" PointY="42.375" />
         <EntityTypeShape EntityType="VysDBModel.KullanicilarLog" Width="1.5" PointX="2.75" PointY="7.375" />
         <EntityTypeShape EntityType="VysDBModel.Vw_BirimlerTree" Width="1.5" PointX="7.75" PointY="6.375" />
         <EntityTypeShape EntityType="VysDBModel.Vw_MaddelerTree" Width="1.5" PointX="4.75" PointY="9.375" />
         <EntityTypeShape EntityType="VysDBModel.Vw_MaddeVeriGirisDurum" Width="1.5" PointX="9.75" PointY="6.375" />
+        <AssociationConnector Association="VysDBModel.FK_Ayarlar_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerAy_Aylar" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerForm_BFrDonemleri" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerForm_BFrFormlar" />
@@ -91,20 +94,25 @@
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_BFRFormlar" />
         <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Birimler" />
+        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_BFRFormlar_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_BFRFormlarBirim_BFRFormlar" />
         <AssociationConnector Association="VysDBModel.FK_BFRFormlarBirim_Birimler" />
+        <AssociationConnector Association="VysDBModel.FK_Birimler_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_Birimler_UstBirimler" />
         <AssociationConnector Association="VysDBModel.FK_BirimMaddeleri_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_FRFormlarBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Birimler" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeBirim_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenAciklama_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenDosya_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_Birimler" />
         <AssociationConnector Association="VysDBModel.FK_BirimMaddeleri_Maddeler" />
         <AssociationConnector Association="VysDBModel.FK_DuyuruEkleri_Duyurular" />
+        <AssociationConnector Association="VysDBModel.FK_Duyurular_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerAy_Faaliyetler" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerKaynak_Faaliyetler" />
         <AssociationConnector Association="VysDBModel.FK_FaaliyetlerMadde_Faaliyetler" />
@@ -116,9 +124,13 @@
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_FrDonemlerForm" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormBirim_FrFormlar" />
         <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_FrFormlar" />
+        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_FRFormlar_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_FRFormlarBirim_FRFormlar" />
         <AssociationConnector Association="VysDBModel.FK_GonderilenMailEkleri_GonderilenMailler" />
         <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_GonderilenMailler" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Mesajlar" />
         <AssociationConnector Association="VysDBModel.FK_GTBirimHesapKodlari_GTBirimler" />
         <AssociationConnector Association="VysDBModel.FK_GTBirimHesapKodlari_GTHesapKodlari" />
@@ -127,6 +139,7 @@
         <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTBirimler" />
         <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_GTBirimler" />
         <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_GTBirimler" />
+        <AssociationConnector Association="VysDBModel.FK_GTDonemleri_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTDonemleri" />
         <AssociationConnector Association="VysDBModel.FK_GTHesapKodlariGelirNitelikleri_GTHesapKodlari" />
         <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTHesapKodlari" />
@@ -136,22 +149,34 @@
         <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_GTHesapNumaralari" />
         <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTVergiKimlikNumaralari" />
         <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_GTVeriGirisDurumlari" />
+        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_GTVeriGirisi" />
+        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_GelenMesajlar_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Unvanlar" />
+        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_YetkiGruplari" />
+        <AssociationConnector Association="VysDBModel.FK_MesajKategorileri_Kullanicilar" />
+        <AssociationConnector Association="VysDBModel.FK_SistemBilgilendirme_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_MaddeTurleri" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_MaddeYilSonuDegerHesaplamaTipleri" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_UstMaddeler" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_VeriGirisSekilleri" />
         <AssociationConnector Association="VysDBModel.FK_Maddeler_VeriTipleri" />
         <AssociationConnector Association="VysDBModel.FK_MaddelerEslestirilenTuler_Maddeler" />
-        <AssociationConnector Association="VysDBModel.FK_MaddelerVeriGirisDonemleri_Maddeler" />
+        <AssociationConnector Association="VysDBModel.FK_MaddelerVeriGirisAylari_Maddeler" />
         <AssociationConnector Association="VysDBModel.FK_MFEM_Maddeler" />
         <AssociationConnector Association="VysDBModel.FK_MFEM_MaddelerEslesen" />
         <AssociationConnector Association="VysDBModel.FK_RaporTipleriSecilenMaddeler_Maddeler" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_Maddeler" />
         <AssociationConnector Association="VysDBModel.FK_MaddelerEslestirilenTuler_MaddeTurleri" />
         <AssociationConnector Association="VysDBModel.FK_MaddelerVeriGirisDonemleri_VACokluVeriDonemleri" />
+        <AssociationConnector Association="VysDBModel.FK_MaddeTurleriVeriGirisDonemleri_MaddeTurleri" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_MaddeTurleri" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeTur_MaddeTurleri" />
+        <AssociationConnector Association="VysDBModel.FK_MaddeTurleriVeriGirisDonemleri_VACokluVeriDonemleri" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_MaddeYilSonuDegerHesaplamaTipleri" />
         <AssociationConnector Association="VysDBModel.FK_MailSablonlari_MailSablonTipleri" />
         <AssociationConnector Association="VysDBModel.FK_MailSablonlariEkleri_MailSablonlari" />
@@ -168,38 +193,16 @@
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeTur_VASurecleri" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_VeriGirisSekilleri" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMadde_VeriTipleri" />
+        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeAy_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeBirim_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenAciklama_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeEklenenDosya_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeFormulEslesenMadde_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeFormulEslesenMadde_VASurecleriMadde1" />
         <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeGirilenDeger_VASurecleriMadde" />
-        <AssociationConnector Association="VysDBModel.FK_VASurecleriMaddeVeriGirisDonemleri_VASurecleriMadde" />
         <AssociationConnector Association="VysDBModel.FK_YetkiGrupRolleri_YetkiGruplari" />
-        <AssociationConnector Association="VysDBModel.MenuRollleri" />
-        <EntityTypeShape EntityType="VysDBModel.Kullanicilar" Width="1.5" PointX="15.5" PointY="53.125" />
-        <AssociationConnector Association="VysDBModel.FK_Ayarlar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_BFRDonemlerFormGirisleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_BFRFormlar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_Birimler_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Birimler" />
-        <AssociationConnector Association="VysDBModel.FK_Duyurular_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_FRDonemlerFormGirisleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_FRFormlar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GonderilenMailKullanicilar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GonderilenMailler_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GTDonemleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GTVeriGirisi_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GTVerigirisiDetay_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_KullaniciBirimleri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapKodlari_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_KullaniciGTHesapNumaralari_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_GelenMesajlar_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_Unvanlar" />
-        <AssociationConnector Association="VysDBModel.FK_Kullanicilar_YetkiGruplari" />
-        <AssociationConnector Association="VysDBModel.FK_MesajKategorileri_Kullanicilar" />
-        <AssociationConnector Association="VysDBModel.FK_SistemBilgilendirme_Kullanicilar" />
         <AssociationConnector Association="VysDBModel.KullaniciRolleri" />
+        <AssociationConnector Association="VysDBModel.MenuRollleri" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

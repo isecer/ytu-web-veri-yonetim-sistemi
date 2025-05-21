@@ -2,8 +2,8 @@
 @using WebApp.Utilities.Extensions
 @using WebApp.Utilities.MenuAndRoles
 @model  FmMaddeTurleri
-@{ 
-     
+@{
+
     Layout = "~/Views/Shared/_Layout.cshtml";
     var kayitYetki = RoleNames.MaddeTurleriKayit.InRole();
 }
@@ -30,28 +30,32 @@
                 <div class="panel-body">
                     <table class="table table-hover">
                         <thead>
-                        <tr>
-                            <th width="75"></th>
-                            <th class="sirala sorting" field="MaddeTurAdi">Madde Tür Adı</th>
-                            <th width="100" field="IsPlanlananDegerOlacak" class="sirala sorting" title="Aktif Yıl Planlanan Değer Olacak Mı?">Aktif Yıl P.D</th>
-                            <th width="100" field="IsPlanlananDegerOlacakGelecekYil" class="sirala sorting" title="Gelecek Planlanan Değer Olacak Mı?">Gelecek Yıl P.D</th> 
-                            <th width="70" class="sirala sorting" field="IsAktif">Durum</th>
-                            <th width="35"></th>
-                        </tr>
-                        <tr class="filtrele">
-                            <th></th>
-                            <th><input name="MaddeTurAdi" type="text" value="@Model.MaddeTurAdi" class="form-control" /></th>
-                            <th>
-                                @Html.DropDownList("IsPlanlananDegerOlacak", null, new { @class = "form-control", style = "padding:0px;" })
-                            </th>
-                            <th>
-                                @Html.DropDownList("IsPlanlananDegerOlacakGelecekYil", null, new { @class = "form-control", style = "padding:0px;" })
-                            </th> 
-                            <th>
-                                @Html.DropDownList("IsAktif", null, new { @class = "form-control", style = "padding:0px;" })
-                            </th> 
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th width="75"></th>
+                                <th class="sirala sorting" field="MaddeTurAdi">Madde Tür Adı</th>
+                                <th width="100" field="IsPlanlananDegerOlacak" class="sirala sorting" title="Aktif Yıl Planlanan Değer Olacak Mı?">Aktif Yıl P.D</th>
+                                <th width="100" field="IsPlanlananDegerOlacakGelecekYil" class="sirala sorting" title="Gelecek Planlanan Değer Olacak Mı?">Gelecek Yıl P.D</th>
+                                <th width="100" field="IsVeriGirisDonemleriMaddeTurundenKopyalansin" class="sirala sorting" title="Süreç maddeleri güncellenirken veri giriş dönemleri madde türünden kopyalansın?">V.G.D.M.T.K</th>
+                                <th width="70" class="sirala sorting" field="IsAktif">Durum</th>
+                                <th width="35"></th>
+                            </tr>
+                            <tr class="filtrele">
+                                <th></th>
+                                <th><input name="MaddeTurAdi" type="text" value="@Model.MaddeTurAdi" class="form-control" /></th>
+                                <th>
+                                    @Html.DropDownList("IsPlanlananDegerOlacak", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                                <th>
+                                    @Html.DropDownList("IsPlanlananDegerOlacakGelecekYil", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                                <th>
+                                    @Html.DropDownList("IsVeriGirisDonemleriMaddeTurundenKopyalansin", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                                <th>
+                                    @Html.DropDownList("IsAktif", null, new { @class = "form-control", style = "padding:0px;" })
+                                </th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
 
@@ -60,7 +64,7 @@
                                 var rowIndex = Model.StartRowIndex;
                                 foreach (var item in Model.Data)
                                 {
-                                    rowIndex++; 
+                                    rowIndex++;
                                     <tr>
                                         <td>
                                             <table>
@@ -82,7 +86,10 @@
                                         </td>
                                         <td>
                                             <span class="badge badge-@(item.IsPlanlananDegerOlacakGelecekYil ? "success" : "info")">@item.IsPlanlananDegerOlacakGelecekYil.ToEvetHayir()</span>
-                                        </td> 
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-@(item.IsVeriGirisDonemleriMaddeTurundenKopyalansin ? "success" : "info")">@item.IsVeriGirisDonemleriMaddeTurundenKopyalansin.ToEvetHayir()</span>
+                                        </td>
                                         <td id="tdIa_@item.MaddeTurID" style="text-align:center;">
                                             <span class="badge badge-@(item.IsAktif ? "success" : "danger")">@item.IsAktif.ToAktifPasif()</span>
                                         </td>
@@ -100,18 +107,22 @@
                                                 <div class="panel-body" style="margin:0px;padding:0px;">
                                                     <div class="panel-body form-group-separated">
                                                         <div class="form-group">
-                                                            <label class="col-md-2 col-xs-4 control-label">Aktif Yıl Planlanan Değer Olacak Mı?</label>
-                                                            <div class="col-md-10 col-xs-8"><span class="badge badge-@(item.IsPlanlananDegerOlacak ? "success" : "info")">@item.IsPlanlananDegerOlacak.ToEvetHayir()</span></div>
+                                                            <label class="col-md-8 col-xs-8 control-label">Aktif Yıl Planlanan Değer Olacak Mı?</label>
+                                                            <div class="col-md-4 col-xs-4"><span class="badge badge-@(item.IsPlanlananDegerOlacak ? "success" : "info")">@item.IsPlanlananDegerOlacak.ToEvetHayir()</span></div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="col-md-2 col-xs-4 control-label">Gelecek Yıl Planlanan Değer Olacak Mı?</label>
-                                                            <div class="col-md-10 col-xs-8"><span class="badge badge-@(item.IsPlanlananDegerOlacakGelecekYil ? "success" : "info")">@item.IsPlanlananDegerOlacakGelecekYil.ToEvetHayir()</span></div>
-                                                        </div> 
-                                                        <div class="form-group">
-                                                            <label class="col-md-2 col-xs-4 control-label">İşlem Yapan</label>
-                                                            <div class="col-md-10 col-xs-8">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                            <label class="col-md-8 col-xs-8 control-label">Gelecek Yıl Planlanan Değer Olacak Mı?</label>
+                                                            <div class="col-md-4 col-xs-4"><span class="badge badge-@(item.IsPlanlananDegerOlacakGelecekYil ? "success" : "info")">@item.IsPlanlananDegerOlacakGelecekYil.ToEvetHayir()</span></div>
                                                         </div>
-                                                    </div> 
+                                                        <div class="form-group">
+                                                            <label class="col-md-8 col-xs-8 control-label">Süreç maddeleri güncellenirken veri giriş dönemleri madde türünden kopyalansın</label>
+                                                            <div class="col-md-4 col-xs-4"><span class="badge badge-@(item.IsVeriGirisDonemleriMaddeTurundenKopyalansin ? "success" : "info")">@item.IsVeriGirisDonemleriMaddeTurundenKopyalansin.ToEvetHayir()</span></div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-8 col-xs-8 control-label">İşlem Yapan</label>
+                                                            <div class="col-md-4 col-xs-4">@item.IslemYapan [@item.IslemTarihi.ToFormatDateAndTime()][@item.IslemYapanIP]</div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>

@@ -188,6 +188,7 @@ namespace WebApp.Models
         public string MaddeTurAdi { get; set; }
         public bool? IsPlanlananDegerOlacak { get; set; }
         public bool? IsPlanlananDegerOlacakGelecekYil { get; set; }
+        public bool? IsVeriGirisDonemleriMaddeTurundenKopyalansin { get; set; }
         public bool? IsAktif { get; set; }
         public IEnumerable<FrMaddeTurleri> Data { get; set; }
 

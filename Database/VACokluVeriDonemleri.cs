@@ -18,6 +18,7 @@ namespace Database
         public VACokluVeriDonemleri()
         {
             this.MaddelerVeriGirisDonemleris = new HashSet<MaddelerVeriGirisDonemleri>();
+            this.MaddeTurleriVeriGirisDonemleris = new HashSet<MaddeTurleriVeriGirisDonemleri>();
             this.VASurecleriMaddeEklenenAciklamas = new HashSet<VASurecleriMaddeEklenenAciklama>();
             this.VASurecleriMaddeEklenenDosyas = new HashSet<VASurecleriMaddeEklenenDosya>();
             this.VASurecleriMaddeGirilenDegers = new HashSet<VASurecleriMaddeGirilenDeger>();
@@ -30,6 +31,8 @@ namespace Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MaddelerVeriGirisDonemleri> MaddelerVeriGirisDonemleris { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MaddeTurleriVeriGirisDonemleri> MaddeTurleriVeriGirisDonemleris { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMaddeEklenenAciklama> VASurecleriMaddeEklenenAciklamas { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

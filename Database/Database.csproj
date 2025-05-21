@@ -191,6 +191,9 @@
     <Compile Include="MaddeTurleri.cs">
       <DependentUpon>VysDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="MaddeTurleriVeriGirisDonemleri.cs">
+      <DependentUpon>VysDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="MaddeYilSonuDegerHesaplamaTipleri.cs">
       <DependentUpon>VysDb.tt</DependentUpon>
     </Compile>

@@ -17,13 +17,13 @@ namespace Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public VASurecleriMadde()
         {
+            this.VASurecleriMaddeVeriGirisDonemleris = new HashSet<VASurecleriMaddeVeriGirisDonemleri>();
             this.VASurecleriMaddeBirims = new HashSet<VASurecleriMaddeBirim>();
             this.VASurecleriMaddeEklenenAciklamas = new HashSet<VASurecleriMaddeEklenenAciklama>();
             this.VASurecleriMaddeEklenenDosyas = new HashSet<VASurecleriMaddeEklenenDosya>();
             this.VASurecleriMaddeFormulEslesenMaddes = new HashSet<VASurecleriMaddeFormulEslesenMadde>();
             this.VASurecleriMaddeFormulEslesenMaddes1 = new HashSet<VASurecleriMaddeFormulEslesenMadde>();
             this.VASurecleriMaddeGirilenDegers = new HashSet<VASurecleriMaddeGirilenDeger>();
-            this.VASurecleriMaddeVeriGirisDonemleris = new HashSet<VASurecleriMaddeVeriGirisDonemleri>();
         }
     
         public int VASurecleriMaddeID { get; set; }
@@ -49,6 +49,8 @@ namespace Database
         public virtual VeriGirisSekilleri VeriGirisSekilleri { get; set; }
         public virtual VeriTipleri VeriTipleri { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VASurecleriMaddeVeriGirisDonemleri> VASurecleriMaddeVeriGirisDonemleris { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMaddeBirim> VASurecleriMaddeBirims { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMaddeEklenenAciklama> VASurecleriMaddeEklenenAciklamas { get; set; }
@@ -60,7 +62,5 @@ namespace Database
         public virtual ICollection<VASurecleriMaddeFormulEslesenMadde> VASurecleriMaddeFormulEslesenMaddes1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VASurecleriMaddeGirilenDeger> VASurecleriMaddeGirilenDegers { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VASurecleriMaddeVeriGirisDonemleri> VASurecleriMaddeVeriGirisDonemleris { get; set; }
     }
 }

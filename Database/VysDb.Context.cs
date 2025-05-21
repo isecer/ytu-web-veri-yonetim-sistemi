@@ -68,11 +68,13 @@ namespace Database
         public virtual DbSet<KullaniciBirimleri> KullaniciBirimleris { get; set; }
         public virtual DbSet<KullaniciGTHesapKodlari> KullaniciGTHesapKodlaris { get; set; }
         public virtual DbSet<KullaniciGTHesapNumaralari> KullaniciGTHesapNumaralaris { get; set; }
+        public virtual DbSet<Kullanicilar> Kullanicilars { get; set; }
         public virtual DbSet<Maddeler> Maddelers { get; set; }
         public virtual DbSet<MaddelerEslestirilenTurler> MaddelerEslestirilenTurlers { get; set; }
         public virtual DbSet<MaddelerFormulEslesenMaddeler> MaddelerFormulEslesenMaddelers { get; set; }
         public virtual DbSet<MaddelerVeriGirisDonemleri> MaddelerVeriGirisDonemleris { get; set; }
         public virtual DbSet<MaddeTurleri> MaddeTurleris { get; set; }
+        public virtual DbSet<MaddeTurleriVeriGirisDonemleri> MaddeTurleriVeriGirisDonemleris { get; set; }
         public virtual DbSet<MaddeYilSonuDegerHesaplamaTipleri> MaddeYilSonuDegerHesaplamaTipleris { get; set; }
         public virtual DbSet<MailSablonlari> MailSablonlaris { get; set; }
         public virtual DbSet<MailSablonlariEkleri> MailSablonlariEkleris { get; set; }
@@ -104,7 +106,6 @@ namespace Database
         public virtual DbSet<Vw_BirimlerTree> Vw_BirimlerTree { get; set; }
         public virtual DbSet<Vw_MaddelerTree> Vw_MaddelerTree { get; set; }
         public virtual DbSet<Vw_MaddeVeriGirisDurum> Vw_MaddeVeriGirisDurum { get; set; }
-        public virtual DbSet<Kullanicilar> Kullanicilars { get; set; }
     
         public virtual ObjectResult<sp_BirimAgaci_Result> sp_BirimAgaci()
         {
