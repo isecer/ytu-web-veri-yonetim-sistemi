@@ -2,15 +2,15 @@
 @using WebApp.Utilities.Helpers
 @using WebApp.Utilities.MessageBox
 @{
-    var mmMessage = ViewBag.MmMessage as MmMessage; 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var mmMessage = ViewBag.MmMessage as MmMessage;
     var secilenRaporTipIds = (List<int>)ViewBag.RaporTipIds;
 
     var raporTipData = RaporlarBus.GetRaporTipleri(secilenRaporTipIds);
     raporTipData.InputName = "RaporTipIDs";
     raporTipData.PanelTitle = "Rapor Tiplerini Seçiniz";
     raporTipData.ScrollMaxHeight = 250;
-}
-}
+} 
 
 <div class="row">
     @using (Html.BeginForm("Index", "RprBirimRaporlari", FormMethod.Post, new { id = "frmRprBirimRaporlari" }))
